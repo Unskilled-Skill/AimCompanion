@@ -1,23 +1,57 @@
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
-    QScrollArea, QComboBox, QPushButton, QSizePolicy,
-)
-from PyQt6.QtCore import Qt, QUrl
-from PyQt6.QtGui import QDesktopServices, QFont
 from datetime import datetime, timedelta
 
 import matplotlib
 matplotlib.use("QtAgg")
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.dates import AutoDateLocator, ConciseDateFormatter
 from matplotlib.figure import Figure
 
-from models.score import PlayerProfile
-from models.database import Database
-from models.benchmark import (
-    TIERS, get_benchmarks_by_difficulty, score_to_energy, energy_to_tier,
+from PyQt6.QtCore import Qt, QUrl
+from PyQt6.QtGui import QDesktopServices, QFont
+from PyQt6.QtWidgets import (
+    QComboBox, QFrame, QHBoxLayout, QLabel, QProgressBar, QPushButton,
+    QScrollArea, QSizePolicy, QVBoxLayout, QWidget,
 )
-from models.config import TrainingConfig
+
 from core.kovaaks_launcher import open_kovaaks_scenario
+from models.benchmark import TIERS, energy_to_tier, get_benchmarks_by_difficulty, score_to_energy
+from models.config import TrainingConfig
+from models.database import Database
+from models.score import PlayerProfile
+
+
+CARD_STYLE = """
+    QFrame#progressCard {
+        background-color: #181825;
+        border: 1px solid #313244;
+        border-radius: 10px;
+    }
+"""
+
+
+def next_target_for_score(benchmark: dict, score: float):
+    """Return the next official target above score, or the highest cleared target."""
+    targets = benchmark.get("targets", {})
+    ordered = []
+    for tier in TIERS:
+        if tier["name"] in targets:
+            ordered.append((tier["name"], float(targets[tier["name"]]), tier["color"]))
+    for target in ordered:
+        if score < target[1]:
+            return target, False
+    return (ordered[-1] if ordered else None), True
+
+
+def padded_date_limits(dates):
+    """Create readable limits without Matplotlib's multi-year single-point default."""
+    if not dates:
+        return None
+    start, end = min(dates), max(dates)
+    if start == end:
+        pad = timedelta(hours=12)
+    else:
+        pad = max(timedelta(hours=6), (end - start) * 0.08)
+    return start - pad, end + pad
 
 
 class ProgressWidget(QWidget):
@@ -30,134 +64,98 @@ class ProgressWidget(QWidget):
         self._build_ui()
 
     def _build_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(12)
+
+        controls = QFrame()
+        controls.setObjectName("progressCard")
+        controls.setStyleSheet(CARD_STYLE)
+        controls_layout = QVBoxLayout(controls)
+        controls_layout.setContentsMargins(16, 13, 16, 13)
+        controls_layout.setSpacing(9)
 
         selector_row = QHBoxLayout()
         selector_row.setSpacing(10)
-        selector_label = QLabel("S5 benchmark")
-        selector_label.setStyleSheet("color: #bac2de;")
-        selector_label.setFont(QFont("Segoe UI", 11))
+        selector_label = QLabel("BENCHMARK")
+        selector_label.setStyleSheet("color: #89b4fa; font-weight: bold;")
         selector_row.addWidget(selector_label)
 
         self.scenario_combo = QComboBox()
+        self.scenario_combo.setMinimumWidth(320)
+        self.scenario_combo.setMaximumWidth(560)
         self.scenario_combo.addItems([b["name"] for b in self.benchmark_defs])
         self.scenario_combo.currentTextChanged.connect(self._on_scenario_changed)
         selector_row.addWidget(self.scenario_combo, 1)
+
         self.measurement_status = QLabel()
-        self.measurement_status.setObjectName("mutedText")
         selector_row.addWidget(self.measurement_status)
         selector_row.addStretch()
-        layout.addLayout(selector_row)
 
-        action_row = QHBoxLayout()
-        action_row.setSpacing(8)
-        open_benchmark = QPushButton("Open benchmark")
-        open_benchmark.setObjectName("secondaryButton")
-        open_benchmark.clicked.connect(self._open_selected_benchmark)
-        action_row.addWidget(open_benchmark)
-        check_next = QPushButton("Check next")
-        check_next.setObjectName("primaryButton")
-        check_next.setToolTip("Open an unmeasured benchmark, then the least recently checked one")
-        check_next.clicked.connect(self._check_next_benchmark)
-        action_row.addWidget(check_next)
-        official_profile = QPushButton("Voltaic profile")
-        official_profile.setObjectName("secondaryButton")
-        official_profile.setToolTip("Open your authoritative Voltaic S5 rank")
-        official_profile.clicked.connect(self._open_voltaic_profile)
-        action_row.addWidget(official_profile)
-        action_row.addWidget(QLabel("Range"))
+        range_label = QLabel("RANGE")
+        range_label.setStyleSheet("color: #89b4fa; font-weight: bold;")
+        selector_row.addWidget(range_label)
         self.range_combo = QComboBox()
         self.range_combo.addItems(["30 days", "90 days", "1 year", "All time"])
         self.range_combo.setCurrentText("90 days")
         self.range_combo.currentTextChanged.connect(self._on_range_changed)
-        action_row.addWidget(self.range_combo)
+        selector_row.addWidget(self.range_combo)
+        controls_layout.addLayout(selector_row)
+
+        action_row = QHBoxLayout()
+        action_row.setSpacing(8)
+        open_benchmark = QPushButton("Run benchmark")
+        open_benchmark.setObjectName("primaryButton")
+        open_benchmark.clicked.connect(self._open_selected_benchmark)
+        action_row.addWidget(open_benchmark)
+        check_next = QPushButton("Check next benchmark")
+        check_next.setObjectName("secondaryButton")
+        check_next.setToolTip("Open an unmeasured benchmark, then the least recently checked one")
+        check_next.clicked.connect(self._check_next_benchmark)
+        action_row.addWidget(check_next)
+        official_profile = QPushButton("Open Voltaic profile")
+        official_profile.setObjectName("secondaryButton")
+        official_profile.clicked.connect(self._open_voltaic_profile)
+        action_row.addWidget(official_profile)
         action_row.addStretch()
-        layout.addLayout(action_row)
-        official_note = QLabel(
-            "Check next opens one official benchmark. Complete a few attempts, then "
-            "Sync scores; Voltaic remains the authoritative S5 rank source."
-        )
-        official_note.setObjectName("mutedText")
-        official_note.setWordWrap(True)
-        layout.addWidget(official_note)
+        hint = QLabel("Play a few attempts, then Sync scores above.")
+        hint.setObjectName("mutedText")
+        action_row.addWidget(hint)
+        controls_layout.addLayout(action_row)
+        root.addWidget(controls)
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll_content = QWidget()
-        self.scroll_layout = QVBoxLayout(scroll_content)
-        self.scroll_layout.setContentsMargins(2, 6, 2, 6)
-        self.scroll_layout.setSpacing(16)
+        content = QWidget()
+        self.scroll_layout = QVBoxLayout(content)
+        self.scroll_layout.setContentsMargins(2, 0, 2, 6)
+        self.scroll_layout.setSpacing(12)
 
-        self.energy_chart_frame = QFrame()
-        self.energy_chart_frame.setObjectName("progressCard")
-        self.energy_chart_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.energy_chart_frame.setStyleSheet("""
-            QFrame#progressCard {
-                background-color: #181825;
-                border-radius: 10px;
-                padding: 18px;
-                border: 1px solid #313244;
-            }
-        """)
-        self.energy_chart_layout = QVBoxLayout(self.energy_chart_frame)
-        self.energy_chart_layout.setSpacing(10)
-        self.scroll_layout.addWidget(self.energy_chart_frame)
-
-        self.chart_frame = QFrame()
-        self.chart_frame.setObjectName("progressCard")
-        self.chart_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.chart_frame.setStyleSheet("""
-            QFrame#progressCard {
-                background-color: #181825;
-                border-radius: 10px;
-                padding: 18px;
-                border: 1px solid #313244;
-            }
-        """)
-        self.chart_layout = QVBoxLayout(self.chart_frame)
-        self.chart_layout.setSpacing(10)
-        self.scroll_layout.addWidget(self.chart_frame)
-
-        self.stats_frame = QFrame()
-        self.stats_frame.setObjectName("progressCard")
-        self.stats_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.stats_frame.setStyleSheet("""
-            QFrame#progressCard {
-                background-color: #181825;
-                border-radius: 10px;
-                padding: 18px;
-                border: 1px solid #313244;
-            }
-        """)
-        self.stats_layout = QVBoxLayout(self.stats_frame)
-        self.stats_layout.setSpacing(10)
-        self.scroll_layout.addWidget(self.stats_frame)
-
-        self.history_frame = QFrame()
-        self.history_frame.setObjectName("progressCard")
-        self.history_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.history_frame.setStyleSheet("""
-            QFrame#progressCard {
-                background-color: #181825;
-                border-radius: 10px;
-                padding: 18px;
-                border: 1px solid #313244;
-            }
-        """)
-        self.history_layout = QVBoxLayout(self.history_frame)
-        self.history_layout.setSpacing(4)
-        self.scroll_layout.addWidget(self.history_frame)
-
+        self.summary_frame, self.summary_layout = self._card()
+        self.detail_frame, self.detail_layout = self._card()
+        self.energy_chart_frame, self.energy_chart_layout = self._card()
+        self.history_frame, self.history_layout = self._card()
+        for frame in (self.summary_frame, self.detail_frame, self.energy_chart_frame, self.history_frame):
+            self.scroll_layout.addWidget(frame)
         self.scroll_layout.addStretch()
-        scroll.setWidget(scroll_content)
-        layout.addWidget(scroll)
+        scroll.setWidget(content)
+        root.addWidget(scroll)
 
         self._build_energy_chart()
-
         if self.benchmark_defs:
             self._on_scenario_changed(self.benchmark_defs[0]["name"])
+
+    @staticmethod
+    def _card():
+        frame = QFrame()
+        frame.setObjectName("progressCard")
+        frame.setStyleSheet(CARD_STYLE)
+        layout = QVBoxLayout(frame)
+        layout.setContentsMargins(18, 15, 18, 15)
+        layout.setSpacing(10)
+        return frame, layout
 
     def _selected_definition(self):
         name = self.scenario_combo.currentText()
@@ -171,18 +169,13 @@ class ProgressWidget(QWidget):
     def _check_next_benchmark(self):
         if not self.benchmark_defs:
             return
-        unmeasured = [
-            benchmark for benchmark in self.benchmark_defs
-            if not self.db.get_score_history(benchmark["name"])
-        ]
+        unmeasured = [b for b in self.benchmark_defs if not self.db.get_score_history(b["name"])]
         if unmeasured:
             selected = unmeasured[0]
         else:
             selected = min(
                 self.benchmark_defs,
-                key=lambda benchmark: self.db.get_score_history(
-                    benchmark["name"]
-                )[-1].timestamp,
+                key=lambda b: self.db.get_score_history(b["name"])[-1].timestamp,
             )
         self.scenario_combo.setCurrentText(selected["name"])
         self._open_selected_benchmark()
@@ -196,8 +189,9 @@ class ProgressWidget(QWidget):
             self.measurement_status.setText("Not measured")
             self.measurement_status.setStyleSheet("color: #f9e2af; font-weight: bold;")
             return
+        noun = "attempt" if len(history) == 1 else "attempts"
         last = history[-1].timestamp.strftime("%b %d")
-        self.measurement_status.setText(f"{len(history)} attempts  ·  last {last}")
+        self.measurement_status.setText(f"{len(history)} {noun}  •  last {last}")
         self.measurement_status.setStyleSheet("color: #94e2d5; font-weight: bold;")
 
     def _clear_layout(self, layout):
@@ -209,9 +203,7 @@ class ProgressWidget(QWidget):
                 self._clear_layout(item.layout())
 
     def _filtered_history(self, history):
-        days = {"30 days": 30, "90 days": 90, "1 year": 365}.get(
-            self.range_combo.currentText()
-        )
+        days = {"30 days": 30, "90 days": 90, "1 year": 365}.get(self.range_combo.currentText())
         if not days:
             return history
         cutoff = datetime.now() - timedelta(days=days)
@@ -223,273 +215,277 @@ class ProgressWidget(QWidget):
 
     def _build_energy_chart(self):
         self._clear_layout(self.energy_chart_layout)
+        series = []
+        colors = {"clicking": "#89b4fa", "tracking": "#a6e3a1", "switching": "#fab387"}
+        for category in self.profile.categories:
+            for subcategory in category.subcategories:
+                for benchmark in subcategory.benchmarks:
+                    history = self._filtered_history(self.db.get_score_history(benchmark.name))
+                    if len(history) >= 2:
+                        series.append((category.name, benchmark.name, history))
 
-        title = QLabel("Energy Progression Over Time")
-        title.setFont(QFont("Segoe UI", 13, QFont.Weight.Bold))
-        title.setStyleSheet("color: #cdd6f4;")
-        self.energy_chart_layout.addWidget(title)
+        if not series:
+            self.energy_chart_frame.hide()
+            return
 
-        fig = Figure(figsize=(10, 3.5), dpi=100)
-        fig.patch.set_facecolor("#11111b")
-        fig.subplots_adjust(left=0.07, right=0.98, top=0.92, bottom=0.32)
-        ax = fig.add_subplot(111)
-        ax.set_facecolor("#181825")
+        self.energy_chart_frame.show()
+        self.energy_chart_layout.addWidget(self._section_title("Overall rank movement"))
+        subtitle = QLabel("Official benchmark energy over time. Each line is one measured benchmark.")
+        subtitle.setObjectName("mutedText")
+        self.energy_chart_layout.addWidget(subtitle)
 
-        colors = {
-            "clicking": "#89b4fa",
-            "tracking": "#a6e3a1",
-            "switching": "#fab387",
-        }
+        fig, ax = self._figure()
+        all_dates = []
+        for category, _name, history in series:
+            dates = [score.timestamp for score in history]
+            all_dates.extend(dates)
+            ax.plot(
+                dates, [score_to_energy(_name, score.score) for score in history],
+                color=colors.get(category.casefold(), "#cdd6f4"), linewidth=1.8,
+                marker="o", markersize=3, alpha=0.8,
+            )
+        for tier in TIERS[1:]:
+            if tier["min_energy"] > 0:
+                ax.axhline(tier["min_energy"], color=tier["color"], linewidth=0.7, alpha=0.25, linestyle="--")
+        self._style_axis(ax, "Energy", all_dates)
+        self.energy_chart_layout.addWidget(self._canvas(fig, 235))
 
-        for cat in self.profile.categories:
-            if not cat.subcategories:
-                continue
-            for sub in cat.subcategories:
-                for bench in sub.benchmarks:
-                    history = self._filtered_history(
-                        self.db.get_score_history(bench.name)
-                    )
-                    if len(history) < 2:
-                        continue
-                    energies = [score_to_energy(bench.name, s.score) for s in history]
-                    dates = [score.timestamp for score in history]
-                    ax.plot(dates, energies,
-                           color=colors.get(cat.name, "#cdd6f4"),
-                           linewidth=1.8, alpha=0.85)
-
-        for t in TIERS[1:]:
-            if t["min_energy"] > 0:
-                ax.axhline(y=t["min_energy"], color=t["color"],
-                          linewidth=0.8, alpha=0.4, linestyle="--")
-
-        ax.set_ylabel("Energy", color="#bac2de", fontsize=10, labelpad=8)
-        ax.set_xlabel("Date", color="#bac2de", fontsize=10, labelpad=8)
-        ax.tick_params(colors="#a6adc8", labelsize=9, length=4)
-        ax.spines["bottom"].set_color("#45475a")
-        ax.spines["left"].set_color("#45475a")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.grid(True, alpha=0.12, color="#585b70", linestyle="-")
-        fig.autofmt_xdate(rotation=25)
-
-        canvas = FigureCanvasQTAgg(fig)
-        canvas.setMinimumHeight(200)
-        canvas.setMinimumWidth(0)
-        canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.energy_chart_layout.addWidget(canvas)
-
-        legend_row = QHBoxLayout()
-        legend_row.setContentsMargins(4, 4, 0, 0)
-        legend_row.setSpacing(20)
+        legend = QHBoxLayout()
+        legend.setSpacing(18)
         for name, color in colors.items():
-            swatch = QLabel()
-            swatch.setFixedSize(16, 16)
-            swatch.setStyleSheet(f"background-color: {color}; border-radius: 3px;")
-            legend_row.addWidget(swatch)
-            lbl = QLabel(name.capitalize())
-            lbl.setFont(QFont("Segoe UI", 10))
-            lbl.setStyleSheet(f"color: {color};")
-            legend_row.addWidget(lbl)
-        legend_row.addStretch()
-        self.energy_chart_layout.addLayout(legend_row)
+            dot = QLabel("●")
+            dot.setStyleSheet(f"color: {color};")
+            legend.addWidget(dot)
+            label = QLabel(name.capitalize())
+            label.setStyleSheet("color: #bac2de;")
+            legend.addWidget(label)
+        legend.addStretch()
+        self.energy_chart_layout.addLayout(legend)
 
     def _on_scenario_changed(self, name: str):
         if not name:
             return
-
         self._update_measurement_status(name)
-
-        self._clear_layout(self.chart_layout)
-        self._clear_layout(self.stats_layout)
+        self._clear_layout(self.summary_layout)
+        self._clear_layout(self.detail_layout)
         self._clear_layout(self.history_layout)
 
+        benchmark = self._selected_definition() or {}
         history = self._filtered_history(self.db.get_score_history(name))
+        self._build_summary(benchmark, history)
 
         if not history:
-            benchmark = self._selected_definition() or {}
-            no_data = QLabel(
-                "Not measured yet\n\n"
-                f"{benchmark.get('category', 'Aim')} / {benchmark.get('subcategory', 'General')}"
-                "  ·  Play this official benchmark to establish your baseline."
-            )
-            no_data.setStyleSheet("color: #7f849c; font-style: italic; padding: 20px;")
-            no_data.setFont(QFont("Segoe UI", 11))
-            no_data.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            no_data.setWordWrap(True)
-            self.chart_layout.addWidget(no_data)
-            self.stats_frame.hide()
+            self._build_empty_state(benchmark)
             self.history_frame.hide()
+        elif len(history) == 1:
+            self._build_baseline_state(benchmark, history[0].score)
+            self.history_frame.hide()
+        else:
+            self._build_score_chart(name, history)
+            self._build_history(history)
+
+    def _build_summary(self, benchmark, history):
+        category = benchmark.get("category", "Aim")
+        subcategory = benchmark.get("subcategory", "General")
+        heading = QHBoxLayout()
+        heading.addWidget(self._section_title(f"{category} / {subcategory}"))
+        heading.addStretch()
+        if history:
+            best = max(score.score for score in history)
+            tier = energy_to_tier(score_to_energy(benchmark.get("name", ""), best))
+            badge = QLabel(tier)
+            badge.setStyleSheet("background: #313244; color: #cdd6f4; padding: 5px 12px; border-radius: 10px; font-weight: bold;")
+            heading.addWidget(badge)
+        self.summary_layout.addLayout(heading)
+
+        if not history:
+            note = QLabel("No baseline yet. This benchmark will start measuring this skill once you complete it.")
+            note.setObjectName("mutedText")
+            self.summary_layout.addWidget(note)
             return
 
-        self.stats_frame.show()
+        scores = [score.score for score in history]
+        best, latest, first = max(scores), scores[-1], scores[0]
+        delta = latest - first
+        target, completed = next_target_for_score(benchmark, best)
+        target_text = "Top target cleared" if completed else (f"{target[0]} at {target[1]:.0f}" if target else "—")
+        cards = QHBoxLayout()
+        cards.setSpacing(10)
+        values = [
+            ("ATTEMPTS", str(len(scores)), "#89b4fa"),
+            ("BEST", f"{best:.1f}", "#a6e3a1"),
+            ("LATEST", f"{latest:.1f}", "#cdd6f4"),
+            ("CHANGE", f"{delta:+.1f}", "#a6e3a1" if delta >= 0 else "#f38ba8"),
+            ("NEXT TARGET", target_text, target[2] if target else "#f9e2af"),
+        ]
+        for label, value, color in values:
+            cards.addWidget(self._stat(label, value, color), 1)
+        self.summary_layout.addLayout(cards)
+
+    def _build_empty_state(self, benchmark):
+        self.detail_frame.show()
+        title = QLabel("Establish your baseline")
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
+        title.setStyleSheet("color: #cdd6f4; margin-top: 12px;")
+        self.detail_layout.addWidget(title)
+        copy = QLabel("Run this official benchmark 2–3 times. Your best score sets the baseline; later attempts reveal the trend.")
+        copy.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        copy.setWordWrap(True)
+        copy.setStyleSheet("color: #a6adc8;")
+        self.detail_layout.addWidget(copy)
+        run = QPushButton(f"Run {benchmark.get('scenario', 'benchmark')}")
+        run.setObjectName("primaryButton")
+        run.setMaximumWidth(280)
+        run.clicked.connect(self._open_selected_benchmark)
+        row = QHBoxLayout()
+        row.addStretch()
+        row.addWidget(run)
+        row.addStretch()
+        self.detail_layout.addLayout(row)
+
+    def _build_baseline_state(self, benchmark, score):
+        self.detail_frame.show()
+        self.detail_layout.addWidget(self._section_title("Baseline established"))
+        target, completed = next_target_for_score(benchmark, score)
+        if target:
+            if completed:
+                message = QLabel(f"{score:.1f} clears the highest target tracked for this benchmark.")
+                progress_value = 100
+            else:
+                gap = target[1] - score
+                message = QLabel(f"{score:.1f} baseline  •  {gap:.1f} points to {target[0]}")
+                previous = max((float(v) for v in benchmark.get("targets", {}).values() if float(v) <= score), default=0.0)
+                progress_value = int(max(0, min(100, (score - previous) / max(1, target[1] - previous) * 100)))
+            message.setStyleSheet("color: #cdd6f4; font-size: 15px; font-weight: bold;")
+            self.detail_layout.addWidget(message)
+            bar = QProgressBar()
+            bar.setRange(0, 100)
+            bar.setValue(progress_value)
+            bar.setTextVisible(False)
+            bar.setFixedHeight(10)
+            color = target[2]
+            bar.setStyleSheet(f"QProgressBar {{ background: #11111b; border: 0; border-radius: 5px; }} QProgressBar::chunk {{ background: {color}; border-radius: 5px; }}")
+            self.detail_layout.addWidget(bar)
+        note = QLabel("Complete one more attempt to unlock a useful trend. A single dot would not tell you whether your aim is improving.")
+        note.setWordWrap(True)
+        note.setObjectName("mutedText")
+        self.detail_layout.addWidget(note)
+
+    def _build_score_chart(self, name, history):
+        self.detail_frame.show()
+        self.detail_layout.addWidget(self._section_title("Score trend"))
+        scores = [score.score for score in history]
+        dates = [score.timestamp for score in history]
+        fig, ax = self._figure()
+        ax.plot(dates, scores, color="#89b4fa", linewidth=1.8, marker="o", markersize=5, alpha=0.9)
+        if len(scores) >= 3:
+            rolling = [sum(scores[max(0, i - 4):i + 1]) / len(scores[max(0, i - 4):i + 1]) for i in range(len(scores))]
+            ax.plot(dates, rolling, color="#a6e3a1", linewidth=2.4, label="5-run average")
+            legend = ax.legend(facecolor="#181825", edgecolor="#313244")
+            for text in legend.get_texts():
+                text.set_color("#cdd6f4")
+        best_idx = scores.index(max(scores))
+        ax.scatter([dates[best_idx]], [scores[best_idx]], color="#a6e3a1", s=36, zorder=4)
+        self._style_axis(ax, "Score", dates)
+        self.detail_layout.addWidget(self._canvas(fig, 255))
+
+        recent = scores[-3:]
+        if len(scores) >= 6:
+            previous = scores[-6:-3]
+            trend = sum(recent) / len(recent) - sum(previous) / len(previous)
+            text = f"Recent 3-run average: {sum(recent) / len(recent):.1f}  •  trend: {trend:+.1f}"
+            color = "#a6e3a1" if trend >= 0 else "#f38ba8"
+        else:
+            text = f"Recent {len(recent)}-run average: {sum(recent) / len(recent):.1f}  •  6 attempts unlock a stable trend comparison"
+            color = "#a6adc8"
+        trend_label = QLabel(text)
+        trend_label.setStyleSheet(f"color: {color}; font-weight: bold;")
+        self.detail_layout.addWidget(trend_label)
+
+    def _build_history(self, history):
         self.history_frame.show()
+        self.history_layout.addWidget(self._section_title("Recent attempts"))
+        for index, score in enumerate(reversed(history[-8:])):
+            row_widget = QFrame()
+            row_widget.setStyleSheet(f"background: {'#1e1e2e' if index % 2 else '#181825'}; border-radius: 5px;")
+            row = QHBoxLayout(row_widget)
+            row.setContentsMargins(10, 7, 10, 7)
+            date = QLabel(score.timestamp.strftime("%b %d, %Y  %H:%M"))
+            date.setStyleSheet("color: #a6adc8;")
+            row.addWidget(date)
+            row.addStretch()
+            value = QLabel(f"{score.score:.1f}")
+            value.setStyleSheet("color: #cdd6f4; font-weight: bold;")
+            row.addWidget(value)
+            chronological_index = len(history) - 1 - index
+            if chronological_index > 0:
+                delta = score.score - history[chronological_index - 1].score
+                delta_label = QLabel(f"{delta:+.1f}")
+                delta_label.setFixedWidth(70)
+                delta_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+                delta_label.setStyleSheet(f"color: {'#a6e3a1' if delta >= 0 else '#f38ba8'};")
+                row.addWidget(delta_label)
+            self.history_layout.addWidget(row_widget)
 
-        scores = [s.score for s in history]
-
-        fig = Figure(figsize=(10, 3.5), dpi=100)
-        fig.patch.set_facecolor("#11111b")
-        fig.subplots_adjust(left=0.07, right=0.98, top=0.90, bottom=0.28)
+    @staticmethod
+    def _figure():
+        fig = Figure(figsize=(10, 2.6), dpi=100)
+        fig.patch.set_facecolor("#181825")
+        fig.subplots_adjust(left=0.065, right=0.985, top=0.96, bottom=0.22)
         ax = fig.add_subplot(111)
         ax.set_facecolor("#181825")
-        dates = [score.timestamp for score in history]
-        ax.plot(dates, scores, color="#89b4fa", linewidth=1.4, marker="o", markersize=4, alpha=0.65)
-        if len(scores) >= 3:
-            rolling = [
-                sum(scores[max(0, i - 4):i + 1]) / len(scores[max(0, i - 4):i + 1])
-                for i in range(len(scores))
-            ]
-            ax.plot(dates, rolling, color="#a6e3a1", linewidth=2.5, label="5-run average")
-            ax.legend(facecolor="#181825", labelcolor="#cdd6f4")
+        return fig, ax
 
-        if len(scores) > 1:
-            best_idx = scores.index(max(scores))
-            ax.annotate(
-                f"Best: {max(scores):.0f}",
-                xy=(dates[best_idx], max(scores)),
-                xytext=(0, 22), textcoords="offset points",
-                fontsize=10, color="#a6e3a1", fontweight="bold",
-                ha="left",
-                arrowprops=dict(arrowstyle="-", color="#a6e3a1", lw=0.8),
-            )
-
-        ax.set_title(name, color="#cdd6f4", fontsize=13, fontweight="bold", pad=12)
-        ax.set_ylabel("Score", color="#bac2de", fontsize=10, labelpad=8)
-        ax.tick_params(colors="#a6adc8", labelsize=9, length=4)
+    @staticmethod
+    def _style_axis(ax, ylabel, dates):
+        ax.set_ylabel(ylabel, color="#bac2de", fontsize=9, labelpad=8)
+        ax.tick_params(colors="#a6adc8", labelsize=8, length=3)
         ax.spines["bottom"].set_color("#45475a")
         ax.spines["left"].set_color("#45475a")
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
-        ax.grid(True, alpha=0.12, color="#585b70", linestyle="-")
-        fig.autofmt_xdate(rotation=25)
+        ax.grid(True, alpha=0.12, color="#585b70")
+        limits = padded_date_limits(dates)
+        if limits:
+            ax.set_xlim(*limits)
+        locator = AutoDateLocator(minticks=3, maxticks=7)
+        ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(ConciseDateFormatter(locator))
 
+    @staticmethod
+    def _canvas(fig, height):
         canvas = FigureCanvasQTAgg(fig)
-        canvas.setMinimumHeight(200)
+        canvas.setMinimumHeight(height)
+        canvas.setMaximumHeight(height + 30)
         canvas.setMinimumWidth(0)
         canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.chart_layout.addWidget(canvas)
+        return canvas
 
-        title = QLabel(f"Statistics - {name}")
-        title.setFont(QFont("Segoe UI", 13, QFont.Weight.Bold))
-        title.setStyleSheet("color: #cdd6f4;")
-        self.stats_layout.addWidget(title)
+    @staticmethod
+    def _section_title(text):
+        label = QLabel(text)
+        label.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))
+        label.setStyleSheet("color: #cdd6f4;")
+        return label
 
-        best = max(scores)
-        first = scores[0]
-        latest = scores[-1]
-        improvement = latest - first
-
-        stats_row = QHBoxLayout()
-        stats_row.setSpacing(12)
-        stats_row.addWidget(self._stat("Attempts", str(len(scores)), "#89b4fa"))
-        stats_row.addWidget(self._stat("Best", f"{best:.1f}", "#a6e3a1"))
-        stats_row.addWidget(self._stat("Latest", f"{latest:.1f}", "#cdd6f4"))
-        stats_row.addWidget(self._stat("First", f"{first:.1f}", "#7f849c"))
-        delta_color = "#a6e3a1" if improvement >= 0 else "#f38ba8"
-        stats_row.addWidget(self._stat("Change", f"{improvement:+.1f}", delta_color))
-        stats_row.addStretch()
-        self.stats_layout.addLayout(stats_row)
-
-        recent_window = scores[-3:]
-        recent_average = sum(recent_window) / len(recent_window)
-        previous_window = scores[-6:-3]
-        if previous_window:
-            previous_average = sum(previous_window) / len(previous_window)
-            trend = recent_average - previous_average
-            trend_pct = (
-                trend / previous_average * 100 if previous_average else 0.0
-            )
-            trend_color = "#a6e3a1" if trend >= 0 else "#f38ba8"
-            consistency = QLabel(
-                f"Recent consistency  ·  last {len(recent_window)} avg "
-                f"{recent_average:.1f}  ·  previous {len(previous_window)} avg "
-                f"{previous_average:.1f}  ·  {trend:+.1f} ({trend_pct:+.1f}%)"
-            )
-            consistency.setStyleSheet(f"color: {trend_color}; font-weight: bold;")
-        else:
-            consistency = QLabel(
-                f"Recent consistency  ·  last {len(recent_window)} avg "
-                f"{recent_average:.1f}  ·  more attempts needed for a trend"
-            )
-            consistency.setStyleSheet("color: #a6adc8;")
-        self.stats_layout.addWidget(consistency)
-
-        history_title = QLabel("Run History")
-        history_title.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))
-        history_title.setStyleSheet("color: #cdd6f4;")
-        self.history_layout.addWidget(history_title)
-
-        header_row = QHBoxLayout()
-        header_row.setContentsMargins(4, 0, 4, 4)
-        header_row.setSpacing(0)
-        for h, w in [("#", 40), ("Date", 160), ("Score", 80), ("Change", 80)]:
-            lbl = QLabel(h)
-            lbl.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
-            lbl.setStyleSheet("color: #89b4fa; padding: 6px 8px;")
-            lbl.setFixedWidth(w)
-            header_row.addWidget(lbl)
-        header_row.addStretch()
-        self.history_layout.addLayout(header_row)
-
-        for i, s in enumerate(reversed(history), 1):
-            row = QHBoxLayout()
-            row.setContentsMargins(4, 0, 4, 0)
-            row.setSpacing(0)
-
-            bg = "#1e1e2e" if i % 2 == 0 else "#181825"
-            row_widget = QFrame()
-            row_widget.setStyleSheet(f"QFrame {{ background-color: {bg}; border-radius: 4px; }}")
-            row_layout = QHBoxLayout(row_widget)
-            row_layout.setContentsMargins(0, 2, 0, 2)
-            row_layout.setSpacing(0)
-
-            row_layout.addWidget(self._history_cell(str(i), "#7f849c", 40))
-            row_layout.addWidget(self._history_cell(s.timestamp.strftime("%Y-%m-%d %H:%M"), "#a6adc8", 160))
-            row_layout.addWidget(self._history_cell(f"{s.score:.1f}", "#cdd6f4", 80))
-
-            if i > 1:
-                prev_score = history[-(i + 1)].score
-                delta = s.score - prev_score
-                color = "#a6e3a1" if delta >= 0 else "#f38ba8"
-                row_layout.addWidget(self._history_cell(f"{delta:+.1f}", color, 80))
-            else:
-                row_layout.addWidget(self._history_cell("-", "#45475a", 80))
-
-            row_layout.addStretch()
-            self.history_layout.addWidget(row_widget)
-
-    def _stat(self, label: str, value: str, color: str) -> QFrame:
+    @staticmethod
+    def _stat(label, value, color):
         frame = QFrame()
-        frame.setStyleSheet(f"""
-            QFrame {{
-                background-color: #11111b;
-                border-radius: 8px;
-                padding: 14px;
-                border: 1px solid #313244;
-                border-left: 4px solid {color};
-            }}
-        """)
+        frame.setMinimumHeight(82)
+        frame.setStyleSheet("background: #11111b; border: 1px solid #313244; border-radius: 8px;")
         layout = QVBoxLayout(frame)
-        layout.setSpacing(6)
-
-        lbl = QLabel(label)
-        lbl.setFont(QFont("Segoe UI", 10))
-        lbl.setStyleSheet("color: #a6adc8;")
-        layout.addWidget(lbl)
-
-        val = QLabel(value)
-        val.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
-        val.setStyleSheet(f"color: {color};")
-        val.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(val)
-
+        layout.setContentsMargins(12, 10, 12, 10)
+        layout.setSpacing(5)
+        name = QLabel(label)
+        name.setStyleSheet("color: #7f849c; font-weight: bold;")
+        layout.addWidget(name)
+        number = QLabel(value)
+        number.setFont(QFont("Segoe UI", 13, QFont.Weight.Bold))
+        number.setStyleSheet(f"color: {color};")
+        number.setWordWrap(True)
+        layout.addWidget(number)
         return frame
-
-    def _history_cell(self, text: str, color: str, width: int = 80) -> QLabel:
-        lbl = QLabel(text)
-        lbl.setFont(QFont("Segoe UI", 9))
-        lbl.setStyleSheet(f"color: {color}; padding: 5px 8px;")
-        lbl.setFixedWidth(width)
-        return lbl
 
     def update_profile(self, profile: PlayerProfile):
         current = self.scenario_combo.currentText()

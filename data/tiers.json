@@ -1,0 +1,15 @@
+[
+  {"name": "Iron", "min_energy": 100, "color": "#808080"},
+  {"name": "Bronze", "min_energy": 200, "color": "#CD7F32"},
+  {"name": "Silver", "min_energy": 300, "color": "#C0C0C0"},
+  {"name": "Gold", "min_energy": 400, "color": "#FFD700"},
+  {"name": "Platinum", "min_energy": 500, "color": "#00CED1"},
+  {"name": "Diamond", "min_energy": 600, "color": "#B9F2FF"},
+  {"name": "Jade", "min_energy": 700, "color": "#00A86B"},
+  {"name": "Master", "min_energy": 800, "color": "#FF4500"},
+  {"name": "Grandmaster", "min_energy": 900, "color": "#9966CC"},
+  {"name": "Nova", "min_energy": 1000, "color": "#FF69B4"},
+  {"name": "Astra", "min_energy": 1100, "color": "#FFD700"},
+  {"name": "Celestial", "min_energy": 1200, "color": "#E6E6FA"},
+  {"name": "Radiant", "min_energy": 1300, "color": "#FFFFFF"}
+]

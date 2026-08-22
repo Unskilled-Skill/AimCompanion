@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.spec.bak
+*.sha256
+
+# Writable user state belongs in %LOCALAPPDATA%\AimCompanion.
+data/*.db
+data/config.json

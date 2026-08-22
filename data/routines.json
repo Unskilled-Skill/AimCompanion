@@ -1,0 +1,334 @@
+[
+  {
+    "name": "Smoothness & Precision - Easy",
+    "description": "Smoothness training for tracking control - recommended up to Platinum on Precise",
+    "duration_minutes": 25,
+    "share_code": "KOVAAKSBOOMSTICKINGFASTGULAG",
+    "targets": ["Tracking_Precise", "Tracking_Control", "Tracking"],
+    "min_rank": "Iron",
+    "source": "Voltaic Weakness Routines 2.0",
+    "exercises": [
+      {"scenario": "Centering I 180 no strafes", "duration": "5m", "focus": "Smooth crosshair centering, focus on being smooth against thin bots"},
+      {"scenario": "B180TI Sparky", "duration": "8m", "focus": "Smooth tracking on horizontal and vertical bouncing targets"},
+      {"scenario": "PGTI Voltaic Easy", "duration": "8m", "focus": "Smooth tracking on tiny targets, both horizontal and vertical"},
+      {"scenario": "Glider GOATED Easy", "duration": "5m", "focus": "Smooth tracking against smaller air bots"},
+      {"scenario": "ddtv xyz far veryslow small", "duration": "4m", "focus": "Micro-precision on far slow small targets"}
+    ]
+  },
+  {
+    "name": "Smoothness & Precision - Intermediate",
+    "description": "Smoothness training - recommended up to Diamond on Precise",
+    "duration_minutes": 30,
+    "share_code": "KOVAAKSDASHINGDIAGONALJUMP",
+    "targets": ["Tracking_Precise", "Tracking_Control", "Tracking"],
+    "min_rank": "Silver",
+    "source": "Voltaic Weakness Routines 2.0",
+    "exercises": [
+      {"scenario": "Thin Gauntlet", "duration": "2-3 runs", "focus": "Smooth tracking against thin bots"},
+      {"scenario": "B360TI Small Sparky", "duration": "10m", "focus": "Smooth tracking on tiny bouncing targets, 360 degrees"},
+      {"scenario": "PGTI Curved", "duration": "10m", "focus": "Smooth tracking on curved path tiny targets"},
+      {"scenario": "Smoothsphere", "duration": "2-3 runs", "focus": "Smooth sphere tracking, air bots"}
+    ]
+  },
+  {
+    "name": "Smoothness & Precision - Advanced",
+    "description": "Smoothness training - recommended for Master+ on Precise",
+    "duration_minutes": 30,
+    "share_code": "KOVAAKSDODGINGDOWNEDRIFLE",
+    "targets": ["Tracking_Precise", "Tracking_Control", "Tracking"],
+    "min_rank": "Diamond",
+    "source": "Voltaic Weakness Routines 2.0",
+    "exercises": [
+      {"scenario": "Thin Gauntlet V2 Thin Goated", "duration": "2-3 runs", "focus": "Ultra-thin target smooth tracking"},
+      {"scenario": "B360TI Small Sparky", "duration": "8m", "focus": "360 tiny bouncing target smoothness"},
+      {"scenario": "PGTI Curved", "duration": "8m", "focus": "Curved path precise tracking"},
+      {"scenario": "Smoothsphere", "duration": "5-10m", "focus": "Advanced smooth sphere tracking"}
+    ]
+  },
+  {
+    "name": "Static Clicking - Easy",
+    "description": "Static clicking mastery - recommended for Diamond and below on Static",
+    "duration_minutes": 30,
+    "share_code": "KOVAAKSENRYINGEGGPLANTPRISM",
+    "targets": ["Clicking_Static", "Clicking"],
+    "min_rank": "Iron",
+    "source": "Voltaic Weakness Routines 2.0",
+    "exercises": [
+      {"scenario": "Pokeball 1w4t shrink", "duration": "3m", "focus": "Hold MB1, focus on least time between targets"},
+      {"scenario": "1w4t shrink", "duration": "3m", "focus": "Clicking version, good warmup"},
+      {"scenario": "1wall2targets TE", "duration": "3m", "focus": "FOV 110-115 OW, fast flick between targets"},
+      {"scenario": "5 Sphere Hipfire", "duration": "3m", "focus": "Speed on small angles"},
+      {"scenario": "5 Sphere Hipfire Small", "duration": "3m", "focus": "Micro-corrections"},
+      {"scenario": "Pokeball Frenzy Auto 1w4ts", "duration": "3m", "focus": "Hold MB1, flick in 2 motions"},
+      {"scenario": "Pokeball 1w4ts 30%", "duration": "3m", "focus": "More accuracy than previous"},
+      {"scenario": "Pokeball Frenzy Auto 1w2ts", "duration": "3m", "focus": "Large angle flicks, land on 1st flick"},
+      {"scenario": "1wall2targets_smallflicks 60s", "duration": "3m", "focus": "Small flick varied targets"},
+      {"scenario": "1w4ts Voltaic", "duration": "3m", "focus": "Keep accuracy 90%+, benchmark scenario"},
+      {"scenario": "Wide Wall 4 Targets", "duration": "3m", "focus": "Large angle static, FOV 103-115"},
+      {"scenario": "1wall 6targets small", "duration": "3m", "focus": "100% accuracy goal, benchmark scenario"}
+    ]
+  },
+  {
+    "name": "Static Clicking - Advanced",
+    "description": "Static clicking mastery - recommended for Master+ on Static",
+    "duration_minutes": 45,
+    "share_code": "KOVAAKSDROPPINGDYNAMICHELL",
+    "targets": ["Clicking_Static", "Clicking"],
+    "min_rank": "Diamond",
+    "source": "Voltaic Weakness Routines 2.0",
+    "exercises": [
+      {"scenario": "Pokeball 1w4t shrink", "duration": "3m", "focus": "Hold MB1, least time between targets"},
+      {"scenario": "1w4t shrink", "duration": "3m", "focus": "Clicking warmup"},
+      {"scenario": "Static Speed Test", "duration": "3m", "focus": "Reload, go fast without worrying about accuracy"},
+      {"scenario": "fuglaaPressure", "duration": "3m", "focus": "Pressure aiming, pacing and aiming"},
+      {"scenario": "Pressure Aiming 7 Shortened", "duration": "3m", "focus": "More targets, click faster"},
+      {"scenario": "Pokeball Frenzy Auto Wide Wall 4 Targets Small", "duration": "3m", "focus": "Land first flick, go as fast as possible"},
+      {"scenario": "1w3ts", "duration": "3m", "focus": "Large angles, few small targets"},
+      {"scenario": "Wide Wall 4 Targets Small", "duration": "3m", "focus": "Same with 1 more target"},
+      {"scenario": "Pokeball Frenzy Auto 1w2ts", "duration": "3m", "focus": "Large angle flicks, land on 1st flick"},
+      {"scenario": "1w2tes", "duration": "3m", "focus": "Accurate while maintaining pace, extra small"},
+      {"scenario": "Pokeball 1w4ts 30%", "duration": "3m", "focus": "Balance speed and precision"},
+      {"scenario": "1w4ts Voltaic", "duration": "3m", "focus": "Keep accuracy 90%+"},
+      {"scenario": "1wall2targets_smallflicks 60s", "duration": "3m", "focus": "Small flick varied targets"},
+      {"scenario": "5 Sphere Hipfire Small", "duration": "3m", "focus": "Chaining close targets"},
+      {"scenario": "10 Sphere Hipfire Extra Small", "duration": "3m", "focus": "Precision hipfire for all aspects of static"},
+      {"scenario": "1wall 6targets small", "duration": "3m", "focus": "98%+ accuracy goal"}
+    ]
+  },
+  {
+    "name": "Speed Switching",
+    "description": "Develop speed and accuracy when switching targets - repeat 5x (25 min)",
+    "duration_minutes": 25,
+    "share_code": "KOVAAKSEXITFRAGGINGENTRYGAMESENSE",
+    "targets": ["Switching_Speed", "Switching"],
+    "min_rank": "Iron",
+    "source": "Voltaic Weakness Routines 2.0 (Viscose)",
+    "repeat": "5x",
+    "exercises": [
+      {"scenario": "patCircleSwitch small NR static", "duration": "1m", "focus": "Test accuracy of initial switch and readjustment"},
+      {"scenario": "voxTargetSwitch Large", "duration": "1m", "focus": "Speed and getting used to going fast"},
+      {"scenario": "voxTS Viscose Varied", "duration": "1m", "focus": "Starts large, shrinks - maintain speed on small targets"},
+      {"scenario": "voxTargetSwitch Voltaic", "duration": "1m", "focus": "Benchmark for wide angle switch speed"},
+      {"scenario": "patCircleSwitch Static", "duration": "1m", "focus": "Easier version, bring focus back to speed"}
+    ]
+  },
+  {
+    "name": "Reactivity Training",
+    "description": "Improve reactivity to direction changes - recommended for Diamond+ on Reactive",
+    "duration_minutes": 35,
+    "share_code": "KOVAAKSFEEDINGEXTRACINEMATIC",
+    "targets": ["Tracking_Reactive", "Tracking"],
+    "min_rank": "Diamond",
+    "source": "Voltaic Weakness Routines 2.0 (sini)",
+    "exercises": [
+      {"scenario": "Close Fast Strafes Invincible", "duration": "10m", "focus": "Focus on reading bot movement"},
+      {"scenario": "Air Voltaic", "duration": "2-3 runs", "focus": "Focus on reading bot movement, multi-directional"},
+      {"scenario": "Vertical Fast Strafes", "duration": "10m", "focus": "Pure vertical reactivity"},
+      {"scenario": "Air UFO Hard Invincible", "duration": "5m", "focus": "Fast acquisition and reactivity, optional"}
+    ]
+  },
+  {
+    "name": "Strafe Tracking",
+    "description": "Develop hand independence for strafe aiming - 35 minutes",
+    "duration_minutes": 35,
+    "share_code": "KOVAAKSFLANKINGFANTASTICPATROL",
+    "targets": ["Tracking", "Tracking_Control", "general"],
+    "min_rank": "Iron",
+    "source": "Voltaic Weakness Routines 2.0 (HotRodRe)",
+    "exercises": [
+      {"scenario": "Midrange Long Strafes V2", "duration": "2m", "focus": "Warm up hand, smoothness and quick direction changes"},
+      {"scenario": "Revolving Tracking", "duration": "2m", "focus": "Arm warm up, circle strafe tracking"},
+      {"scenario": "Pole Long Dodge", "duration": "3m", "focus": "Stationary target while strafing, hand independence"},
+      {"scenario": "Close LS Easy Dodge", "duration": "3m", "focus": "Hold strafe, switch when bot killed, anti-mirroring"},
+      {"scenario": "Cycle Strafes Long", "duration": "4m", "focus": "Cycle strafe, pay attention to movement bar"},
+      {"scenario": "Circle Strafes Long Varied Easy", "duration": "3m", "focus": "Circle strafe, varied speed"},
+      {"scenario": "Circle Strafes Fast", "duration": "3m", "focus": "Fast circle strafing"},
+      {"scenario": "3D Mid Dodge", "duration": "3m", "focus": "3D mid-range dodging"},
+      {"scenario": "Air Angelic 4 Voltaic Easy", "duration": "2m", "focus": "Multi-directional reactivity after movement"},
+      {"scenario": "Amphi LG 1v1 Easy", "duration": "3m", "focus": "Free movement against dodging bot"}
+    ]
+  },
+  {
+    "name": "Switching Stability Focus",
+    "description": "Short routine targeting ControlTS and Penta Bounce - your weakest subcategory",
+    "duration_minutes": 25,
+    "share_code": "",
+    "targets": ["Switching_Stability", "Switching"],
+    "min_rank": "Iron",
+    "source": "Weakness-targeted (VT benchmark scenarios)",
+    "exercises": [
+      {"scenario": "VT ControlTS Novice S5", "duration": "5m", "focus": "Controlled sphere tracking, focus on smooth transitions"},
+      {"scenario": "VT Penta Bounce Novice S5", "duration": "5m", "focus": "Bouncing target stability, maintain crosshair on target"},
+      {"scenario": "patCircleSwitch small NR static", "duration": "3m", "focus": "Initial switch accuracy and readjustment"},
+      {"scenario": "voxTargetSwitch Voltaic", "duration": "3m", "focus": "Wide angle switch speed benchmark"},
+      {"scenario": "VT ControlTS Novice S5", "duration": "5m", "focus": "Second pass - apply what you learned"},
+      {"scenario": "VT Penta Bounce Novice S5", "duration": "4m", "focus": "Second pass - push for improvement"}
+    ]
+  },
+  {
+    "name": "Switching Evasive Focus",
+    "description": "Short routine targeting DriftTS and FlyTS - evasive switching",
+    "duration_minutes": 25,
+    "share_code": "",
+    "targets": ["Switching_Evasive", "Switching"],
+    "min_rank": "Iron",
+    "source": "Weakness-targeted (VT benchmark scenarios)",
+    "exercises": [
+      {"scenario": "VT DriftTS Novice S5", "duration": "5m", "focus": "Drifting targets, read movement before switching"},
+      {"scenario": "VT FlyTS Novice S5", "duration": "5m", "focus": "Flying targets, track then switch"},
+      {"scenario": "voxTS Viscose Varied", "duration": "3m", "focus": "Varied size switching, maintain speed"},
+      {"scenario": "voxTargetSwitch Large", "duration": "3m", "focus": "Large target speed, build confidence"},
+      {"scenario": "VT DriftTS Novice S5", "duration": "5m", "focus": "Second pass - focus on smooth tracking between switches"},
+      {"scenario": "VT FlyTS Novice S5", "duration": "4m", "focus": "Second pass - push for improvement"}
+    ]
+  },
+  {
+    "name": "Clicking Linear Focus",
+    "description": "Short routine targeting Frogtagon and Floating Heads - linear clicking",
+    "duration_minutes": 20,
+    "share_code": "",
+    "targets": ["Clicking_Linear", "Clicking"],
+    "min_rank": "Iron",
+    "source": "Weakness-targeted (VT benchmark scenarios)",
+    "exercises": [
+      {"scenario": "VT Frogtagon Novice S5", "duration": "5m", "focus": "Polygon clicking, lead targets on linear paths"},
+      {"scenario": "VT Floating Heads Novice S5", "duration": "5m", "focus": "Multi-target linear, time your clicks"},
+      {"scenario": "1wall5targets_pasu slow", "duration": "3m", "focus": "Slow precision clicking on linear targets"},
+      {"scenario": "VT Frogtagon Novice S5", "duration": "4m", "focus": "Second pass - apply improvements"},
+      {"scenario": "VT Floating Heads Novice S5", "duration": "3m", "focus": "Second pass - push for improvement"}
+    ]
+  },
+  {
+    "name": "Clicking Dynamic Focus",
+    "description": "Short routine targeting Pasu and Popcorn - dynamic bouncing clicking",
+    "duration_minutes": 20,
+    "share_code": "",
+    "targets": ["Clicking_Dynamic", "Clicking"],
+    "min_rank": "Iron",
+    "source": "Weakness-targeted (VT benchmark scenarios)",
+    "exercises": [
+      {"scenario": "VT Pasu Novice S5", "duration": "5m", "focus": "Bouncing targets, read trajectory and time clicks"},
+      {"scenario": "VT Popcorn Novice S5", "duration": "5m", "focus": "Popcorn clicking, lead targets"},
+      {"scenario": "POPCORN", "duration": "3m", "focus": "Dynamic clicking practice with installed scenario"},
+      {"scenario": "VT Pasu Novice S5", "duration": "4m", "focus": "Second pass - focus on accuracy over speed"},
+      {"scenario": "VT Popcorn Novice S5", "duration": "3m", "focus": "Second pass - push for improvement"}
+    ]
+  },
+  {
+    "name": "VDIM Clicking I (Static + Linear)",
+    "description": "VDIM Monday - Static and Linear clicking focus",
+    "duration_minutes": 90,
+    "share_code": "KovaaKsCarryingGodlikeDink",
+    "targets": ["Clicking_Static", "Clicking_Linear", "Clicking"],
+    "min_rank": "Bronze",
+    "source": "Voltaic VDIM S5",
+    "exercises": [
+      {"scenario": "Pokeball 1w4t shrink", "duration": "3m", "focus": "Hold MB1, static clicking warmup"},
+      {"scenario": "1w4t shrink", "duration": "3m", "focus": "Clicking version warmup"},
+      {"scenario": "1wall2targets TE", "duration": "3m", "focus": "FOV 110-115 OW, fast flick"},
+      {"scenario": "5 Sphere Hipfire", "duration": "3m", "focus": "Speed on small angles"},
+      {"scenario": "5 Sphere Hipfire Small", "duration": "3m", "focus": "Micro-corrections"},
+      {"scenario": "1w4ts Voltaic", "duration": "3m", "focus": "90%+ accuracy"},
+      {"scenario": "1wall 6targets small", "duration": "3m", "focus": "100% accuracy goal"},
+      {"scenario": "VT Frogtagon Novice S5", "duration": "3m", "focus": "Linear clicking"},
+      {"scenario": "VT Floating Heads Novice S5", "duration": "3m", "focus": "Multi-target linear clicking"}
+    ]
+  },
+  {
+    "name": "VDIM Clicking II (Dynamic + Linear)",
+    "description": "VDIM Tuesday - Dynamic clicking focus",
+    "duration_minutes": 90,
+    "share_code": "KovaaKsChallengingGoldenochreBattlepass",
+    "targets": ["Clicking_Dynamic", "Clicking_Linear", "Clicking"],
+    "min_rank": "Bronze",
+    "source": "Voltaic VDIM S5",
+    "exercises": [
+      {"scenario": "VT Pasu Novice S5", "duration": "3m", "focus": "Dynamic bouncing clicking"},
+      {"scenario": "VT Popcorn Novice S5", "duration": "3m", "focus": "Dynamic popcorn clicking"},
+      {"scenario": "POPCORN", "duration": "3m", "focus": "Dynamic clicking practice"},
+      {"scenario": "VT Frogtagon Novice S5", "duration": "3m", "focus": "Linear clicking"},
+      {"scenario": "VT Floating Heads Novice S5", "duration": "3m", "focus": "Multi-target linear"}
+    ]
+  },
+  {
+    "name": "VDIM Tracking I (Precise + Control)",
+    "description": "VDIM Wednesday - Precise and Control tracking",
+    "duration_minutes": 90,
+    "share_code": "KovaaKsChatfraggingGoldenochreRank",
+    "targets": ["Tracking_Precise", "Tracking_Control", "Tracking"],
+    "min_rank": "Bronze",
+    "source": "Voltaic VDIM S5",
+    "exercises": [
+      {"scenario": "VT PGT Novice S5", "duration": "3m", "focus": "Precise tracking"},
+      {"scenario": "VT Snake Track Novice S5", "duration": "3m", "focus": "Horizontal precise tracking"},
+      {"scenario": "VT Raw Control Novice S5", "duration": "3m", "focus": "Control tracking"},
+      {"scenario": "VT Controlsphere Novice S5", "duration": "3m", "focus": "Sphere control tracking"},
+      {"scenario": "Revolving Tracking", "duration": "2m", "focus": "Arm control tracking"},
+      {"scenario": "Centering I 180 no strafes", "duration": "5m", "focus": "Smoothness centering"}
+    ]
+  },
+  {
+    "name": "VDIM Tracking II (Reactive + Control)",
+    "description": "VDIM Thursday - Reactive tracking focus",
+    "duration_minutes": 90,
+    "share_code": "KovaaKsChattingGoldenrodGulag",
+    "targets": ["Tracking_Reactive", "Tracking_Control", "Tracking"],
+    "min_rank": "Bronze",
+    "source": "Voltaic VDIM S5",
+    "exercises": [
+      {"scenario": "VT Aether Novice S5", "duration": "3m", "focus": "Reactive tracking"},
+      {"scenario": "VT Ground Novice S5", "duration": "3m", "focus": "Ground reactive tracking"},
+      {"scenario": "VT Raw Control Novice S5", "duration": "3m", "focus": "Control tracking"},
+      {"scenario": "Narrow Strafe", "duration": "3m", "focus": "Narrow strafe reactive"},
+      {"scenario": "Cata Orb Long Strafes", "duration": "3m", "focus": "Long strafe reactive"}
+    ]
+  },
+  {
+    "name": "VDIM Switching I (Speed + Stability)",
+    "description": "VDIM Friday - Speed and Stability switching",
+    "duration_minutes": 90,
+    "share_code": "KovaaKsCheatingGoodContracts",
+    "targets": ["Switching_Speed", "Switching_Stability", "Switching"],
+    "min_rank": "Bronze",
+    "source": "Voltaic VDIM S5",
+    "exercises": [
+      {"scenario": "VT DotTS Novice S5", "duration": "3m", "focus": "Speed switching"},
+      {"scenario": "VT EddieTS Novice S5", "duration": "3m", "focus": "Speed switching"},
+      {"scenario": "VT ControlTS Novice S5", "duration": "3m", "focus": "Stability switching"},
+      {"scenario": "VT Penta Bounce Novice S5", "duration": "3m", "focus": "Bounce stability"},
+      {"scenario": "patCircleSwitch small NR static", "duration": "1m", "focus": "Circle switch accuracy"},
+      {"scenario": "voxTargetSwitch Voltaic", "duration": "1m", "focus": "VT benchmark switching"}
+    ]
+  },
+  {
+    "name": "VDIM Switching II (Evasive + Stability)",
+    "description": "VDIM Saturday - Evasive switching focus",
+    "duration_minutes": 90,
+    "share_code": "KovaaKsChokingGooshedAimbot",
+    "targets": ["Switching_Evasive", "Switching_Stability", "Switching"],
+    "min_rank": "Bronze",
+    "source": "Voltaic VDIM S5",
+    "exercises": [
+      {"scenario": "VT DriftTS Novice S5", "duration": "3m", "focus": "Evasive switching"},
+      {"scenario": "VT FlyTS Novice S5", "duration": "3m", "focus": "Flying evasive switching"},
+      {"scenario": "VT ControlTS Novice S5", "duration": "3m", "focus": "Stability switching"},
+      {"scenario": "VT Penta Bounce Novice S5", "duration": "3m", "focus": "Bounce stability"},
+      {"scenario": "voxTS Viscose Varied", "duration": "1m", "focus": "Varied size switching"}
+    ]
+  },
+  {
+    "name": "General Maintenance - Tracking",
+    "description": "Keep tracking skills sharp - your strength area",
+    "duration_minutes": 20,
+    "share_code": "",
+    "targets": ["Tracking", "general"],
+    "min_rank": "Iron",
+    "source": "Maintenance",
+    "exercises": [
+      {"scenario": "VT PGT Novice S5", "duration": "3m", "focus": "Precise tracking maintenance"},
+      {"scenario": "VT Ground Novice S5", "duration": "3m", "focus": "Reactive tracking maintenance"},
+      {"scenario": "VT Raw Control Novice S5", "duration": "3m", "focus": "Control tracking maintenance"},
+      {"scenario": "Revolving Tracking", "duration": "2m", "focus": "Arm control maintenance"}
+    ]
+  }
+]

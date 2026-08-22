@@ -1,0 +1,6 @@
+APP_NAME = "Aim Companion"
+APP_ID = "UnskilledSkill.AimCompanion"
+VERSION = "1.0.0"
+GITHUB_REPOSITORY = "Unskilled-Skill/AimCompanion"
+RELEASES_URL = f"https://github.com/{GITHUB_REPOSITORY}/releases"
+

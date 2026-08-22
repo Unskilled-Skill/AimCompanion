@@ -1,0 +1,704 @@
+[
+    {
+        "name": "VT Pasu Novice S5",
+        "scenario": "VT Pasu Novice S5",
+        "category": "Clicking",
+        "subcategory": "Dynamic",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 555,
+            "Bronze": 660,
+            "Silver": 745,
+            "Gold": 800
+        }
+    },
+    {
+        "name": "VT Popcorn Novice S5",
+        "scenario": "VT Popcorn Novice S5",
+        "category": "Clicking",
+        "subcategory": "Dynamic",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 390,
+            "Bronze": 500,
+            "Silver": 600,
+            "Gold": 720
+        }
+    },
+    {
+        "name": "VT 1w4ts Novice S5",
+        "scenario": "VT 1w4ts Novice S5",
+        "category": "Clicking",
+        "subcategory": "Static",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 820,
+            "Bronze": 915,
+            "Silver": 1010,
+            "Gold": 1110
+        }
+    },
+    {
+        "name": "VT ww5t Novice S5",
+        "scenario": "VT ww5t Novice S5",
+        "category": "Clicking",
+        "subcategory": "Static",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 990,
+            "Bronze": 1090,
+            "Silver": 1190,
+            "Gold": 1290
+        }
+    },
+    {
+        "name": "VT Frogtagon Novice S5",
+        "scenario": "VT Frogtagon Novice S5",
+        "category": "Clicking",
+        "subcategory": "Linear",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 620,
+            "Bronze": 740,
+            "Silver": 850,
+            "Gold": 980
+        }
+    },
+    {
+        "name": "VT Floating Heads Novice S5",
+        "scenario": "VT Floating Heads Novice S5",
+        "category": "Clicking",
+        "subcategory": "Linear",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 375,
+            "Bronze": 460,
+            "Silver": 540,
+            "Gold": 640
+        }
+    },
+    {
+        "name": "VT PGT Novice S5",
+        "scenario": "VT PGT Novice S5",
+        "category": "Tracking",
+        "subcategory": "Precise",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 1900,
+            "Bronze": 2325,
+            "Silver": 2775,
+            "Gold": 3050
+        }
+    },
+    {
+        "name": "VT Snake Track Novice S5",
+        "scenario": "VT Snake Track Novice S5",
+        "category": "Tracking",
+        "subcategory": "Precise",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 2400,
+            "Bronze": 2750,
+            "Silver": 3125,
+            "Gold": 3425
+        }
+    },
+    {
+        "name": "VT Aether Novice S5",
+        "scenario": "VT Aether Novice S5",
+        "category": "Tracking",
+        "subcategory": "Reactive",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 1525,
+            "Bronze": 1900,
+            "Silver": 2250,
+            "Gold": 2650
+        }
+    },
+    {
+        "name": "VT Ground Novice S5",
+        "scenario": "VT Ground Novice S5",
+        "category": "Tracking",
+        "subcategory": "Reactive",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 2100,
+            "Bronze": 2500,
+            "Silver": 2825,
+            "Gold": 3100
+        }
+    },
+    {
+        "name": "VT Raw Control Novice S5",
+        "scenario": "VT Raw Control Novice S5",
+        "category": "Tracking",
+        "subcategory": "Control",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 2125,
+            "Bronze": 2550,
+            "Silver": 2975,
+            "Gold": 3450
+        }
+    },
+    {
+        "name": "VT Controlsphere Novice S5",
+        "scenario": "VT Controlsphere Novice S5",
+        "category": "Tracking",
+        "subcategory": "Control",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 1575,
+            "Bronze": 1950,
+            "Silver": 2400,
+            "Gold": 2900
+        }
+    },
+    {
+        "name": "VT DotTS Novice S5",
+        "scenario": "VT DotTS Novice S5",
+        "category": "Switching",
+        "subcategory": "Speed",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 845,
+            "Bronze": 940,
+            "Silver": 1030,
+            "Gold": 1090
+        }
+    },
+    {
+        "name": "VT EddieTS Novice S5",
+        "scenario": "VT EddieTS Novice S5",
+        "category": "Switching",
+        "subcategory": "Speed",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 640,
+            "Bronze": 730,
+            "Silver": 810,
+            "Gold": 890
+        }
+    },
+    {
+        "name": "VT DriftTS Novice S5",
+        "scenario": "VT DriftTS Novice S5",
+        "category": "Switching",
+        "subcategory": "Evasive",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 315,
+            "Bronze": 355,
+            "Silver": 390,
+            "Gold": 430
+        }
+    },
+    {
+        "name": "VT FlyTS Novice S5",
+        "scenario": "VT FlyTS Novice S5",
+        "category": "Switching",
+        "subcategory": "Evasive",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 420,
+            "Bronze": 460,
+            "Silver": 500,
+            "Gold": 535
+        }
+    },
+    {
+        "name": "VT ControlTS Novice S5",
+        "scenario": "VT ControlTS Novice S5",
+        "category": "Switching",
+        "subcategory": "Stability",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 340,
+            "Bronze": 380,
+            "Silver": 420,
+            "Gold": 450
+        }
+    },
+    {
+        "name": "VT Penta Bounce Novice S5",
+        "scenario": "VT Penta Bounce Novice S5",
+        "category": "Switching",
+        "subcategory": "Stability",
+        "difficulty": "Novice",
+        "targets": {
+            "Iron": 290,
+            "Bronze": 340,
+            "Silver": 390,
+            "Gold": 445
+        }
+    },
+    {
+        "name": "VT Pasu Intermediate S5",
+        "scenario": "VT Pasu Intermediate S5",
+        "category": "Clicking",
+        "subcategory": "Dynamic",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 600,
+            "Diamond": 750,
+            "Jade": 880,
+            "Master": 1000
+        }
+    },
+    {
+        "name": "VT Popcorn Intermediate S5",
+        "scenario": "VT Popcorn Intermediate S5",
+        "category": "Clicking",
+        "subcategory": "Dynamic",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 550,
+            "Diamond": 700,
+            "Jade": 830,
+            "Master": 950
+        }
+    },
+    {
+        "name": "VT 1w3ts Intermediate S5",
+        "scenario": "VT 1w3ts Intermediate S5",
+        "category": "Clicking",
+        "subcategory": "Static",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 90,
+            "Diamond": 105,
+            "Jade": 120,
+            "Master": 135
+        }
+    },
+    {
+        "name": "VT ww5t Intermediate S5",
+        "scenario": "VT ww5t Intermediate S5",
+        "category": "Clicking",
+        "subcategory": "Static",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 110,
+            "Diamond": 125,
+            "Jade": 140,
+            "Master": 155
+        }
+    },
+    {
+        "name": "VT Frogtagon Intermediate S5",
+        "scenario": "VT Frogtagon Intermediate S5",
+        "category": "Clicking",
+        "subcategory": "Linear",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 650,
+            "Diamond": 800,
+            "Jade": 920,
+            "Master": 1050
+        }
+    },
+    {
+        "name": "VT Floating Heads Intermediate S5",
+        "scenario": "VT Floating Heads Intermediate S5",
+        "category": "Clicking",
+        "subcategory": "Linear",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 600,
+            "Diamond": 750,
+            "Jade": 870,
+            "Master": 1000
+        }
+    },
+    {
+        "name": "VT PGT Intermediate S5",
+        "scenario": "VT PGT Intermediate S5",
+        "category": "Tracking",
+        "subcategory": "Precise",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 2500,
+            "Diamond": 3000,
+            "Jade": 3500,
+            "Master": 4000
+        }
+    },
+    {
+        "name": "VT Snake Track Intermediate S5",
+        "scenario": "VT Snake Track Intermediate S5",
+        "category": "Tracking",
+        "subcategory": "Precise",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 3000,
+            "Diamond": 3600,
+            "Jade": 4100,
+            "Master": 4600
+        }
+    },
+    {
+        "name": "VT Aether Intermediate S5",
+        "scenario": "VT Aether Intermediate S5",
+        "category": "Tracking",
+        "subcategory": "Reactive",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 2700,
+            "Diamond": 3300,
+            "Jade": 3800,
+            "Master": 4300
+        }
+    },
+    {
+        "name": "VT Ground Intermediate S5",
+        "scenario": "VT Ground Intermediate S5",
+        "category": "Tracking",
+        "subcategory": "Reactive",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 3100,
+            "Diamond": 3700,
+            "Jade": 4200,
+            "Master": 4700
+        }
+    },
+    {
+        "name": "VT Raw Control Intermediate S5",
+        "scenario": "VT Raw Control Intermediate S5",
+        "category": "Tracking",
+        "subcategory": "Control",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 2800,
+            "Diamond": 3400,
+            "Jade": 3900,
+            "Master": 4400
+        }
+    },
+    {
+        "name": "VT Controlsphere Intermediate S5",
+        "scenario": "VT Controlsphere Intermediate S5",
+        "category": "Tracking",
+        "subcategory": "Control",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 2900,
+            "Diamond": 3500,
+            "Jade": 4000,
+            "Master": 4500
+        }
+    },
+    {
+        "name": "VT DotTS Intermediate S5",
+        "scenario": "VT DotTS Intermediate S5",
+        "category": "Switching",
+        "subcategory": "Speed",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 1700,
+            "Diamond": 2000,
+            "Jade": 2300,
+            "Master": 2600
+        }
+    },
+    {
+        "name": "VT EddieTS Intermediate S5",
+        "scenario": "VT EddieTS Intermediate S5",
+        "category": "Switching",
+        "subcategory": "Speed",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 1600,
+            "Diamond": 1900,
+            "Jade": 2200,
+            "Master": 2500
+        }
+    },
+    {
+        "name": "VT DriftTS Intermediate S5",
+        "scenario": "VT DriftTS Intermediate S5",
+        "category": "Switching",
+        "subcategory": "Evasive",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 1500,
+            "Diamond": 1800,
+            "Jade": 2100,
+            "Master": 2400
+        }
+    },
+    {
+        "name": "VT FlyTS Intermediate S5",
+        "scenario": "VT FlyTS Intermediate S5",
+        "category": "Switching",
+        "subcategory": "Evasive",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 1550,
+            "Diamond": 1850,
+            "Jade": 2150,
+            "Master": 2450
+        }
+    },
+    {
+        "name": "VT ControlTS Intermediate S5",
+        "scenario": "VT ControlTS Intermediate S5",
+        "category": "Switching",
+        "subcategory": "Stability",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 1650,
+            "Diamond": 1950,
+            "Jade": 2250,
+            "Master": 2550
+        }
+    },
+    {
+        "name": "VT Penta Bounce Intermediate S5",
+        "scenario": "VT Penta Bounce Intermediate S5",
+        "category": "Switching",
+        "subcategory": "Stability",
+        "difficulty": "Intermediate",
+        "targets": {
+            "Platinum": 1600,
+            "Diamond": 1900,
+            "Jade": 2200,
+            "Master": 2500
+        }
+    },
+    {
+        "name": "VT Pasu Advanced S5",
+        "scenario": "VT Pasu Advanced S5",
+        "category": "Clicking",
+        "subcategory": "Dynamic",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 800,
+            "Nova": 950,
+            "Astra": 1100,
+            "Celestial": 1250
+        }
+    },
+    {
+        "name": "VT Popcorn Advanced S5",
+        "scenario": "VT Popcorn Advanced S5",
+        "category": "Clicking",
+        "subcategory": "Dynamic",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 750,
+            "Nova": 900,
+            "Astra": 1050,
+            "Celestial": 1200
+        }
+    },
+    {
+        "name": "VT 1w2ts Advanced S5",
+        "scenario": "VT 1w2ts Advanced S5",
+        "category": "Clicking",
+        "subcategory": "Static",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 95,
+            "Nova": 110,
+            "Astra": 125,
+            "Celestial": 140
+        }
+    },
+    {
+        "name": "VT ww5t Advanced S5",
+        "scenario": "VT ww5t Advanced S5",
+        "category": "Clicking",
+        "subcategory": "Static",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 115,
+            "Nova": 130,
+            "Astra": 145,
+            "Celestial": 160
+        }
+    },
+    {
+        "name": "VT Frogtagon Advanced S5",
+        "scenario": "VT Frogtagon Advanced S5",
+        "category": "Clicking",
+        "subcategory": "Linear",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 850,
+            "Nova": 1000,
+            "Astra": 1150,
+            "Celestial": 1300
+        }
+    },
+    {
+        "name": "VT Floating Heads Advanced S5",
+        "scenario": "VT Floating Heads Advanced S5",
+        "category": "Clicking",
+        "subcategory": "Linear",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 800,
+            "Nova": 950,
+            "Astra": 1100,
+            "Celestial": 1250
+        }
+    },
+    {
+        "name": "VT PGT Advanced S5",
+        "scenario": "VT PGT Advanced S5",
+        "category": "Tracking",
+        "subcategory": "Precise",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 3500,
+            "Nova": 4100,
+            "Astra": 4700,
+            "Celestial": 5300
+        }
+    },
+    {
+        "name": "VT Snake Track Advanced S5",
+        "scenario": "VT Snake Track Advanced S5",
+        "category": "Tracking",
+        "subcategory": "Precise",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 4000,
+            "Nova": 4700,
+            "Astra": 5300,
+            "Celestial": 6000
+        }
+    },
+    {
+        "name": "VT Aether Advanced S5",
+        "scenario": "VT Aether Advanced S5",
+        "category": "Tracking",
+        "subcategory": "Reactive",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 3700,
+            "Nova": 4300,
+            "Astra": 4900,
+            "Celestial": 5500
+        }
+    },
+    {
+        "name": "VT Ground Advanced S5",
+        "scenario": "VT Ground Advanced S5",
+        "category": "Tracking",
+        "subcategory": "Reactive",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 4200,
+            "Nova": 4900,
+            "Astra": 5600,
+            "Celestial": 6300
+        }
+    },
+    {
+        "name": "VT Raw Control Advanced S5",
+        "scenario": "VT Raw Control Advanced S5",
+        "category": "Tracking",
+        "subcategory": "Control",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 3800,
+            "Nova": 4400,
+            "Astra": 5000,
+            "Celestial": 5600
+        }
+    },
+    {
+        "name": "VT Controlsphere Advanced S5",
+        "scenario": "VT Controlsphere Advanced S5",
+        "category": "Tracking",
+        "subcategory": "Control",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 3900,
+            "Nova": 4500,
+            "Astra": 5100,
+            "Celestial": 5700
+        }
+    },
+    {
+        "name": "VT DotTS Advanced S5",
+        "scenario": "VT DotTS Advanced S5",
+        "category": "Switching",
+        "subcategory": "Speed",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 2200,
+            "Nova": 2500,
+            "Astra": 2800,
+            "Celestial": 3100
+        }
+    },
+    {
+        "name": "VT EddieTS Advanced S5",
+        "scenario": "VT EddieTS Advanced S5",
+        "category": "Switching",
+        "subcategory": "Speed",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 2100,
+            "Nova": 2400,
+            "Astra": 2700,
+            "Celestial": 3000
+        }
+    },
+    {
+        "name": "VT DriftTS Advanced S5",
+        "scenario": "VT DriftTS Advanced S5",
+        "category": "Switching",
+        "subcategory": "Evasive",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 2000,
+            "Nova": 2300,
+            "Astra": 2600,
+            "Celestial": 2900
+        }
+    },
+    {
+        "name": "VT FlyTS Advanced S5",
+        "scenario": "VT FlyTS Advanced S5",
+        "category": "Switching",
+        "subcategory": "Evasive",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 2050,
+            "Nova": 2350,
+            "Astra": 2650,
+            "Celestial": 2950
+        }
+    },
+    {
+        "name": "VT ControlTS Advanced S5",
+        "scenario": "VT ControlTS Advanced S5",
+        "category": "Switching",
+        "subcategory": "Stability",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 2150,
+            "Nova": 2450,
+            "Astra": 2750,
+            "Celestial": 3050
+        }
+    },
+    {
+        "name": "VT Penta Bounce Advanced S5",
+        "scenario": "VT Penta Bounce Advanced S5",
+        "category": "Switching",
+        "subcategory": "Stability",
+        "difficulty": "Advanced",
+        "targets": {
+            "Grandmaster": 2100,
+            "Nova": 2400,
+            "Astra": 2700,
+            "Celestial": 3000
+        }
+    }
+]

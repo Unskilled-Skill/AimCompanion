@@ -1,0 +1,172 @@
+{
+  "description": "Offline, paraphrased practice guidance derived from the supplied Voltaic resources. This is a concise companion, not a replacement for the original documents.",
+  "sources": [
+    {"title": "Game-specific routines", "url": "https://docs.google.com/document/d/1TpFHOg6WbPS2iFie2z53AnyQTXQ_ZBg7lKNqjvWhXIE/edit"},
+    {"title": "Issue-specific routines", "url": "https://docs.google.com/document/d/1cORiFefxaTxULk1RffPtZht2tUNQkGBv9oiPc_qWlCI/edit"},
+    {"title": "Fundamental routines 2.5", "url": "https://docs.google.com/document/d/1iunv6vXKWZpjpFvclGLGBeFg6WudwsavozZ-TlGDq_c/edit"},
+    {"title": "Recommended scenario sheet", "url": "https://docs.google.com/spreadsheets/d/1bLUVZJvaxSTtjIrsjTdXopRsvXnqHVvxOxEAa8yLRTg/edit"},
+    {"title": "Starting your aim journey", "url": "https://docs.google.com/document/d/1JoNtoHK9GgJCjE-7yQxKXkpAkGJyOBBipiZqPNYwECs/edit"},
+    {"title": "Improvement-based mentality", "url": "https://blog.voltaic.gg/constructing-an-improvement-based-mentality/"},
+    {"title": "Aim glossary", "url": "https://docs.google.com/document/d/1evzPXTABYsNg3udHhl12ZkfBogscKhsEdF7AONjZPso/edit"}
+  ],
+  "principles": [
+    "Train clean technique before chasing score. Speed should emerge from accurate, repeatable movement.",
+    "Keep visual attention on the target. Read its movement instead of staring at the crosshair or guessing its next turn.",
+    "Use relaxed fingers, wrist, and shoulder. Pause when tension or loss of focus changes how you move.",
+    "Benchmarks measure ability; practice routines develop it. Use both, but do not turn every practice run into a benchmark attempt.",
+    "Aim training supports game practice. Crosshair placement, movement, positioning, and decisions still need in-game work."
+  ],
+  "session_method": {
+    "summary": "Give every run one technical intention, preserve movement quality, and review the result before repeating.",
+    "steps": [
+      "Warm up briefly at controlled speed; it should prepare you, not tire you.",
+      "Read the cue for the current scenario and choose one behavior to emphasize.",
+      "Run the prescribed repetitions without restarting weak attempts to protect your average.",
+      "After each block, identify one recurring error and correct only that error in the next block.",
+      "Finish while technique is still stable, then apply one trained behavior in your main game."
+    ]
+  },
+  "practice_scope": {
+    "summary": "Aim training efficiently isolates mouse control, supplies repetition, and gives clear feedback; it does not teach positioning, decisions, game sense, recoil systems, or every game-specific mechanic.",
+    "advantages": ["Skill isolation", "High-quality repetition", "Controlled scenario variety", "Immediate performance feedback"],
+    "transfer_rule": "After synthetic practice, apply one trained behavior inside the game while also practising its movement and decision context."
+  },
+  "mindset": {
+    "learning_zone": "During practice, inspect mistakes without attaching them to your identity. A weak run is information about a behavior, not evidence that you are a bad player.",
+    "performance_zone": "During a benchmark or match, commit attention to execution. Save detailed criticism for the review afterward so it does not interrupt performance.",
+    "reflection_prompt": [
+      "Why did the error occur?",
+      "What controllable behavior would prevent it?",
+      "How will I apply that correction in the next run?"
+    ],
+    "reset_signals": [
+      "You are restarting runs only to protect a score.",
+      "You are predicting, rushing, or tensing instead of following the technique cue.",
+      "Frustration has replaced objective observation.",
+      "You are zoning out and cannot name the purpose of the current run."
+    ],
+    "reset_action": "Pause briefly, relax your hand and shoulders, restate one controllable cue, then decide whether the next run can still be deliberate."
+  },
+  "training_environment": {
+    "sensitivity": "Sensitivity is a training variable and personal preference, not a fragile memory that must never change. Use a range that permits the intended movement without strain or loss of control.",
+    "fov": "Field of view changes visible area, apparent target size, and perceived sensitivity. Use the scenario or routine recommendation; do not change it solely to make a score easier.",
+    "body_control": "Use the grip that feels natural, let arm, wrist, and fingers share the movement, and avoid excessive tension.",
+    "session_quality": "Focused practice has diminishing returns. For longer sessions, use breaks and stop when attention, technique, vision, or physical comfort deteriorates.",
+    "health": "Pain is not productive difficulty. Stop the session rather than training through pain or persistent discomfort."
+  },
+  "self_review": {
+    "summary": "Review recurring behaviors rather than judging a run only by its score.",
+    "checks": [
+      "Was movement shaky or unnecessarily tense?",
+      "Did reactions become predictions?",
+      "Were corrections slow, repeated, or too large?",
+      "Did timing or target reading cause misses?",
+      "Was the next target selected efficiently?",
+      "Did the run preserve the technique cue from start to finish?"
+    ]
+  },
+  "difficulty_and_progression": {
+    "summary": "Use the routine matching your demonstrated benchmark level and adjust a scenario when its difficulty prevents the intended technique.",
+    "rules": [
+      "Start with the fundamental routine for your current achieved rank; move up after earning the next benchmark rank.",
+      "If you cannot perform the stated technique, use an easier or larger-target variant before adding speed.",
+      "If movement is consistently clean and the drill no longer demands correction, use a harder variant or the next ranked routine.",
+      "Use several relevant scenarios rather than grinding one score; different target behavior exposes different control errors.",
+      "Dedicated strafe routines begin at Platinum because basic mouse control should be established first."
+    ]
+  },
+  "categories": {
+    "Clicking_Static": {
+      "title": "Static clicking",
+      "goal": "Build an efficient initial flick followed by a small, controlled correction.",
+      "cue": "Move in a straight line, stop near the target, confirm the micro-correction, then click.",
+      "avoid": "Do not spam, arc between targets, or trade accuracy for uncontrolled flick speed.",
+      "progress": "First reduce correction size and misses; only then shorten the time between confirmed clicks."
+    },
+    "Clicking_Dynamic": {
+      "title": "Dynamic clicking",
+      "goal": "Read a moving target's path, acquire it smoothly, and time the click.",
+      "cue": "Read the trajectory, meet the target with a clean path, and click when alignment is confirmed.",
+      "avoid": "Do not flick to where the target was or spray clicks while crossing its path.",
+      "progress": "Keep timing reliable on harder trajectories before prioritizing faster target changes."
+    },
+    "Clicking_Linear": {
+      "title": "Linear clicking",
+      "goal": "Develop predictable-path reading, interception, and precise click timing.",
+      "cue": "Match the line and speed first, then click through the target with minimal correction.",
+      "avoid": "Do not lead blindly; update the interception point from the movement you actually see.",
+      "progress": "Increase target speed or reduce size only while the approach remains smooth."
+    },
+    "Tracking_Precise": {
+      "title": "Precise tracking",
+      "goal": "Make continuous small corrections while remaining smooth and relaxed.",
+      "cue": "Look at the target, match its current speed, and correct gently without freezing the hand.",
+      "avoid": "Do not stare at the crosshair, tense up, or repeatedly lift and reset without need.",
+      "progress": "Use thinner or less predictable targets after you can stay smooth through direction and depth changes."
+    },
+    "Tracking_Reactive": {
+      "title": "Reactive tracking",
+      "goal": "Recognize direction changes quickly, then commit to stable tracking.",
+      "cue": "React to the turn you see; make one decisive correction and immediately settle into the new direction.",
+      "avoid": "Do not predict reversals or keep flicking after you have reacquired the target.",
+      "progress": "Reduce reacquisition delay while preserving the smooth portion between changes."
+    },
+    "Tracking_Control": {
+      "title": "Control tracking",
+      "goal": "Maintain contact through longer strafes, speed changes, and complex movement.",
+      "cue": "Match velocity deliberately and blend arm, wrist, and fingers as the target's range changes.",
+      "avoid": "Do not mirror mechanically or let large corrections turn into repeated oscillation.",
+      "progress": "Add evasiveness only after long directional segments remain stable."
+    },
+    "Switching_Speed": {
+      "title": "Speed switching",
+      "goal": "Acquire and finish targets quickly while planning the next efficient path.",
+      "cue": "Confirm the target, finish it, and use a straight transfer toward the next target you already selected.",
+      "avoid": "Do not leave early, curve the switch, or search for the next target after the current one dies.",
+      "progress": "Increase switch frequency without losing first-contact accuracy or target confirmation."
+    },
+    "Switching_Evasive": {
+      "title": "Evasive switching",
+      "goal": "Combine fast acquisition with enough tracking to finish a moving target.",
+      "cue": "Land the switch, stabilize on the target's movement, finish it, then transfer cleanly.",
+      "avoid": "Do not treat every target as a flick; evasive targets require a short controlled tracking phase.",
+      "progress": "Use more evasive variants when acquisition and confirmation remain distinct and controlled."
+    },
+    "Switching_Stability": {
+      "title": "Switching stability",
+      "goal": "Preserve smooth control immediately before and after each target transfer.",
+      "cue": "Enter and exit each switch without a jerk, then hold stable contact until the target is complete.",
+      "avoid": "Do not tense during the flick or wobble around the target after landing.",
+      "progress": "Shorten transfers only while the landing and follow-up tracking stay stable."
+    }
+  },
+  "issues": {
+    "Smoothness & Precision": "Use small, thin, and multi-directional targets to expose fine-control errors. Slow down enough to remove jitter before adding pace.",
+    "Static": "Separate the initial path from the final correction. Hold-fire or pokeball drills isolate the path; clicking variants add timing and pace.",
+    "Speed": "Practice frequent, efficient target acquisition. Plan the next target early and remove curved or hesitant switch paths.",
+    "Reactivity": "Read changes visually and respond to them. Prediction may raise a lucky score but trains the wrong behavior.",
+    "Strafe Tracking": "Use deliberate movement patterns to learn mouse control independent of movement and to control mirroring or anti-mirroring on purpose."
+  },
+  "movement": {
+    "summary": "Movement drills train coordination, not just raw aim. Follow the prescribed strafe pattern and keep the mouse correction independent from the movement key.",
+    "cues": [
+      "Choose mirroring or anti-mirroring deliberately instead of drifting into one pattern.",
+      "Keep the target under visual attention while your movement changes the required mouse correction.",
+      "Treat movement routines as a supplement; game-specific movement mechanics still require practice in the game."
+    ]
+  },
+  "game_transfer": {
+    "Valorant & Counterstrike": "Emphasize target acquisition, small corrections, click timing, and precision. Use tracking work mainly to improve smooth crosshair movement, then practise crosshair placement and counter-strafing in game.",
+    "Arena Fps: Quake & Diabotical": "Blend sustained tracking, rapid weapon-dependent switches, and projectile reading; transfer it with real fights and movement practice.",
+    "Fortnite": "Train close-range reactive control, fast target changes, and varied vertical angles, then combine them with building, editing, and movement in game.",
+    "Apex Legends": "Prioritize sustained reactive tracking, recoil-compatible smoothness, and switching between mobile targets; test the skill during strafe fights in game.",
+    "Overwatch": "Use a role- and hero-appropriate mix of tracking, clicking, and switching, then practise the hero's movement, projectile speed, and engagement ranges in game.",
+    "Call Of Duty & Battlefield": "Develop fast acquisition and controlled tracking across common engagement ranges, then reinforce centering and recoil control in game.",
+    "Hyper Scape": "Emphasize high-mobility reactive tracking and rapid switches across vertical fights, followed by movement-integrated practice in game.",
+    "Rainbow 6 Siege": "Prioritize precise acquisition and micro-corrections, while treating crosshair placement, leaning, and angle knowledge as in-game skills.",
+    "Destiny 2": "Combine dynamic clicking with tracking and target switching, then account for weapon aim assist, movement, and ability pressure in game.",
+    "Warzone - Call Of Duty": "Train acquisition followed by longer tracking and target confirmation, then practise centering, recoil, and multiple-enemy decisions in game.",
+    "Splitgate": "Blend tracking and switching with vertical target changes, then integrate portal awareness and movement in game.",
+    "General / Fundamentals": "Build broad mouse control across clicking, tracking, and switching, then apply one technical cue in your main game after the session."
+  }
+}

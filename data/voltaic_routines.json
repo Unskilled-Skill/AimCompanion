@@ -1,0 +1,6734 @@
+{
+  "description": "Structured factual index of the supplied Voltaic routine documents.",
+  "sources": [
+    {
+      "title": "Voltaic Game-specific Kovaak's Aim Routines",
+      "url": "https://bit.ly/gameroutines"
+    },
+    {
+      "title": "Voltaic Issue-specific Aim Routines",
+      "url": "https://bit.ly/vtissueroutines"
+    },
+    {
+      "title": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "url": "https://bit.ly/VTfundamentals2"
+    }
+  ],
+  "routines": [
+    {
+      "name": "Valorant & Counterstrike — KovaaK 2.0 - Easy",
+      "kind": "game",
+      "group": "Valorant & Counterstrike",
+      "variant": "KovaaK 2.0 - Easy",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 100,
+      "share_code": "KOVAAKSTELEPORTINGJEBAITEDBUYSTATION",
+      "recommended_ranks": [
+        "Bronze",
+        "Silver",
+        "Gold"
+      ],
+      "min_rank": "Bronze",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Speed",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Thin Gauntlet Easy",
+          "alternatives": [
+            "Centering I Easy"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "patTargetSwitch no reload",
+          "alternatives": [
+            "patTargetSwitch"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto TE 60s",
+          "alternatives": [
+            "Pokeball Frenzy Auto TE Wide"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch click",
+          "alternatives": [
+            "1wall5targets_pasu slow",
+            "patTargetClick 1shot"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Wide Wall 3 Targets",
+          "alternatives": [
+            "Wide Wall 4 Targets"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Floating Heads Timing Easy",
+          "alternatives": [
+            "tamSpeed 2bps"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetClick Easy Strafe",
+          "alternatives": [
+            "Pasu Dodge EES 180"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Reflex Micro++ Flick Reload",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Microshot Speed Medium",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Reactive Clicking",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Valorant & Counterstrike — KovaaK 2.0 - VT bardOZ VALORANT Advanced",
+      "kind": "game",
+      "group": "Valorant & Counterstrike",
+      "variant": "KovaaK 2.0 - VT bardOZ VALORANT Advanced",
+      "description": "",
+      "duration_minutes": 32,
+      "duration_max_minutes": 44,
+      "share_code": "KOVAAKSULTINGCLUTCHHIPFIRE",
+      "recommended_ranks": [
+        "Diamond",
+        "Jade",
+        "Master",
+        "Grandmaster",
+        "Nova",
+        "Astra",
+        "Celestial",
+        "Radiant"
+      ],
+      "min_rank": "Diamond",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "voxTS Voltaic",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w2ts",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball auto ww6t",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2ts reload",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "5 sphere hipfire extra small",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "6wall18targets small reload",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Floating Heads Timing 400%",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "SmoothBot Invincible Goated",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Centering I",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Pistol Strafe Gallery Small",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Reflex Micro++ Flick Reload Small",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Valorant & Counterstrike — KovaaK 2.0 - Advanced Classic",
+      "kind": "game",
+      "group": "Valorant & Counterstrike",
+      "variant": "KovaaK 2.0 - Advanced Classic",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 100,
+      "share_code": "KOVAAKSBOBBINGSNEAKYBLOOM",
+      "recommended_ranks": [
+        "Platinum",
+        "Diamond",
+        "Jade",
+        "Master",
+        "Grandmaster",
+        "Nova",
+        "Astra",
+        "Celestial",
+        "Radiant"
+      ],
+      "min_rank": "Platinum",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Speed",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Thin Gauntlet",
+          "alternatives": [
+            "Centering I"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "patTargetSwitch small no reload",
+          "alternatives": [
+            "patTargetSwitch Small"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto Small 60s",
+          "alternatives": [
+            "Pokeball Frenzy Auto Small Wide"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetClick 20% small",
+          "alternatives": [
+            "Pasu Small Reload",
+            "patTargetClick small 1shot"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w3ts",
+          "alternatives": [
+            "1w4ts reload"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Floating Heads Timing 400%",
+          "alternatives": [
+            "tamSpeed 2bpes"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetClick Easy Strafe",
+          "alternatives": [
+            "Pasu Dodge EES 180"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Reflex Micro++ Flick Reload Small",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Valorant Microshot Speed Small",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Reactive Clicking Hard",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Arena Fps: Quake & Diabotical — KovaaK 2.0 - Fundamental",
+      "kind": "game",
+      "group": "Arena Fps: Quake & Diabotical",
+      "variant": "KovaaK 2.0 - Fundamental",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 95,
+      "share_code": "KOVAAKSAFKINGMAGENTAAFK",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Clicking",
+        "Movement_Tracking",
+        "Switching_Speed",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Ground Plaza Sparky Quake",
+          "alternatives": [
+            "Smoothbot Invincible Goated"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Divine",
+          "alternatives": [
+            "B180TI Sparky Small"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza High Ground Sparky",
+          "alternatives": [
+            "Plaza High Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza Low Ground Sparky",
+          "alternatives": [
+            "Plaza Low Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "LG pin practice 360",
+          "alternatives": [
+            "Bounce 180 Tracking Sparky",
+            "Air Dodge Target Switch"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pattargetswitch 90 no reload",
+          "alternatives": [
+            "Slide Targets"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Try to focus on optimizing your technique for maximum speed, using exclusively wrist",
+          "alternatives": [
+            "arm depending on your sensitivity and grip style."
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall5targets_pasu reload",
+          "alternatives": [
+            "Popcorn Sparky",
+            "DevTargetSwitch 1shot"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Bounce 180 Sparky",
+          "alternatives": [
+            "Skeet Clicking"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "LGC3 Reborn Varied",
+          "alternatives": [
+            "Air Angelic Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Dodge Easy",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Quake LG 1v1 Rockets",
+          "alternatives": [
+            "Stralroom FS Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Arena Fps: Quake & Diabotical — KovaaK 2.0 - LG 1v1 Routine",
+      "kind": "game",
+      "group": "Arena Fps: Quake & Diabotical",
+      "variant": "KovaaK 2.0 - LG 1v1 Routine",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSBINDINGMAROONWINDOW",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Movement_Tracking",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Contains warm up exercises, so no warm up needed prior to starting the routine",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Establishes independence between your right and left hands",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Asks the player to focus on Dodging",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Focus on tracking for other Quake/Diabotical game modes outside of 1v1 LG/Shaft fights",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Teach Fundamental Strafe Aim (mirroring/anti-mirroring/half-sideways)",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Teach Smoothness",
+          "alternatives": [
+            "Reactivity"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Midrange Long Strafes V2",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole Long Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Anti-Mirror LS 360 Thin Robsai",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Long",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Fast",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close FS Quick Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air UFO 10x",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "XY Tracking Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "LG Duel 1v1 Diabotical",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Fortnite — KovaaK 2.0 - Fundamental [First person]",
+      "kind": "game",
+      "group": "Fortnite",
+      "variant": "KovaaK 2.0 - Fundamental [First person]",
+      "description": "",
+      "duration_minutes": 30,
+      "duration_max_minutes": 30,
+      "share_code": "KOVAAKSBLOOMINGMAXIMUMBLUEFALLDAMAGE",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Air 2 Smooth",
+          "alternatives": [
+            "Air close long strafes",
+            "Air far long strafes"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Thin Gauntlet",
+          "alternatives": [
+            "Smoothbot Invincible Goated",
+            "CLSI FN",
+            "MLS FNI"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180TI Sparky",
+          "alternatives": [
+            "FN Gliders 360 HS"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Bounce 180 Tracking Sparky",
+          "alternatives": [
+            "PatTargetShotgun"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall5targets_pasu reload",
+          "alternatives": [
+            "Bounce 180 Sparky"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w3ts",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Infantry",
+          "alternatives": [
+            "Fortnite Gliders 360 HS"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Charge - Pasu",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Charge - B180 Sparky",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Charge - PatTargetShotgun",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Fortnite — KovaaK 2.0 - Fundamental [Third person]",
+      "kind": "game",
+      "group": "Fortnite",
+      "variant": "KovaaK 2.0 - Fundamental [Third person]",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 70,
+      "share_code": "KOVAAKSBOMBINGMEDIUMTELEPORT",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Switching_Evasive",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Air 2 Smooth FN",
+          "alternatives": [
+            "Air 1 FN",
+            "Air 2 FN"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Thin Gauntlet FN",
+          "alternatives": [
+            "Smoothbot Invincible Goated FN",
+            "CLSI FN",
+            "MLSI FN"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180TI Sparky FN",
+          "alternatives": [
+            "FN Gliders 360 HS"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180T Sparky FN",
+          "alternatives": [
+            "PatTargetShotgun FN"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu FN",
+          "alternatives": [
+            "B180 Sparky FN"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Wide Wall 3 Targets Small FN",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Infantry FN",
+          "alternatives": [
+            "FN Gliders 360 HS"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Fortnite — KovaaK 2.0 - Charge [Third person]",
+      "kind": "game",
+      "group": "Fortnite",
+      "variant": "KovaaK 2.0 - Charge [Third person]",
+      "description": "",
+      "duration_minutes": 30,
+      "duration_max_minutes": 30,
+      "share_code": "KOVAAKSBOBBINGMEDIUMCAMP",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Charge - Pasu FN",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Charge - B180 Sparky FN",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Charge - PatTargetShotgun FN",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Apex Legends — VT APEX 2.0 EASY",
+      "kind": "game",
+      "group": "Apex Legends",
+      "variant": "VT APEX 2.0 EASY",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 70,
+      "share_code": "KOVAAKSCHOKINGCLOSEBUG",
+      "recommended_ranks": [
+        "Gold",
+        "Platinum",
+        "Diamond",
+        "Jade",
+        "Master",
+        "Grandmaster",
+        "Nova",
+        "Astra",
+        "Celestial",
+        "Radiant"
+      ],
+      "min_rank": "Gold",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Revolving Tracking Slow",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180T Voltaic Regen",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere 80%",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Tappy Strafes Easy",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Fast Strafes Very Easy Invincible",
+          "alternatives": [
+            "CFSEI Thin Shotgun HS"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Voltaic Slower - 40%",
+          "alternatives": [
+            "Smoothbot Voltaic Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Thin Aiming Long Invincible",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Vertical Smoothness Training Popcorn",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Apex MLSI Headshot Click",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 360 Reload Goated 2-Click Easy",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180 Voltaic Easy",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch Smooth",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Manwing Strafe Gallery Easy V3",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Apex Legends — VT APEX 2.0 COMPLETE FOCUS",
+      "kind": "game",
+      "group": "Apex Legends",
+      "variant": "VT APEX 2.0 COMPLETE FOCUS",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 70,
+      "share_code": "KOVAAKSCHATFRAGGINGCHESTNUTTOPFRAG",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Tracking",
+        "Switching_Evasive",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Revolving Tracking",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "fuglaab180t",
+          "alternatives": [
+            "B180T Voltaic Regen"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Tappy Strafes",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Fast Strafes Easy Invincible",
+          "alternatives": [
+            "CFSE Thin Shotgun HS"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Voltaic Slower - 60%",
+          "alternatives": [
+            "Smoothbot Voltaic"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Thin Aiming Long Invincible",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Vertical Smoothness Training Popcorn Small",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Apex MLSI Headshot Click",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 360 Reload Goated 2-Click",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180 Voltaic",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch Smooth",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge Thin",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Manwing Strafe Gallery V3",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Apex Legends — VT APEX 2.0 CLICKING FOCUS",
+      "kind": "game",
+      "group": "Apex Legends",
+      "variant": "VT APEX 2.0 CLICKING FOCUS",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 100,
+      "share_code": "KOVAAKSCLEARINGCLOSESTART",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Movement_Clicking",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Apex MLSI Headshot Click",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VoxTargetSwitch Click Heads",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Voltaic Goated",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 360 Reload Goated 2-Click Small",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 360 Reload Goated",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180 Voltaic",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2ts Perfected",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Easy",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "6wall18targets small reload",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Manwing Strafe Gallery V3",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Dodge Easy",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Apex Legends — VT APEX 2.0 TRACKING FOCUS",
+      "kind": "game",
+      "group": "Apex Legends",
+      "variant": "VT APEX 2.0 TRACKING FOCUS",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSCLICKINGCLUTCHKILLSTREAK",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Tracking",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Revolving Tracking",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B360TI Sparky Small Popcorn",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "FuglaaXYZ Voltaic No Blinks small",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Angelic 4 Voltaic Smaller",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Tappy Strafes",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Fast Strafes Easy Invincible",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Thinbot Plaza Raspberry Invincible v2",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Voltaic Slower - 60%   &   PGTI Voltaic Slower - 80%",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Thin Aiming Long Invincible",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "raspStrafes 360 Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "RaspStrafesCata Invincible",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Reactive Dot Invincible",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza Low Ground Sparky 50%HP",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Vertical smoothness training popcorn small",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole long dodge extra thin",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge Thin",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking Strafes",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Anti-Mirror LS 360 Thin Robsai",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Apex Legends — VT APEX 2.0 SWITCHING FOCUS",
+      "kind": "game",
+      "group": "Apex Legends",
+      "variant": "VT APEX 2.0 SWITCHING FOCUS",
+      "description": "",
+      "duration_minutes": 34,
+      "duration_max_minutes": 34,
+      "share_code": "KOVAAKSCLIPPINGCOBALTDOUBLEPUMP",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Oblique Tracking Goated",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "fuglaab180t",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Target Switching 360 Static Extra Thin",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "xenTargetSwitch",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch Smooth",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "kinTS Voltaic mini",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Skeet Tracking Goated smaller",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere TS",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "canTS",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Bounce 180 Tracking",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTargetSwitch Dodge 360 v2",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Apex Legends — VT APEX 2.0 STRAFE AIM FOCUS",
+      "kind": "game",
+      "group": "Apex Legends",
+      "variant": "VT APEX 2.0 STRAFE AIM FOCUS",
+      "description": "",
+      "duration_minutes": 40,
+      "duration_max_minutes": 40,
+      "share_code": "KOVAAKSCOUNTERSTRAFINGCOPPERBLOOM",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Movement_Clicking",
+        "Movement_Tracking",
+        "Switching_Speed",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Revolving Tracking",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Rhombus Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole long dodge extra thin",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking Strafes",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge Thin",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Anti-Mirror LS 360 Thin Robsai",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Rhombus Vertical Dodge",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Hyperscape VT Dodge Easy",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Dodge Track Pure",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Manwing Strafe Gallery V3",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Dodge Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetClick Easy Strafe",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTargetSwitch Dodge 360 v2",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Range LG Duel",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Stralroom FS Dodge",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "lgc3 Reborn Varied Thin",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Dodge",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Apex Legends — VT APEX ORIGINAL",
+      "kind": "game",
+      "group": "Apex Legends",
+      "variant": "VT APEX ORIGINAL",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 100,
+      "share_code": "KOVAAKSGEARINGFASTUFO",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Tracking",
+        "Switching_Speed",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Ground Plaza Sparky v3",
+          "alternatives": [
+            "Apex CLS Headshot"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air no ufo no skybots",
+          "alternatives": [
+            "B180TI Sparky",
+            "Smoothbot Invincible Goated"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza High Ground Sparky",
+          "alternatives": [
+            "Plaza High Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza Low Ground Sparky",
+          "alternatives": [
+            "Plaza Low Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Apex CLS Headshot Click",
+          "alternatives": [
+            "Apex MLS Headshot Click"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Bounce 180 Tracking Sparky",
+          "alternatives": [
+            "patTargetSwitch no reload",
+            "devTargetSwitch no reload"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall5targets_pasu reload",
+          "alternatives": [
+            "Popcorn Sparky"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "CFSE Thin Shotgun HS",
+          "alternatives": [
+            "CFSEI Thin Shotgun HS"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180 Manwing Sparky",
+          "alternatives": [
+            "Bounce 180 Sparky"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Manwing Strafe Gallery V3",
+          "alternatives": [
+            "Close FS Dodge Manwing Nomag"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Angelic Dodge",
+          "alternatives": [
+            "XY Tracking Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Overwatch — KovaaK 2.0",
+      "kind": "game",
+      "group": "Overwatch",
+      "variant": "KovaaK 2.0",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 90,
+      "share_code": "KOVAAKSBOTTINGMIDEGG",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Tracking",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Ground Plaza Sparky v3 OW",
+          "alternatives": [
+            "CLS Headshot OW",
+            "MLS Headshot OW"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Divine",
+          "alternatives": [
+            "Popcorn GTI",
+            "Smoothbot Invincible Goated"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza High Ground Sparky",
+          "alternatives": [
+            "Plaza High Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza Low Ground Sparky",
+          "alternatives": [
+            "Plaza Low Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Air no ufo no skybots small click",
+          "alternatives": [
+            "CLS Headshot Click OW",
+            "CLSI Headshot Click OW"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Bounce 180 Tracking Sparky",
+          "alternatives": [
+            "Air Dodge Target Switch"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Sparky",
+          "alternatives": [
+            "1wall5targets_pasu reload"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180 Manwing Sparky",
+          "alternatives": [
+            "Skeet Clicking"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Manwing Strafe Gallery V3",
+          "alternatives": [
+            "Close FS Dodge Manwing V2 nomag"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Angelic Dodge",
+          "alternatives": [
+            "XY Tracking Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "LGC3 Reborn Varied OW",
+          "alternatives": [
+            "Arc Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Call Of Duty & Battlefield — KovaaK 2.0",
+      "kind": "game",
+      "group": "Call Of Duty & Battlefield",
+      "variant": "KovaaK 2.0",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSGHOSTPEEKINGFEDMONSTER",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Speed",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Bounce 360T Sparky",
+          "alternatives": [
+            "Target Switching 360 Thin"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTargetSwitch 360",
+          "alternatives": [
+            "Pokeball Frenzy Auto Small 60s"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "kinTargetSwitch 360 no reload",
+          "alternatives": [
+            "patTargetSwitch v2"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "devTargetSwitch goated no mag",
+          "alternatives": [
+            "Skeet Tracking Goated"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTS Voltaic",
+          "alternatives": [
+            "Floating Heads 50% Health"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w3ts",
+          "alternatives": [
+            "1w4ts reload"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Reactive Clicking",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Hyper Scape — KovaaK 2.0",
+      "kind": "game",
+      "group": "Hyper Scape",
+      "variant": "KovaaK 2.0",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 90,
+      "share_code": "KOVAAKSBOUNCINGMIDNIGHTBLUEBRUSH",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Clicking",
+        "Movement_Tracking",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Smoothbot Invincible Goated",
+          "alternatives": [
+            "Ground Plaza Sparky v3"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn GTI",
+          "alternatives": [
+            "Fountain Tracking",
+            "Slide&Bounce Tracking"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Divine",
+          "alternatives": [
+            "Air no ufo no skybots",
+            "Overhead Jumps"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza High Ground Sparky",
+          "alternatives": [
+            "Plaza High Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Plaza Low Ground Sparky",
+          "alternatives": [
+            "Plaza Low Ground Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Air no ufo no skybots small click",
+          "alternatives": [
+            "CLS Headshot Click OW",
+            "CLSI Headshot Click OW"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Fountain ClickTiming",
+          "alternatives": [
+            "Slide&Bounce Sheriff",
+            "apa3’s Bounce House"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Sparky",
+          "alternatives": [
+            "Vertical Hand Warmup small"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Arc Dodge Click",
+          "alternatives": [
+            "Popcorn Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "HyperScape VT Dodge",
+          "alternatives": [
+            "Arc Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Rainbow 6 Siege — KovaaK 2.0",
+      "kind": "game",
+      "group": "Rainbow 6 Siege",
+      "variant": "KovaaK 2.0",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSBUNNYHOPPINGMINIINTELLIGENCE",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Speed",
+        "Tracking_Control",
+        "Tracking_Precise"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Thin Gauntlet V2",
+          "alternatives": [
+            "Centering I"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PatTargetSwitch no reload",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTS Voltaic",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall5targets_pasu reload",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch Click",
+          "alternatives": [
+            "Floating Head Timing 400%"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts reload",
+          "alternatives": [
+            "1w3ts"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Destiny 2 — KovaaK 2.0",
+      "kind": "game",
+      "group": "Destiny 2",
+      "variant": "KovaaK 2.0",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 110,
+      "share_code": "KOVAAKSGLIDINGFLANKEDENTRYFRAGGER",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "Ground Plaza Sparky v3",
+          "alternatives": [
+            "Flicker Plaza",
+            "FuglaaXYZ Voltaic"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere Voltaic",
+          "alternatives": [
+            "Smoothbot Goated Invincible",
+            "B360 TI Sparky"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "GP Sparky TS v2",
+          "alternatives": [
+            "PatTargetSwitch 360 no reload",
+            "Bounce 360 Tracking Sparky"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "tamTargetSwitch smooth",
+          "alternatives": [
+            "voxTS Voltaic"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Fast Strafes Shotgun",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 360 Reload",
+          "alternatives": [
+            "Pasu 360 Reload Small",
+            "Destiny 2 Hand Cannon and Sniper v2"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 3-Click v2",
+          "alternatives": [
+            "Floating Head Timing 400%",
+            "voxTargetSwitch Click"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts reload",
+          "alternatives": [
+            "1w3ts"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pistol Strafe Gallery Sparky Small",
+          "alternatives": [
+            "patTargetClick Dodge"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Psalmflick Strafing SRR",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        },
+        {
+          "scenario": "Psalmflick Strafing Tracking",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Warzone - Call Of Duty — KovaaK 2.0",
+      "kind": "game",
+      "group": "Warzone - Call Of Duty",
+      "variant": "KovaaK 2.0",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSBUYINGMOUNTEDDODGE",
+      "recommended_ranks": [
+        "Platinum",
+        "Diamond",
+        "Jade",
+        "Master",
+        "Grandmaster",
+        "Nova",
+        "Astra",
+        "Celestial",
+        "Radiant"
+      ],
+      "min_rank": "Platinum",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Movement_Tracking",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "tamTargetSwitch Smooth",
+          "alternatives": [
+            "tamTargetSwitch Control",
+            "Controlsphere"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "kinTargetSwitch Small No Reload 300%HP",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "canTS",
+          "alternatives": [
+            "canTS Smooth Hard"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch Smooth",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "FuglaaB180T",
+          "alternatives": [
+            "Bounce 360T Sparky"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "psalmTrack Voltaic",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Glider Goated",
+          "alternatives": [
+            "FN Gliders 360 HS Invincible"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Long Strafes Warzone",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Kindaclose Mid Strafes HS",
+          "alternatives": [
+            "Kindaclose Mid Strafes Humanoid HS"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Fountain Tracking Easy",
+          "alternatives": [
+            "PGTI Voltaic Easy"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Chicken",
+          "alternatives": [
+            "Tamspeed 2bps",
+            "B180 Voltaic Chicken"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto Small 60s",
+          "alternatives": [
+            "Reflex Poke-Micro++ Regenerating Goated"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2ts reload smallflicks",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Floating Heads Timing 400%",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Reactive Clicking Hard",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Apa3’s Bounce House",
+          "alternatives": [
+            "Air Invincible Bounce House"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Splitgate — KovaaK 2.0",
+      "kind": "game",
+      "group": "Splitgate",
+      "variant": "KovaaK 2.0",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSCALLINGNARROWBFG",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Game-specific Kovaak's Aim Routines",
+      "source_url": "https://bit.ly/gameroutines",
+      "exercises": [
+        {
+          "scenario": "voxTargetSwitch 360",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "siniTS",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "siniTS 360",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Sini Click",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 360 Voltaic",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Sini Multiclick",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu 3-Click Angelic",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Floating Heads Timing 400% 3-Click",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Ground Plaza Voltaic Invincible 5",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180TI Sparky",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothbot Voltaic",
+          "alternatives": [],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Smoothness & Precision — Easy",
+      "kind": "issue",
+      "group": "Smoothness & Precision",
+      "variant": "Easy",
+      "description": "",
+      "duration_minutes": 20,
+      "duration_max_minutes": 30,
+      "share_code": "KOVAAKSBOOMSTICKINGFASTGULAG",
+      "recommended_ranks": [
+        "Iron",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum"
+      ],
+      "min_rank": "Iron",
+      "targets": [
+        "Tracking_Precise",
+        "Tracking_Control"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "Centering I 180 no strafes",
+          "alternatives": [
+            "Thin Gauntlet Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180TI Sparky",
+          "alternatives": [
+            "Pasu Track Smooth"
+          ],
+          "duration": "8m",
+          "duration_min": 8,
+          "duration_max": 8,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Voltaic Easy",
+          "alternatives": [
+            "Smoothbot Invincible Goated 15% bigger"
+          ],
+          "duration": "8m",
+          "duration_min": 8,
+          "duration_max": 8,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Glider GOATED Easy",
+          "alternatives": [
+            "Smoothness Trainer Air",
+            "Air NUNS small 1256"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ddtv xyz far veryslow small",
+          "alternatives": [
+            "ddtv xyz mid veryslow small"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Smoothness & Precision — Intermediate",
+      "kind": "issue",
+      "group": "Smoothness & Precision",
+      "variant": "Intermediate",
+      "description": "",
+      "duration_minutes": 27,
+      "duration_max_minutes": 27,
+      "share_code": "KOVAAKSDASHINGDIAGONALJUMP",
+      "recommended_ranks": [
+        "Iron",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond"
+      ],
+      "min_rank": "Iron",
+      "targets": [
+        "Tracking_Precise",
+        "Tracking_Control"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "Thin Gauntlet",
+          "alternatives": [
+            "Centering I",
+            "Centering II"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B360TI Small Sparky",
+          "alternatives": [
+            "B180TI Small Sparky",
+            "Pasu track invincible - Small"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Curved",
+          "alternatives": [
+            "Smoothbot Invincible Goated",
+            "Glider Goated"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere",
+          "alternatives": [
+            "Air 2 Smooth Invincible",
+            "Air Voltaic Easy"
+          ],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Smoothness & Precision — Advanced",
+      "kind": "issue",
+      "group": "Smoothness & Precision",
+      "variant": "Advanced",
+      "description": "",
+      "duration_minutes": 26,
+      "duration_max_minutes": 26,
+      "share_code": "KOVAAKSDODGINGDOWNEDRIFLE",
+      "recommended_ranks": [
+        "Master",
+        "Grandmaster",
+        "Nova",
+        "Astra",
+        "Celestial",
+        "Radiant"
+      ],
+      "min_rank": "Master",
+      "targets": [
+        "Tracking_Precise",
+        "Tracking_Control"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "Thin Gauntlet V2 Thin Goated",
+          "alternatives": [
+            "Centering II",
+            "Centering III"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B360TI Small Sparky",
+          "alternatives": [
+            "B180TI Extra Small Sparky",
+            "Pasu Track Smooth Small"
+          ],
+          "duration": "8m",
+          "duration_min": 8,
+          "duration_max": 8,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Curved",
+          "alternatives": [
+            "Smoothbot Invincible Goated",
+            "Glider Goated Hard"
+          ],
+          "duration": "8m",
+          "duration_min": 8,
+          "duration_max": 8,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere",
+          "alternatives": [
+            "Air Angelic 4 Voltaic",
+            "Air Voltaic"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "tamTargetSwitch Smooth",
+          "alternatives": [
+            "tamTargetSwitch Control"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Static — Easy",
+      "kind": "issue",
+      "group": "Static",
+      "variant": "Easy",
+      "description": "",
+      "duration_minutes": 15,
+      "duration_max_minutes": 45,
+      "share_code": "KOVAAKSENRAGINGEGGPLANTARENA",
+      "recommended_ranks": [
+        "Iron",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum",
+        "Diamond"
+      ],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Static"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "Pokeball 1w4t shrink",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4t shrink",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall2targets TE",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "5 Sphere Hipfire",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "5 Sphere Hipfire Small",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w4ts",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball 1w4ts 30%",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w2ts",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w2tes",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall2targets_smallflicks 60s",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts Voltaic",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts 30% larger",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Wide Wall 4 Targets",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall 6targets small",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Static — Advanced",
+      "kind": "issue",
+      "group": "Static",
+      "variant": "Advanced",
+      "description": "",
+      "duration_minutes": 20,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSDROPPINGDYNAMICHELL",
+      "recommended_ranks": [
+        "Master",
+        "Grandmaster",
+        "Nova",
+        "Astra",
+        "Celestial",
+        "Radiant"
+      ],
+      "min_rank": "Master",
+      "targets": [
+        "Clicking_Static"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "Pokeball 1w4t shrink",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4t shrink",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Static Speed Test",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "fuglaaPressure",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pressure Aiming 7 Shortened",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ww4t Varied",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto Wide Wall 4 Targets Small",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w3ts",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Wide Wall 4 Targets Small",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w2ts",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2tes",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts reload 30% smaller",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball 1w4ts 30%",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts Voltaic",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall2targets_smallflicks 60s",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "5 Sphere Hipfire Small",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "10 Sphere Hipfire Extra Small",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall 6targets small",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Speed",
+      "kind": "issue",
+      "group": "Speed",
+      "variant": "",
+      "description": "",
+      "duration_minutes": 5,
+      "duration_max_minutes": 5,
+      "share_code": "KOVAAKSEXITFRAGGINGENTRYGAMESENSE",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Switching_Speed"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "patCircleSwitch small NR static",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch Large",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTS Viscose Varied",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "voxTargetSwitch Voltaic",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patCircleSwitch Static",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Reactivity",
+      "kind": "issue",
+      "group": "Reactivity",
+      "variant": "",
+      "description": "",
+      "duration_minutes": 30,
+      "duration_max_minutes": 40,
+      "share_code": "KOVAAKSFEEDINGEXTRACINEMATIC",
+      "recommended_ranks": [
+        "Diamond",
+        "Jade",
+        "Master",
+        "Grandmaster",
+        "Nova",
+        "Astra",
+        "Celestial",
+        "Radiant"
+      ],
+      "min_rank": "Diamond",
+      "targets": [
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "VSS GP9",
+          "alternatives": [
+            "Close Fast Strafes Invincible"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic",
+          "alternatives": [
+            "Ground Plaza Voltaic"
+          ],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Vertical Fast Strafes",
+          "alternatives": [
+            "Air Angelic 3478"
+          ],
+          "duration": "10m",
+          "duration_min": 10,
+          "duration_max": 10,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air UFO Hard Invincible",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": true,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Strafe Tracking",
+      "kind": "issue",
+      "group": "Strafe Tracking",
+      "variant": "",
+      "description": "",
+      "duration_minutes": 35,
+      "duration_max_minutes": 35,
+      "share_code": "KOVAAKSFLANKINGFANTASTICPATROL",
+      "recommended_ranks": [],
+      "min_rank": "Iron",
+      "targets": [
+        "Tracking_Reactive",
+        "Tracking_Control",
+        "Movement_Tracking"
+      ],
+      "source": "Voltaic Issue-specific Aim Routines",
+      "source_url": "https://bit.ly/vtissueroutines",
+      "exercises": [
+        {
+          "scenario": "Midrange Long Strafes V2",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole Long Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Long",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Long Varied Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Fast",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "3D Mid Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Angelic 4 Voltaic Easy",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Amphi LG 1v1 Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Iron — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 65,
+      "duration_max_minutes": 65,
+      "share_code": "KOVAAKSFINISHINGGREENADVENTURE",
+      "recommended_ranks": [
+        "Iron"
+      ],
+      "min_rank": "Iron",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Centering 90 Easy+ No Strafes",
+          "alternatives": [
+            "Thin Aiming Long Iron"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Far Long Strafes Very Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Close Long Strafes Very Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "GP Far Long Strafes Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "GP Close Long Strafes Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Kindaclose Fast Strafes Iron",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B90TI Iron",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothbot Iron",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Iron",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B90 Voltaic Iron",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Tamspeed 2bp Iron",
+          "alternatives": [
+            "Tile Spheres 90 Strafing"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball ww3t Voltaic Iron",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Wide Wall 3 Targets TE",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2t TE Reload",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B90T Voltaic Easy Very Slow",
+          "alternatives": [
+            "kinTS Voltaic Iron"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic Iron",
+          "alternatives": [
+            "voxTS Voltaic Iron"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Bronze — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 65,
+      "duration_max_minutes": 65,
+      "share_code": "KOVAAKSFLANKINGGREENPISTOL",
+      "recommended_ranks": [
+        "Bronze"
+      ],
+      "min_rank": "Bronze",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Centering 90 Easy No Strafes",
+          "alternatives": [
+            "Thin Aiming Long Bronze"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Far Long Strafes Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Close Long Strafes Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "GP Far Long Strafes",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "GP Close Long Strafes",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Kindaclose Fast Strafes Bronze",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Vertical Bronze",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothbot Bronze",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Bronze",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B90 Voltaic Bronze",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Tamspeed 2bp Bronze",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball ww3t Voltaic Iron",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ww3t Voltaic Larger",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts 30% larger",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B90T Voltaic Easy Slow",
+          "alternatives": [
+            "kinTS Voltaic Bronze"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic Bronze",
+          "alternatives": [
+            "voxTS Voltaic Bronze"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Silver — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 65,
+      "duration_max_minutes": 65,
+      "share_code": "KOVAAKSFLASHINGHARDFORCEBUY",
+      "recommended_ranks": [
+        "Silver"
+      ],
+      "min_rank": "Silver",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Centering I 90 no strafes",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Easy Invincible 2",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Easy Invincible 1",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Ground Plaza Voltaic Easy Invincible 2",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Ground Plaza Voltaic Easy Invincible 1",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Kindaclose Fast Strafes Silver",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Vertical Silver",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothbot Silver",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Silver",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180 Voltaic Silver",
+          "alternatives": [
+            "Popcorn Voltaic Silver"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Tamspeed 2bp Silver",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball 1w4t shrink",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ww3t Voltaic",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts Voltaic",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180T Voltaic Silver",
+          "alternatives": [
+            "kinTS Voltaic Silver"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic Silver",
+          "alternatives": [
+            "voxTS Voltaic Silver"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Gold — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 59,
+      "duration_max_minutes": 59,
+      "share_code": "KOVAAKSFLICKINGHORIZONTALCHAMPION",
+      "recommended_ranks": [
+        "Gold"
+      ],
+      "min_rank": "Gold",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Thin Gauntlet Gold",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Voltaic Gold",
+          "alternatives": [
+            "B180TI Voltaic"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothbot Voltaic Easy",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Kindaclose Fast Strafes",
+          "alternatives": [
+            "Close Fast Strafes Easy Invincible"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Ground Plaza Voltaic Easy",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Easy",
+          "alternatives": [
+            "Air Voltaic AIO Easy  - 2",
+            "4 runs respectively"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Easy",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Voltaic Easy",
+          "alternatives": [
+            "B180 Voltaic Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Tamspeed 2bp Gold",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto Wide Wall 4 Targets Small",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ww3t Voltaic Smaller",
+          "alternatives": [
+            "Wide Wall 3 Targets"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts Voltaic",
+          "alternatives": [
+            "1w2ts reload",
+            "1w4t shrink"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180T Voltaic Easy",
+          "alternatives": [
+            "kinTS Voltaic Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic Easy",
+          "alternatives": [
+            "voxTS Voltaic Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Platinum — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSGEARINGHORIZONTALWEAPONLEVEL",
+      "recommended_ranks": [
+        "Platinum"
+      ],
+      "min_rank": "Platinum",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Thin Gauntlet V2",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Voltaic Easy",
+          "alternatives": [
+            "B360TI Voltaic"
+          ],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere Platinum",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Ground Plaza Voltaic Easy",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close Fast Strafes Invincible",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic Easy",
+          "alternatives": [
+            "Air Voltaic AIO Easy  - 2",
+            "4 runs respectively"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Intermediate",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Voltaic Intermediate",
+          "alternatives": [
+            "B180 Voltaic Intermediate"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Tamspeed 2bp Platinum",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto Wide Wall 4 Targets Extra Small",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ww3t Voltaic 50% smaller",
+          "alternatives": [
+            "ww4t Varied",
+            "Wide Wall 4 Targets Small"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts_truste Raspberry",
+          "alternatives": [
+            "1w2ts reload smallflicks"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B360T Voltaic Easy",
+          "alternatives": [
+            "kinTS Voltaic Easy"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic 360 Easy",
+          "alternatives": [
+            "voxTS Voltaic"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Platinum — Platinum Strafe",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Platinum Strafe",
+      "description": "",
+      "duration_minutes": 37,
+      "duration_max_minutes": 37,
+      "share_code": "KOVAAKSNAMEDROPPINGSILVERHEAVEN",
+      "recommended_ranks": [
+        "Platinum"
+      ],
+      "min_rank": "Platinum",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Clicking",
+        "Movement_Tracking",
+        "Switching_Evasive",
+        "Switching_Stability",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Pistol Strafe Gallery Platinum",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Dodge TS Platinum",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Arc Dodge Switch Platinum",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "XY Tracking Dodge Platinum",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT AngleStrafe Intermediate",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT BounceStrafe Intermediate",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT SkyStrafe Intermediate",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole Long Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Dodge Platinum",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Long Platinum",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Long Varied Platinum",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Fast Platinum",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "3D Mid Dodge Platinum",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT PatStrafe Platinum",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Diamond — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 62,
+      "duration_max_minutes": 62,
+      "share_code": "KOVAAKSGHOSTPEEKINGHUGENIGHTFALL",
+      "recommended_ranks": [
+        "Diamond"
+      ],
+      "min_rank": "Diamond",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Centering II 180",
+          "alternatives": [
+            "Smooth Thin Strafes"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "PGTI Voltaic Slower - 80%",
+          "alternatives": [
+            "B360TI Voltaic Smaller"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere Diamond",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere Diamond",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VSS Close-Mid Long",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Ground Plaza Voltaic",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Voltaic",
+          "alternatives": [
+            "Air Voltaic AIO  - 2",
+            "5 runs respectively"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic Intermediate",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Voltaic Intermediate",
+          "alternatives": [
+            "B180 Voltaic Intermediate"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Tamspeed 2bpes",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball 1w4ts 30%",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Wide Wall 4 Targets 30% Smaller",
+          "alternatives": [
+            "ww2t voltaic 50% smaller"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts Voltaic 30% smaller",
+          "alternatives": [
+            "10 Sphere Hipfire Extra Small"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B360T Voltaic",
+          "alternatives": [
+            "kinTS Voltaic"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic",
+          "alternatives": [
+            "voxTargetSwitch 30% Smaller +2"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Midrange Long Strafes V2",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Diamond — Diamond Strafe",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Diamond Strafe",
+      "description": "",
+      "duration_minutes": 37,
+      "duration_max_minutes": 37,
+      "share_code": "KOVAAKSPICKINGSMOOTHOPTIC",
+      "recommended_ranks": [
+        "Diamond"
+      ],
+      "min_rank": "Diamond",
+      "targets": [
+        "Movement_Tracking",
+        "Switching_Evasive",
+        "Switching_Stability",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Pistol Strafe Gallery Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Dodge TS Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Arc Dodge Switch Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "XY Tracking Dodge Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT AngleStrafe Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT BounceStrafe Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT SkyStrafe Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole Long Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Easy Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Long",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Long Varied Easy",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Fast",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "3D Mid Dodge Diamond",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT PatStrafe Diamond",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Jade — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 60,
+      "duration_max_minutes": 60,
+      "share_code": "KOVAAKSGLIDINGINDIGOFACTION",
+      "recommended_ranks": [
+        "Jade"
+      ],
+      "min_rank": "Jade",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "[MCA-5] Auto Balanced Long Strafes",
+          "alternatives": [
+            "Smooth Thin Strafes Raspberry"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Gauntlet Raspberry",
+          "alternatives": [
+            "PGTI Voltaic  - 1",
+            "5 run(s) respectively"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Flicker Plaza",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Midrange Short Strafes Invincible Raspberry",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air CELESTIAL",
+          "alternatives": [
+            "Air Voltaic Invincible 7  - 2",
+            "5 runs respectively"
+          ],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pasu Voltaic 360",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Voltaic",
+          "alternatives": [
+            "B180 Voltaic"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Tamspeed 2bpes",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4t_vbr Raspberry",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Wide Wall 2 Targets Extra Small",
+          "alternatives": [
+            "ww2t voltaic 50% smaller"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2tes",
+          "alternatives": [
+            "1w4ts Voltaic 50% smaller"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B360T Voltaic Jade",
+          "alternatives": [
+            "kinTS Voltaic Smooth"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic 360",
+          "alternatives": [
+            "voxTS Viscose Varied"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Jade — Jade Strafe",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Jade Strafe",
+      "description": "",
+      "duration_minutes": 37,
+      "duration_max_minutes": 37,
+      "share_code": "KOVAAKSPERFECTINGSMOOTH1V1",
+      "recommended_ranks": [
+        "Jade"
+      ],
+      "min_rank": "Jade",
+      "targets": [
+        "Movement_Tracking",
+        "Switching_Evasive",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Pistol Strafe Gallery Jade",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Dodge TS Jade",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Arc Dodge Switch Jade",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "XY Tracking Dodge Jade",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT AngleStrafe Jade",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT BounceStrafe Jade",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT SkyStrafe Jade",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking Thin",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole Long Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Dodge Jade",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Long Jade",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Long Varied Jade",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Fast Jade",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "3D Mid Dodge Jade",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT PatStrafe Intermediate",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Master — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 83,
+      "duration_max_minutes": 83,
+      "share_code": "KOVAAKSGRIEFINGINVINCIBLECAMO",
+      "recommended_ranks": [
+        "Master"
+      ],
+      "min_rank": "Master",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Smooth Thin Strafes Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VAI 1 Master  &  VAI 15 Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Gauntlet Raspberry Master",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Angelic 7 Smaller fixed",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air NUNS AIO Insane",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Flicker XYZ",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "FuglaaXYZ Voltaic Less Blinks Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Trackstop Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Flicker Plaza No strafes Dash Master",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Flicker Plaza Hard",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VSS Close-Mid Long Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Midrange Fast Strafes Invincible Raspberry v2",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Glider GOATED",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothbot Unvincible Goated Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Leap 180TI Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Precision XYZ Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4t Pasu Raspberry Master",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn VT Goated",
+          "alternatives": [
+            "Leap 180 Master"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "psalmTS angelic click",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w6ts_trustechain Raspberry",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w2ts",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2ts reload",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4ts reload 30% smaller",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w3ts 30% larger",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall4targets TE Reload",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto Wide Wall 2 Targets",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ww2t Voltaic",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball 5 Sphere Hipfire Small",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "10 Sphere Hipfire Small Fixed Reload",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "fuglaab180t Master",
+          "alternatives": [
+            "kinTS Voltaic small 200%"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Static Small NR no body",
+          "alternatives": [
+            "voxTS Static Small NR"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic 30% Smaller",
+          "alternatives": [
+            "voxTS Voltaic s3 30% smaller"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Master — Master Strafe",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Master Strafe",
+      "description": "",
+      "duration_minutes": 37,
+      "duration_max_minutes": 37,
+      "share_code": "KOVAAKSPEAKINGSLOWFULLBUY",
+      "recommended_ranks": [
+        "Master"
+      ],
+      "min_rank": "Master",
+      "targets": [
+        "Movement_Tracking",
+        "Switching_Evasive",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Pistol Strafe Gallery Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Dodge TS Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Arc Dodge Switch Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "XY Tracking Dodge Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT AngleStrafe Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT BounceStrafe Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT SkyStrafe Master",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking Thin",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole Long Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Dodge Master",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Long Master",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Long Varied Master",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Fast Master",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "3D Mid Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT PatStrafe Intermediate",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Grandmaster — Complete Routine",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Complete Routine",
+      "description": "",
+      "duration_minutes": 85,
+      "duration_max_minutes": 85,
+      "share_code": "KOVAAKSHEADSHOTTINGINVINCIBLETANK",
+      "recommended_ranks": [
+        "Grandmaster"
+      ],
+      "min_rank": "Grandmaster",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Clicking_Static",
+        "Switching_Evasive",
+        "Switching_Speed",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Smooth Thin Strafes Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VAI 1 Grandmaster  &  VAI 15 Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn Gauntlet Raspberry Grandmaster",
+          "alternatives": [],
+          "duration": "1m",
+          "duration_min": 1,
+          "duration_max": 1,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothsphere Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Controlsphere Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Angelic 7 Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air NUNS AIO Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Flicker XYZ Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "FuglaaXYZ Voltaic Less Blinks Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Trackstop Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Flicker Plaza No Strafes Dash Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Flicker Plaza Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VSS Close-Mid Long 30% Smaller",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Midrange Fast Strafes Invincible Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Glider GOATED Hard",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Smoothbot Unvincible Small Goated",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Leap 180TI Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Precision XYZ Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w4t Pasu Raspberry Grandmaster",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Popcorn VT Goated",
+          "alternatives": [
+            "Leap 180 Grandmaster"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Psalm Clicking Small",
+          "alternatives": [],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w6ts_trustechain Raspberry",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w2ts",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1w2ts reload",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto Wide Wall 2 Targets",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "ww2t Voltaic",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball 5 Sphere Hipfire Small",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "12 Sphere Hipfire 30% Smaller",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pokeball Frenzy Auto 1w4ts",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "fuglaaPressure NoReload",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "1wall4targets TE Reload",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "B180T Voltaic Grandmaster",
+          "alternatives": [
+            "kinTS Voltaic small 300%"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Static Small NR no body",
+          "alternatives": [
+            "voxTS Static Small NR"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "patTS Voltaic 30% Smaller Smooth",
+          "alternatives": [
+            "voxTS Voltaic 30% Smaller Smooth"
+          ],
+          "duration": "5m",
+          "duration_min": 5,
+          "duration_max": 5,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    },
+    {
+      "name": "Grandmaster — Grandmaster  Strafe",
+      "kind": "fundamentals",
+      "group": "Fundamentals",
+      "variant": "Grandmaster  Strafe",
+      "description": "",
+      "duration_minutes": 58,
+      "duration_max_minutes": 58,
+      "share_code": "KOVAAKSPATROLLINGSLIPPERYPRECISION",
+      "recommended_ranks": [
+        "Grandmaster"
+      ],
+      "min_rank": "Grandmaster",
+      "targets": [
+        "Clicking_Dynamic",
+        "Clicking_Linear",
+        "Movement_Clicking",
+        "Movement_Tracking",
+        "Switching_Evasive",
+        "Switching_Stability",
+        "Tracking_Control",
+        "Tracking_Precise",
+        "Tracking_Reactive"
+      ],
+      "source": "Voltaic Fundamental Kovaak's Routines 2.5",
+      "source_url": "https://bit.ly/VTfundamentals2",
+      "exercises": [
+        {
+          "scenario": "Pistol Strafe Gallery Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Air Dodge TS Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Arc Dodge Switch Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "XY Tracking Dodge Grandmaster",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT AngleStrafe Advanced",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT BounceStrafe Advanced",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT SkyStrafe Advanced",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Revolving Tracking Extra Thin",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Pole Long Dodge",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Close LS Dodge Grandmaster",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Cycle Strafes Long Grandmaster",
+          "alternatives": [],
+          "duration": "4m",
+          "duration_min": 4,
+          "duration_max": 4,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Long Varied Grandmaster",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Circle Strafes Fast Grandmaster",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "3D Mid Dodge Grandmaster",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "VT PatStrafe Advanced",
+          "alternatives": [],
+          "duration": "2m",
+          "duration_min": 2,
+          "duration_max": 2,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Empyrean - Scenario/Routine Conception & Creation, Writing, Formatting",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Hasin - Scenario/Routine Conception & Creation, Writing, Formatting",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Krascsi - Routine Conception & Creation",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "HotRodRe - Writing",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "Grissom - Writing",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "BecKz - Writing",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        },
+        {
+          "scenario": "sini - Scenario Conception, Feedback, Formatting, GFX",
+          "alternatives": [],
+          "duration": "3m",
+          "duration_min": 3,
+          "duration_max": 3,
+          "optional": false,
+          "focus": ""
+        }
+      ]
+    }
+  ]
+}

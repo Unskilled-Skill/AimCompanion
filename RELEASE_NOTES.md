@@ -1,16 +1,18 @@
-# Aim Companion 1.0.4
+# Aim Companion 1.0.5
 
-This release rebuilds every Training Tools tab for clarity and useful full-screen behavior.
+This release aligns Home, Today, and Training Guide with the app's short, adaptive training workflow.
 
 ## What changed
 
-- Redesigned Sessions with a compact logger, automatic-training explanation, and a proper empty state.
-- Rebuilt Calendar as a responsive full-width month view with training-day and monthly summaries.
-- Fixed the broken Compare chart and replaced misleading raw-score bars with per-scenario percentage change.
-- Added clear early average, recent average, best, change, and run-count comparison columns.
-- Redesigned Routine Builder into readable scenario-library and current-routine panels with live duration totals.
-- Redesigned Sensitivity as a compact two-column converter that recalculates automatically.
-- Added one-click sensitivity copying and readable conversions for every supported game.
+- Home now shows exact energy remaining to the next Voltaic tier.
+- Skill Balance places Clicking, Tracking, and Switching in one complete row.
+- Every subcategory shows its current tier and distance to the next tier.
+- The recommended focus explains why the weakness was selected and how balance is preserved.
+- Today now preselects one useful training block without launching Kovaak's automatically.
+- Removed the extra generation step and made Start the single primary action.
+- Simplified warm-up and full-routine controls around the recommendation.
+- Converted Training Guide into expandable sections with the most useful coaching visible first.
+- Moved source links into a compact references menu and improved checkbox visibility.
 
 Existing scores, settings, routines, and training history are preserved during installation.
 This build is not Authenticode-signed; use the matching `.sha256` asset to verify

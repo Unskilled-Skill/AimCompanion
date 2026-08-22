@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from models.score import Score
 from ui.comparison import build_comparison_rows
+from ui.dashboard import DashboardWidget
 from ui.sensitivity import convert_sensitivity
 
 
@@ -19,6 +20,12 @@ def score(name, value, day):
 
 
 class ToolLogicTests(unittest.TestCase):
+    def test_dashboard_next_tier_uses_energy_thresholds(self):
+        self.assertEqual(DashboardWidget._next_tier(317.4)["name"], "Gold")
+
+    def test_dashboard_next_tier_stops_after_highest_rank(self):
+        self.assertIsNone(DashboardWidget._next_tier(99999))
+
     def test_comparison_uses_early_and_recent_samples(self):
         rows = build_comparison_rows([
             score("A", 100, 0), score("A", 110, 1), score("A", 120, 2),

@@ -3,10 +3,11 @@ import json
 from datetime import datetime, timedelta
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
-    QScrollArea, QPushButton, QGridLayout, QTextEdit, QStackedWidget, QComboBox
+    QScrollArea, QPushButton, QGridLayout, QTextEdit, QStackedWidget, QComboBox,
+    QToolButton, QMenu
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QFont, QColor
+from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
+from PyQt6.QtGui import QDesktopServices, QFont, QColor
 
 from models.database import Database
 from models.score import PlayerProfile
@@ -171,7 +172,7 @@ class AimHubWidget(QWidget):
         self._add_mindset_and_glossary()
         self.content_layout.addStretch()
 
-    def _card(self, title, color="#ffffff"):
+    def _card(self, title, color="#ffffff", expanded=False):
         frame = QFrame()
         frame.setObjectName("aimHubCard")
         frame.setFrameShape(QFrame.Shape.StyledPanel)
@@ -183,14 +184,33 @@ class AimHubWidget(QWidget):
             }}
         """)
         layout = QVBoxLayout(frame)
-        layout.setContentsMargins(20, 18, 20, 18)
-        layout.setSpacing(8)
+        layout.setContentsMargins(18, 12, 18, 14)
+        layout.setSpacing(6)
 
         if title:
-            title_lbl = QLabel(title)
-            title_lbl.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
-            title_lbl.setStyleSheet(f"color: {color};")
-            layout.addWidget(title_lbl)
+            toggle = QToolButton()
+            toggle.setText(("▾  " if expanded else "›  ") + title)
+            toggle.setCheckable(True)
+            toggle.setChecked(expanded)
+            toggle.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+            toggle.setStyleSheet(
+                f"QToolButton {{ color: {color}; font-size: 12pt; font-weight: bold; "
+                "text-align: left; border: none; padding: 4px 0; }}"
+            )
+            layout.addWidget(toggle)
+            body = QWidget()
+            body_layout = QVBoxLayout(body)
+            body_layout.setContentsMargins(0, 8, 0, 0)
+            body_layout.setSpacing(8)
+            body.setVisible(expanded)
+            toggle.toggled.connect(body.setVisible)
+            toggle.toggled.connect(
+                lambda checked, button=toggle, name=title: button.setText(
+                    ("▾  " if checked else "›  ") + name
+                )
+            )
+            layout.addWidget(body)
+            return frame, body_layout
 
         return frame, layout
 
@@ -203,7 +223,7 @@ class AimHubWidget(QWidget):
         return lbl
 
     def _add_voltaic_foundations(self):
-        card, layout = self._card("How to practise a routine", "#89b4fa")
+        card, layout = self._card("How to practise a routine", "#89b4fa", expanded=True)
         layout.addWidget(self._text(
             GUIDANCE["session_method"]["summary"], "#cdd6f4", bold=True
         ))
@@ -237,10 +257,23 @@ class AimHubWidget(QWidget):
         source_label.setOpenExternalLinks(True)
         source_label.setTextFormat(Qt.TextFormat.RichText)
         layout.addWidget(source_label)
+        source_label.hide()
+        sources = QToolButton()
+        sources.setText(f"Original references ({len(GUIDANCE['sources'])})  ▾")
+        sources.setObjectName("quietButton")
+        sources.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        source_menu = QMenu(sources)
+        for source in GUIDANCE["sources"]:
+            action = source_menu.addAction(source["title"])
+            action.triggered.connect(
+                lambda checked=False, url=source["url"]: QDesktopServices.openUrl(QUrl(url))
+            )
+        sources.setMenu(source_menu)
+        layout.addWidget(sources, 0, Qt.AlignmentFlag.AlignLeft)
         self.content_layout.addWidget(card)
 
     def _add_technique_library(self):
-        card, layout = self._card("Technique by skill", "#94e2d5")
+        card, layout = self._card("Technique by skill", "#94e2d5", expanded=True)
         layout.addWidget(self._text(
             "Choose the category shown beside an exercise to see its goal and execution cue.",
             "#a6adc8", size=10,

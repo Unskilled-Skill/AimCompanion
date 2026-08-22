@@ -114,6 +114,10 @@ class RoutineWidget(QWidget):
         self._build_routine_display()
         self._build_share_codes()
 
+        # Select a useful block immediately, but never launch Kovaak's merely
+        # because the user opened Today.
+        self.show_quick_scenario(False, launch=False)
+
         self.content_layout.addStretch()
         self.scroll.setWidget(scroll_content)
         layout.addWidget(self.scroll)
@@ -127,7 +131,7 @@ class RoutineWidget(QWidget):
         layout.setSpacing(12)
 
         copy = QVBoxLayout()
-        title = QLabel("One focused block")
+        title = QLabel("Today's focused training")
         title.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
         description = QLabel(
             "Train for 3–5 focused minutes, then stop. Return later for a fresh skill."
@@ -183,19 +187,11 @@ class RoutineWidget(QWidget):
         self._update_sync_health()
         layout.addLayout(copy, 1)
 
-        self.continue_today_btn = QPushButton("Get one training block")
-        self.continue_today_btn.setObjectName("primaryButton")
-        self.continue_today_btn.clicked.connect(self._continue_today)
-        layout.addWidget(self.continue_today_btn)
-        train = QPushButton("Different training pick")
-        train.setObjectName("quietButton")
-        train.clicked.connect(lambda: self.show_quick_scenario(False))
-        layout.addWidget(train)
-        warmup = QPushButton("Warm up")
+        warmup = QPushButton("Warm up instead")
         warmup.setObjectName("quietButton")
         warmup.clicked.connect(lambda: self.show_quick_scenario(True))
         layout.addWidget(warmup)
-        self.full_routine_toggle = QPushButton("Full routine")
+        self.full_routine_toggle = QPushButton("Build full routine")
         self.full_routine_toggle.setObjectName("textButton")
         self.full_routine_toggle.setCheckable(True)
         self.full_routine_toggle.toggled.connect(self._toggle_full_routine)
@@ -431,7 +427,7 @@ class RoutineWidget(QWidget):
 
     def _toggle_full_routine(self, visible):
         self.settings_frame.setVisible(visible)
-        self.full_routine_toggle.setText("Hide full routine" if visible else "Full routine")
+        self.full_routine_toggle.setText("Hide full routine" if visible else "Build full routine")
 
     def _build_routine_display(self):
         self.routine_frame = QFrame()
@@ -664,6 +660,8 @@ class RoutineWidget(QWidget):
         }
 
     def _launch_quick_scenario(self, recommendation):
+        if hasattr(self, "stop_quick_btn"):
+            self.stop_quick_btn.setVisible(True)
         scenario_path = find_scenario_file(
             recommendation["scenario"], self.config.get_scenario_dirs()
         )
@@ -991,7 +989,7 @@ class RoutineWidget(QWidget):
         self._clear_layout(self.routine_layout)
         heading = QLabel(
             f"Warm-up pick  ·  {recommendation['warmup_context']}"
-            if recommendation["warmup"] else "Training pick"
+            if recommendation["warmup"] else "RECOMMENDED FOR YOU"
         )
         heading.setObjectName("eyebrow")
         self.routine_layout.addWidget(heading)
@@ -1116,7 +1114,7 @@ class RoutineWidget(QWidget):
 
         actions = QHBoxLayout()
         self.open_quick_btn = QPushButton(
-            "Open scenario" if recommendation["installed"] else "Download & play"
+            "Start 3–5 min block" if recommendation["installed"] else "Download & start"
         )
         self.open_quick_btn.setObjectName("primaryButton")
         self.open_quick_btn.clicked.connect(
@@ -1130,6 +1128,7 @@ class RoutineWidget(QWidget):
         self.stop_quick_btn.clicked.connect(
             lambda: self._stop_quick_session(recommendation)
         )
+        self.stop_quick_btn.setVisible(False)
         actions.addWidget(self.stop_quick_btn)
         self.next_quick_btn = QPushButton(
             "Different warm-up" if recommendation["warmup"] else "Different pick"

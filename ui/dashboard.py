@@ -59,8 +59,11 @@ class DashboardWidget(QWidget):
         rank.setStyleSheet(f"color: {self._tier_color(self.profile.overall_tier)};")
         energy = QLabel(f"{self.profile.overall_energy:.1f} energy")
         energy.setObjectName("homeEnergy")
+        next_tier = self._next_tier(self.profile.overall_energy)
         explanation = QLabel(
-            "Energy lets you compare performance across different benchmark scenarios."
+            (f"{next_tier['min_energy'] - self.profile.overall_energy:.1f} energy to "
+             f"{next_tier['name']}. " if next_tier else "Highest tracked tier reached. ")
+            + "Energy normalizes performance across official benchmarks."
         )
         explanation.setObjectName("mutedText")
         explanation.setWordWrap(True)
@@ -89,7 +92,8 @@ class DashboardWidget(QWidget):
         focus_name.setWordWrap(True)
         focus_name.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         focus_copy = QLabel(
-            "The app will choose one short block for this skill and keep the rest in rotation."
+            f"Your lowest measured skill at {weakest.energy:.0f} energy. Train one short "
+            "block; the other skills remain in rotation."
             if weakest else
             "Import or complete Voltaic benchmarks before asking for a weakness-based routine."
         )
@@ -119,10 +123,10 @@ class DashboardWidget(QWidget):
         subtitle = QLabel("See where your clicking, tracking, and switching currently stand.")
         subtitle.setObjectName("mutedText")
         subtitle.setWordWrap(True)
-        subtitle.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        subtitle.setMaximumWidth(680)
         title_block.addWidget(title)
         title_block.addWidget(subtitle)
-        heading.addLayout(title_block)
+        heading.addLayout(title_block, 1)
         heading.addStretch()
         details = QPushButton("Learn the technique")
         details.setObjectName("textButton")
@@ -133,7 +137,7 @@ class DashboardWidget(QWidget):
         grid = QGridLayout()
         grid.setSpacing(12)
         for index, category in enumerate(self.profile.categories):
-            row, column = divmod(index, 2)
+            row, column = divmod(index, 3)
             grid.addWidget(self._skill_card(category), row, column)
             grid.setColumnStretch(column, 1)
         self.content_layout.addLayout(grid)
@@ -163,7 +167,13 @@ class DashboardWidget(QWidget):
             labels = QHBoxLayout()
             sub_name = QLabel(sub.name)
             sub_name.setObjectName("skillSubName")
-            value = QLabel(f"{sub.energy:.0f}")
+            next_tier = self._next_tier(sub.energy)
+            gap = (
+                f" • {next_tier['min_energy'] - sub.energy:.0f} to {next_tier['name']}"
+                if next_tier else " • top tier"
+            )
+            sub_name.setText(f"{sub.name} • {sub.tier}")
+            value = QLabel(f"{sub.energy:.0f}{gap}")
             value.setObjectName("skillValue")
             labels.addWidget(sub_name)
             labels.addStretch()
@@ -221,6 +231,10 @@ class DashboardWidget(QWidget):
             if item["name"] == tier:
                 return item["color"]
         return "#aab4c5"
+
+    @staticmethod
+    def _next_tier(energy):
+        return next((tier for tier in TIERS if tier["min_energy"] > energy), None)
 
     def update_profile(self, profile):
         self.profile = profile

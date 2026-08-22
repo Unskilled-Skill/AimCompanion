@@ -279,6 +279,20 @@ QCheckBox::indicator,
 QRadioButton::indicator {
     width: 16px;
     height: 16px;
+    background-color: #0d1527;
+    border: 1px solid #3a4965;
+    border-radius: 4px;
+}
+
+QCheckBox::indicator:hover,
+QRadioButton::indicator:hover {
+    border-color: #8b9cfb;
+}
+
+QCheckBox::indicator:checked,
+QRadioButton::indicator:checked {
+    background-color: #8b9cfb;
+    border-color: #a8b3ff;
 }
 
 /* Data widgets */

@@ -265,6 +265,10 @@ class RecommenderTests(unittest.TestCase):
             scenario_deep_link("Gravity Strafes a+"),
             "steam://run/824270/?action=jump-to-scenario;name=Gravity%20Strafes%20a%2B",
         )
+        self.assertEqual(
+            scenario_deep_link("MicroshotSpeed"),
+            "steam://run/824270/?action=jump-to-scenario;name=Microshot%20Speed",
+        )
 
     def test_offline_guidance_covers_sources_and_every_s5_skill(self):
         expected = {
@@ -425,7 +429,7 @@ class RecommenderTests(unittest.TestCase):
         cases = {
             "Apex Legends": (10, ["fuglaaXYLongstrafes", "CloseLongStrafes"]),
             "Valorant & Counterstrike": (
-                10, ["MicroshotSpeed", "1wall5targets_pasu", "TileFrenzyMini"]
+                10, ["Microshot Speed", "1wall5targets_pasu", "TileFrenzyMini"]
             ),
         }
         for context, (minutes, expected) in cases.items():

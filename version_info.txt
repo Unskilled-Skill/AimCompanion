@@ -8,11 +8,11 @@ VSVersionInfo(
       StringTable('040904B0', [
         StringStruct('CompanyName', 'Unskilled-Skill'),
         StringStruct('FileDescription', 'Aim Companion'),
-        StringStruct('FileVersion', '1.0.6'),
+        StringStruct('FileVersion', '1.0.7'),
         StringStruct('InternalName', 'AimCompanion'),
         StringStruct('OriginalFilename', 'AimCompanion.exe'),
         StringStruct('ProductName', 'Aim Companion'),
-        StringStruct('ProductVersion', '1.0.6'),
+        StringStruct('ProductVersion', '1.0.7'),
       ])
     ]),
     VarFileInfo([VarStruct('Translation', [1033, 1200])])

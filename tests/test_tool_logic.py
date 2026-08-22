@@ -48,7 +48,7 @@ class ToolLogicTests(unittest.TestCase):
 
     def test_online_scenario_launch_does_not_require_local_file(self):
         recommendation = {
-            "scenario": "MicroshotSpeed",
+            "scenario": "Microshot Speed",
             "runs": 3,
             "estimated_minutes": 3,
         }

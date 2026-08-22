@@ -27,7 +27,7 @@ GAME_WARMUP_ROUTINES = {
          "cue": "Stay relaxed during close direction changes and keep continuous contact."},
     ],
     "Valorant & Counterstrike": [
-        {"scenario": "MicroshotSpeed", "duration_min": 3,
+        {"scenario": "Microshot Speed", "duration_min": 3,
          "category": "Clicking", "subcategory": "Static",
          "cue": "Acquire quickly, stop cleanly, and avoid dragging the crosshair through targets."},
         {"scenario": "1wall5targets_pasu", "duration_min": 4,

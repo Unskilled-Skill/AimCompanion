@@ -1,23 +1,16 @@
-# Aim Companion 1.0.1
+# Aim Companion 1.0.2
 
-Aim Companion now starts with zero mandatory setup.
+This release makes the interface calmer, clearer, and more direct.
 
 ## What changed
 
-- Removed the blocking first-launch setup dialog.
-- Automatically reads Steam's configured library folders.
-- Automatically detects Kovaak's, its stats folder, and playlists across drives.
-- Automatically imports scores and starts with safe general-training defaults.
-- Settings remain available for optional overrides.
-- Score syncing now consistently respects an overridden Kovaak's folder.
+- Increased Training Guide readability and removed tiny pixel-sized body text.
+- Reduced nested borders and visual noise in learning cards.
+- Tightened sidebar spacing so navigation fits more naturally.
+- Reworked Preferences to explain that everything important is auto-detected.
+- Changed the Home recommendation into a true one-click 3-to-5-minute block.
+- Retains the zero-click first launch and expanded Steam library detection from 1.0.1.
 
-The adaptive nine-skill training engine, verified automatic updater, and all
-version 1.0 features remain included.
-
-## Installation
-
-Download `AimCompanion-Setup.exe` and run it. Existing scores, settings, and
-training history in `%LOCALAPPDATA%\AimCompanion` are preserved.
-
-This build is not Authenticode-signed, so Windows SmartScreen may show an Unknown
-Publisher warning. The matching `.sha256` file verifies installer integrity.
+Existing scores, settings, and training history are preserved during installation.
+This build is not Authenticode-signed; use the matching `.sha256` asset to verify
+installer integrity.

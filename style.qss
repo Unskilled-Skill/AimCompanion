@@ -74,7 +74,7 @@ QScrollArea#navScroll > QWidget > QWidget {
 }
 
 QLabel#navSection {
-    padding: 13px 8px 4px 8px;
+    padding: 9px 8px 3px 8px;
 }
 
 QPushButton#navButton {
@@ -82,7 +82,7 @@ QPushButton#navButton {
     color: #9ca9bf;
     border: none;
     border-radius: 7px;
-    padding: 8px 11px;
+    padding: 7px 11px;
     min-height: 18px;
     text-align: left;
     font-weight: 500;
@@ -526,8 +526,8 @@ QFrame#nextSteps {
 /* Focused learning and routine surfaces */
 QFrame#guideSummary,
 QFrame#guideDetail {
-    background-color: #0d1527;
-    border: 1px solid #27344e;
+    background-color: #0f182b;
+    border: none;
     border-radius: 9px;
 }
 
@@ -537,6 +537,7 @@ QFrame#guideSummary {
 
 QFrame#guideDetail {
     margin-top: 4px;
+    border-left: 3px solid #33415e;
 }
 
 QFrame#routineGuide {

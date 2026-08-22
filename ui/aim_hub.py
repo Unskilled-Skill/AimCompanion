@@ -154,6 +154,7 @@ class AimHubWidget(QWidget):
         scroll.setWidgetResizable(True)
         content = QWidget()
         self.content_layout = QVBoxLayout(content)
+        self.content_layout.setContentsMargins(0, 0, 8, 12)
         self.content_layout.setSpacing(12)
         scroll.setWidget(content)
         main_layout.addWidget(scroll)
@@ -178,7 +179,7 @@ class AimHubWidget(QWidget):
             QFrame#aimHubCard {{
                 background-color: #11192b;
                 border-radius: 12px;
-                border: 1px solid #263149;
+                border: 1px solid #202a40;
             }}
         """)
         layout = QVBoxLayout(frame)
@@ -187,7 +188,7 @@ class AimHubWidget(QWidget):
 
         if title:
             title_lbl = QLabel(title)
-            title_lbl.setFont(QFont("Segoe UI", 13, QFont.Weight.Bold))
+            title_lbl.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
             title_lbl.setStyleSheet(f"color: {color};")
             layout.addWidget(title_lbl)
 
@@ -198,7 +199,7 @@ class AimHubWidget(QWidget):
         lbl.setWordWrap(True)
         weight = QFont.Weight.Bold if bold else QFont.Weight.Normal
         lbl.setFont(QFont("Segoe UI", size, weight))
-        lbl.setStyleSheet(f"color: {color}; font-size: {size}px;")
+        lbl.setStyleSheet(f"color: {color}; font-size: {size}pt;")
         return lbl
 
     def _add_voltaic_foundations(self):
@@ -427,12 +428,12 @@ class AimHubWidget(QWidget):
             day_layout.addWidget(day_label)
 
             focus_label = QLabel(info["focus"])
-            focus_label.setStyleSheet("color: #ddd; font-size: 10px;")
+            focus_label.setStyleSheet("color: #ddd; font-size: 10pt;")
             day_layout.addWidget(focus_label)
 
             if info["subcats"]:
                 subs = QLabel(", ".join(info["subcats"]))
-                subs.setStyleSheet("color: #999; font-size: 9px;")
+                subs.setStyleSheet("color: #999; font-size: 9pt;")
                 day_layout.addWidget(subs)
 
             grid.addWidget(day_card, 0, i)
@@ -471,7 +472,7 @@ class AimHubWidget(QWidget):
             info_layout.addWidget(self._text(step["desc"], "#cccccc", size=10))
 
             dur_label = QLabel(f"{step['duration']} min")
-            dur_label.setStyleSheet(f"color: {step['color']}; font-size: 10px; font-weight: bold;")
+            dur_label.setStyleSheet(f"color: {step['color']}; font-size: 10pt; font-weight: bold;")
             dur_label.setFixedWidth(50)
             dur_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             step_layout.addLayout(info_layout)

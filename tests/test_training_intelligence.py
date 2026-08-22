@@ -216,6 +216,24 @@ class TrainingIntelligenceTests(unittest.TestCase):
         widget.deleteLater()
         app.processEvents()
 
+    def test_home_primary_action_starts_training_without_an_extra_page(self):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from PyQt6.QtWidgets import QApplication, QPushButton
+        from ui.dashboard import DashboardWidget
+
+        app = QApplication.instance() or QApplication([])
+        widget = DashboardWidget(self.profile)
+        requested = []
+        widget.quick_training_requested.connect(lambda: requested.append(True))
+        button = next(
+            item for item in widget.findChildren(QPushButton)
+            if item.text().startswith("Start a")
+        )
+        button.click()
+        app.processEvents()
+        self.assertEqual(requested, [True])
+        widget.deleteLater()
+
 
 if __name__ == "__main__":
     unittest.main()

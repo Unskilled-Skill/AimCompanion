@@ -13,6 +13,7 @@ class DashboardWidget(QWidget):
     """A deliberately small home screen: current level, next action, skill balance."""
 
     navigate_requested = pyqtSignal(str)
+    quick_training_requested = pyqtSignal()
 
     def __init__(self, profile: PlayerProfile):
         super().__init__()
@@ -88,17 +89,18 @@ class DashboardWidget(QWidget):
         focus_name.setWordWrap(True)
         focus_name.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         focus_copy = QLabel(
-            "Build your next routine around this skill to improve your balance."
+            "The app will choose one short block for this skill and keep the rest in rotation."
             if weakest else
             "Import or complete Voltaic benchmarks before asking for a weakness-based routine."
         )
         focus_copy.setObjectName("mutedText")
         focus_copy.setWordWrap(True)
-        start = QPushButton("Build today’s routine" if weakest else "Import scores")
+        start = QPushButton("Start a 3–5 min block" if weakest else "Import scores")
         start.setObjectName("primaryButton")
         start.setCursor(Qt.CursorShape.PointingHandCursor)
         start.clicked.connect(
-            lambda: self.navigate_requested.emit("routines" if weakest else "import")
+            self.quick_training_requested.emit
+            if weakest else lambda: self.navigate_requested.emit("import")
         )
         focus_layout.addWidget(focus_label)
         focus_layout.addWidget(focus_name)

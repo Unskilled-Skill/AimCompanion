@@ -17,22 +17,26 @@ class SetupDialog(QDialog):
         super().__init__(parent)
         self.first_run = first_run
         self.config = TrainingConfig.load()
-        self.setWindowTitle("Set up Aim Companion" if first_run else "Settings")
-        self.setMinimumWidth(620)
+        self.setWindowTitle("Aim Companion preferences")
+        self.setMinimumWidth(700)
 
         layout = QVBoxLayout(self)
-        title = QLabel("Connect Aim Companion to your training")
+        layout.setContentsMargins(26, 24, 26, 22)
+        layout.setSpacing(16)
+        title = QLabel("Preferences")
         title.setObjectName("sectionTitle")
         layout.addWidget(title)
         description = QLabel(
-            "Confirm your Kovaak's installation and training preferences. "
-            "Training data stays on this computer."
+            "Aim Companion detects Kovaak's and chooses safe defaults automatically. "
+            "Change something here only when you want an override."
         )
         description.setObjectName("mutedText")
         description.setWordWrap(True)
         layout.addWidget(description)
 
         form = QFormLayout()
+        form.setHorizontalSpacing(18)
+        form.setVerticalSpacing(12)
         self.install_path = QLineEdit(self.config.kovaaks_install_dir)
         self.install_path.setPlaceholderText("Auto-detect, or choose the FPSAimTrainer folder")
         browse = QPushButton("Browse…")
@@ -56,6 +60,7 @@ class SetupDialog(QDialog):
         form.addRow("Voltaic profile", self.profile_url)
 
         self.game = QComboBox()
+        self.game.setMaximumWidth(360)
         self.game.addItems(get_game_options())
         if self.config.game in get_game_options():
             self.game.setCurrentText(self.config.game)
@@ -65,6 +70,7 @@ class SetupDialog(QDialog):
         self.minutes.setRange(15, 120)
         self.minutes.setSuffix(" min")
         self.minutes.setValue(self.config.session_minutes)
+        self.minutes.setMaximumWidth(160)
         form.addRow("Default session", self.minutes)
 
         self.prefer_installed = QCheckBox("Prefer installed scenarios when fit is equal")

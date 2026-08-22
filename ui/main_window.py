@@ -85,6 +85,9 @@ class MainWindow(QMainWindow):
     def _create_views(self):
         self.dashboard = DashboardWidget(self.profile)
         self.dashboard.navigate_requested.connect(self._navigate)
+        self.dashboard.quick_training_requested.connect(
+            lambda: self._quick_scenario(False)
+        )
         self.routine_view = RoutineWidget(
             self.training_profile, self.db, self.notifier,
             on_scores_updated=self._rebuild_profile,
@@ -144,6 +147,7 @@ class MainWindow(QMainWindow):
 
         workspace = QWidget()
         workspace.setObjectName("workspace")
+        workspace.setMaximumWidth(1500)
         workspace_layout = QVBoxLayout(workspace)
         workspace_layout.setContentsMargins(24, 18, 24, 18)
         workspace_layout.setSpacing(14)
@@ -157,7 +161,7 @@ class MainWindow(QMainWindow):
                 self.page_indexes[key] = self.pages.addWidget(widget)
         self.pages.currentChanged.connect(self._on_page_changed)
         workspace_layout.addWidget(self.pages, 1)
-        shell.addWidget(workspace, 1)
+        shell.addWidget(workspace, 1, Qt.AlignmentFlag.AlignHCenter)
 
         self._navigate("dashboard")
 

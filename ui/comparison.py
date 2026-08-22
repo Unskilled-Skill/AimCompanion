@@ -1,17 +1,43 @@
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
-    QScrollArea, QComboBox, QDateEdit, QPushButton
-)
-from PyQt6.QtCore import Qt, QDate
-from PyQt6.QtGui import QFont
+from collections import defaultdict
 
 import matplotlib
 matplotlib.use("QtAgg")
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
+from PyQt6.QtCore import QDate, Qt
+from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtWidgets import (
+    QAbstractItemView, QDateEdit, QFrame, QHeaderView, QHBoxLayout, QLabel,
+    QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
+)
+
 from models.database import Database
 from models.score import PlayerProfile
+
+
+def build_comparison_rows(scores):
+    """Compare an early sample with a recent sample on each scenario's own scale."""
+    grouped = defaultdict(list)
+    for score in sorted(scores, key=lambda item: item.timestamp):
+        grouped[score.benchmark_name].append(score.score)
+    rows = []
+    for name, values in grouped.items():
+        sample = min(3, max(1, len(values) // 2))
+        early = sum(values[:sample]) / sample
+        recent = sum(values[-sample:]) / sample
+        delta = recent - early
+        delta_pct = (delta / early * 100) if early and len(values) >= 2 else None
+        rows.append({
+            "name": name,
+            "early": early,
+            "recent": recent,
+            "best": max(values),
+            "delta": delta,
+            "delta_pct": delta_pct,
+            "count": len(values),
+        })
+    return sorted(rows, key=lambda row: (row["delta_pct"] is None, -(row["delta_pct"] or 0), row["name"].casefold()))
 
 
 class ComparisonWidget(QWidget):
@@ -20,196 +46,180 @@ class ComparisonWidget(QWidget):
         self.profile = profile
         self.db = db
         self._build_ui()
+        self._compare()
 
     def _build_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(12, 12, 12, 12)
+        root.setSpacing(12)
 
-        header = QLabel("Score Comparison")
-        header.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
-        header.setStyleSheet("color: #cdd6f4;")
-        layout.addWidget(header)
-
-        subtitle = QLabel("Compare your scores between two dates")
-        subtitle.setStyleSheet("color: #7f849c; font-style: italic;")
-        subtitle.setFont(QFont("Segoe UI", 10))
-        layout.addWidget(subtitle)
-
-        date_row = QHBoxLayout()
-        date_row.setSpacing(8)
-
-        from_label = QLabel("From:")
-        from_label.setStyleSheet("color: #cdd6f4;")
-        from_label.setFont(QFont("Segoe UI", 10))
-        date_row.addWidget(from_label)
+        heading = QHBoxLayout()
+        title_block = QVBoxLayout()
+        title = QLabel("Score change")
+        title.setFont(QFont("Segoe UI", 15, QFont.Weight.Bold))
+        title.setStyleSheet("color: #cdd6f4;")
+        title_block.addWidget(title)
+        subtitle = QLabel("Compares your first and latest attempts inside the selected range.")
+        subtitle.setObjectName("mutedText")
+        title_block.addWidget(subtitle)
+        heading.addLayout(title_block)
+        heading.addStretch()
+        heading.addWidget(QLabel("FROM"))
         self.date_from = QDateEdit()
         self.date_from.setCalendarPopup(True)
         self.date_from.setDate(QDate.currentDate().addMonths(-1))
-        date_row.addWidget(self.date_from)
-
-        to_label = QLabel("To:")
-        to_label.setStyleSheet("color: #cdd6f4;")
-        to_label.setFont(QFont("Segoe UI", 10))
-        date_row.addWidget(to_label)
+        self.date_from.setFixedWidth(125)
+        heading.addWidget(self.date_from)
+        heading.addWidget(QLabel("TO"))
         self.date_to = QDateEdit()
         self.date_to.setCalendarPopup(True)
         self.date_to.setDate(QDate.currentDate())
-        date_row.addWidget(self.date_to)
+        self.date_to.setFixedWidth(125)
+        heading.addWidget(self.date_to)
+        compare = QPushButton("Update")
+        compare.setObjectName("primaryButton")
+        compare.clicked.connect(self._compare)
+        heading.addWidget(compare)
+        root.addLayout(heading)
 
-        compare_btn = QPushButton("Compare")
-        compare_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #89b4fa;
-                color: #1e1e2e;
-                border-radius: 6px;
-                padding: 8px 16px;
-                font-weight: bold;
-            }
-            QPushButton:hover { background-color: #74c7ec; }
-        """)
-        compare_btn.clicked.connect(self._compare)
-        date_row.addWidget(compare_btn)
+        self.summary = QLabel()
+        self.summary.setStyleSheet("color: #94e2d5; font-weight: bold;")
+        root.addWidget(self.summary)
 
-        date_row.addStretch()
-        layout.addLayout(date_row)
-
-        self.chart_frame = QFrame()
-        self.chart_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.chart_frame.setStyleSheet("""
-            QFrame {
-                background-color: #1e1e2e;
-                border-radius: 10px;
-                padding: 16px;
-                border: 1px solid #313244;
-            }
-        """)
+        self.chart_frame = self._card()
         self.chart_layout = QVBoxLayout(self.chart_frame)
-        layout.addWidget(self.chart_frame, stretch=2)
+        self.chart_layout.setContentsMargins(16, 12, 16, 12)
+        self.chart_layout.setSpacing(6)
+        root.addWidget(self.chart_frame)
 
-        self.results_frame = QFrame()
-        self.results_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.results_frame.setStyleSheet("""
-            QFrame {
-                background-color: #1e1e2e;
-                border-radius: 10px;
-                padding: 16px;
-                border: 1px solid #313244;
-            }
-        """)
-        self.results_layout = QVBoxLayout(self.results_frame)
+        self.results_frame = self._card()
+        results = QVBoxLayout(self.results_frame)
+        results.setContentsMargins(14, 12, 14, 14)
+        results.setSpacing(8)
+        table_title = QLabel("Scenario details")
+        table_title.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
+        table_title.setStyleSheet("color: #cdd6f4;")
+        results.addWidget(table_title)
+        self.table = QTableWidget(0, 6)
+        self.table.setHorizontalHeaderLabels(["Scenario", "Early avg", "Recent avg", "Best", "Change", "Runs"])
+        self.table.setAlternatingRowColors(True)
+        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table.verticalHeader().hide()
+        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        for column in range(1, 6):
+            self.table.horizontalHeader().setSectionResizeMode(column, QHeaderView.ResizeMode.ResizeToContents)
+        results.addWidget(self.table)
+        root.addWidget(self.results_frame, 1)
 
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll_content = QWidget()
-        self.scroll_layout = QVBoxLayout(scroll_content)
-        self.scroll_layout.setSpacing(14)
-        self.scroll_layout.addWidget(self.chart_frame)
-        self.scroll_layout.addWidget(self.results_frame)
-        self.scroll_layout.addStretch()
-        scroll.setWidget(scroll_content)
-        layout.addWidget(scroll, stretch=1)
-
-        self._compare()
+        self.empty_frame = self._card()
+        empty_layout = QVBoxLayout(self.empty_frame)
+        empty_layout.setContentsMargins(20, 28, 20, 28)
+        self.empty_title = QLabel()
+        self.empty_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_title.setFont(QFont("Segoe UI", 13, QFont.Weight.Bold))
+        self.empty_title.setStyleSheet("color: #cdd6f4;")
+        empty_layout.addWidget(self.empty_title)
+        self.empty_note = QLabel()
+        self.empty_note.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_note.setWordWrap(True)
+        self.empty_note.setObjectName("mutedText")
+        empty_layout.addWidget(self.empty_note)
+        root.addWidget(self.empty_frame)
+        root.addStretch()
 
     def _compare(self):
-        for i in range(self.chart_layout.count()):
-            item = self.chart_layout.itemAt(i)
-            if item and item.widget():
-                item.widget().deleteLater()
-        for i in range(self.results_layout.count()):
-            item = self.results_layout.takeAt(0)
-            if item and item.widget():
-                item.widget().deleteLater()
-
+        self._clear_layout(self.chart_layout)
         start = self.date_from.date().toString("yyyy-MM-dd") + "T00:00:00"
         end = self.date_to.date().toString("yyyy-MM-dd") + "T23:59:59"
+        rows = build_comparison_rows(self.db.get_scores_in_range(start, end))
 
-        scores = self.db.get_scores_in_range(start, end)
-        benchmarks = self.db.get_all_benchmarks()
-
-        bench_data = {}
-        for b in benchmarks:
-            bench_scores = [s for s in scores if s.benchmark_name == b]
-            if bench_scores:
-                avg = sum(s.score for s in bench_scores) / len(bench_scores)
-                best = max(s.score for s in bench_scores)
-                first = bench_scores[0].score
-                bench_data[b] = {"avg": avg, "best": best, "first": first, "count": len(bench_scores)}
-
-        if not bench_data:
-            no_data = QLabel("No scores found in the selected date range")
-            no_data.setStyleSheet("color: #7f849c; font-style: italic;")
-            no_data.setFont(QFont("Segoe UI", 10))
-            self.chart_layout.addWidget(no_data)
+        if not rows:
+            self.summary.clear()
+            self.chart_frame.hide()
+            self.results_frame.hide()
+            self.empty_frame.show()
+            self.empty_title.setText("No scores in this range")
+            self.empty_note.setText("Choose a wider date range or sync your Kovaak's scores, then update the comparison.")
             return
 
-        fig = Figure(figsize=(10, 4), dpi=100)
-        fig.patch.set_facecolor("#1e1e2e")
+        self.empty_frame.hide()
+        self.results_frame.show()
+        comparable = [row for row in rows if row["delta_pct"] is not None]
+        improved = sum(row["delta_pct"] > 0 for row in comparable)
+        declined = sum(row["delta_pct"] < 0 for row in comparable)
+        self.summary.setText(f"{len(rows)} scenarios  •  {len(comparable)} with a trend  •  {improved} improved  •  {declined} declined")
+        self._populate_table(rows)
+
+        if not comparable:
+            self.chart_frame.hide()
+            return
+        self.chart_frame.show()
+        title = QLabel("Largest percentage changes")
+        title.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
+        title.setStyleSheet("color: #cdd6f4;")
+        self.chart_layout.addWidget(title)
+        note = QLabel("Percentage change makes scenarios with different scoring scales comparable.")
+        note.setObjectName("mutedText")
+        self.chart_layout.addWidget(note)
+
+        shown = sorted(comparable, key=lambda row: abs(row["delta_pct"]), reverse=True)[:10]
+        shown.reverse()
+        fig = Figure(figsize=(10, max(2.4, len(shown) * 0.38)), dpi=100)
+        fig.patch.set_facecolor("#11192b")
+        fig.subplots_adjust(left=0.24, right=0.97, top=0.95, bottom=0.20)
         ax = fig.add_subplot(111)
-        ax.set_facecolor("#181825")
-
-        names = list(bench_data.keys())[:12]
-        avgs = [bench_data[n]["avg"] for n in names]
-        bests = [bench_data[n]["best"] for n in names]
-
-        x = range(len(names))
-        ax.bar(x, avgs, color="#89b4fa", alpha=0.7, label="Average", width=0.4)
-        ax.bar([i + 0.4 for i in x], bests, color="#a6e3a1", alpha=0.7, label="Best", width=0.4)
-
-        ax.set_xticks([i + 0.2 for i in x])
-        ax.set_xticklabels([n[:15] for n in names], rotation=45, ha="right", fontsize=9)
-        ax.set_ylabel("Score", color="#a6adc8", fontsize=10)
-        ax.tick_params(colors="#a6adc8", labelsize=9)
-        ax.spines["bottom"].set_color("#45475a")
-        ax.spines["left"].set_color("#45475a")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.legend(facecolor="#1e1e2e", edgecolor="#45475a", labelcolor="#cdd6f4")
-        ax.grid(True, alpha=0.15, color="#585b70")
-
+        ax.set_facecolor("#11192b")
+        values = [row["delta_pct"] for row in shown]
+        labels = [self._short_name(row["name"]) for row in shown]
+        colors = ["#a6e3a1" if value >= 0 else "#f38ba8" for value in values]
+        bars = ax.barh(range(len(shown)), values, color=colors, alpha=0.85, height=0.62)
+        ax.set_yticks(range(len(shown)), labels)
+        ax.axvline(0, color="#7f849c", linewidth=0.8)
+        ax.set_xlabel("Change (%)", color="#a6adc8", fontsize=9)
+        ax.tick_params(colors="#a6adc8", labelsize=8)
+        ax.spines[:].set_visible(False)
+        ax.grid(axis="x", alpha=0.12, color="#585b70")
+        ax.bar_label(bars, labels=[f"{value:+.1f}%" for value in values], padding=4, color="#cdd6f4", fontsize=8)
         canvas = FigureCanvasQTAgg(fig)
+        canvas.setMinimumHeight(max(240, len(shown) * 38))
+        canvas.setMaximumHeight(max(270, len(shown) * 42))
         self.chart_layout.addWidget(canvas)
 
-        title = QLabel("Detailed Comparison")
-        title.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))
-        title.setStyleSheet("color: #cdd6f4;")
-        self.results_layout.addWidget(title)
+    def _populate_table(self, rows):
+        self.table.setRowCount(len(rows))
+        for row_index, data in enumerate(rows):
+            change = "Baseline only" if data["delta_pct"] is None else f"{data['delta_pct']:+.1f}%"
+            values = [
+                data["name"], f"{data['early']:.1f}", f"{data['recent']:.1f}",
+                f"{data['best']:.1f}", change, str(data["count"]),
+            ]
+            for column, value in enumerate(values):
+                item = QTableWidgetItem(value)
+                if column > 0:
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+                if column == 4 and data["delta_pct"] is not None:
+                    item.setForeground(QColor("#a6e3a1" if data["delta_pct"] >= 0 else "#f38ba8"))
+                self.table.setItem(row_index, column, item)
+        self.table.resizeRowsToContents()
 
-        for name in sorted(bench_data.keys()):
-            d = bench_data[name]
-            row = QHBoxLayout()
-            row.setSpacing(12)
+    @staticmethod
+    def _short_name(name):
+        return name if len(name) <= 28 else name[:27] + "…"
 
-            name_lbl = QLabel(name[:25])
-            name_lbl.setStyleSheet("color: #cdd6f4; font-weight: bold;")
-            name_lbl.setFont(QFont("Segoe UI", 10))
-            name_lbl.setFixedWidth(200)
-            row.addWidget(name_lbl)
+    @staticmethod
+    def _clear_layout(layout):
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
 
-            avg_lbl = QLabel(f"Avg: {d['avg']:.0f}")
-            avg_lbl.setStyleSheet("color: #89b4fa;")
-            avg_lbl.setFont(QFont("Segoe UI", 10))
-            row.addWidget(avg_lbl)
-
-            best_lbl = QLabel(f"Best: {d['best']:.0f}")
-            best_lbl.setStyleSheet("color: #a6e3a1;")
-            best_lbl.setFont(QFont("Segoe UI", 10))
-            row.addWidget(best_lbl)
-
-            delta = d["avg"] - d["first"]
-            delta_color = "#a6e3a1" if delta >= 0 else "#f38ba8"
-            delta_lbl = QLabel(f"Delta: {delta:+.0f}")
-            delta_lbl.setStyleSheet(f"color: {delta_color};")
-            delta_lbl.setFont(QFont("Segoe UI", 10))
-            row.addWidget(delta_lbl)
-
-            cnt_lbl = QLabel(f"Runs: {d['count']}")
-            cnt_lbl.setStyleSheet("color: #a6adc8;")
-            cnt_lbl.setFont(QFont("Segoe UI", 10))
-            row.addWidget(cnt_lbl)
-
-            row.addStretch()
-            self.results_layout.addLayout(row)
+    @staticmethod
+    def _card():
+        frame = QFrame()
+        frame.setObjectName("toolCard")
+        frame.setStyleSheet("QFrame#toolCard { background: #11192b; border: 1px solid #263149; border-radius: 9px; }")
+        return frame
 
     def update_profile(self, profile):
         self.profile = profile

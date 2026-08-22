@@ -1,16 +1,15 @@
 import json
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QFrame, QTextEdit, QMessageBox, QLineEdit,
-    QComboBox, QListWidget, QListWidgetItem, QSplitter
-)
+
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import (
+    QAbstractItemView, QComboBox, QFrame, QHBoxLayout, QLabel, QLineEdit, QListWidget,
+    QMessageBox, QPushButton, QSplitter, QVBoxLayout, QWidget,
+)
 
+from core.recommender import SCENARIOS, get_installed_scenario_names
 from models.database import Database
 from models.score import PlayerProfile
-from core.recommender import generate_routine, get_scenario_info, SCENARIOS, SCENARIO_MAP, get_installed_scenario_names
-from models.config import TrainingConfig, FOCUS_OPTIONS
 
 
 class RoutineBuilder(QWidget):
@@ -24,169 +23,196 @@ class RoutineBuilder(QWidget):
         self._build_ui()
 
     def _build_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(12, 12, 12, 12)
+        root.setSpacing(12)
 
-        header = QLabel("Custom Routine Builder")
-        header.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
-        header.setStyleSheet("color: white;")
-        layout.addWidget(header)
-
-        subtitle = QLabel("Manually build your own routine by selecting scenarios")
-        subtitle.setStyleSheet("color: #888; font-style: italic;")
-        layout.addWidget(subtitle)
+        top = QHBoxLayout()
+        title_block = QVBoxLayout()
+        title = QLabel("Routine builder")
+        title.setFont(QFont("Segoe UI", 15, QFont.Weight.Bold))
+        title.setStyleSheet("color: #cdd6f4;")
+        title_block.addWidget(title)
+        subtitle = QLabel("Create a reusable manual routine. Each scenario is a focused 3-minute block.")
+        subtitle.setObjectName("mutedText")
+        title_block.addWidget(subtitle)
+        top.addLayout(title_block)
+        top.addStretch()
+        self.routine_summary = QLabel("0 blocks  •  0 min")
+        self.routine_summary.setStyleSheet("color: #94e2d5; font-weight: bold;")
+        top.addWidget(self.routine_summary)
+        root.addLayout(top)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
-
-        left = QWidget()
-        left_layout = QVBoxLayout(left)
-        left_layout.setContentsMargins(0, 0, 0, 0)
-
-        search_row = QHBoxLayout()
-        self.search = QLineEdit()
-        self.search.setPlaceholderText("Search scenarios...")
-        self.search.setStyleSheet(
-            "QLineEdit { background-color: #1a1a2a; color: white; border-radius: 4px; padding: 6px; border: 1px solid #333; }"
-        )
-        self.search.textChanged.connect(self._filter_list)
-        search_row.addWidget(self.search)
-
-        self.filter_cat = QComboBox()
-        self.filter_cat.addItems(["All", "Clicking", "Tracking", "Switching"])
-        self.filter_cat.setStyleSheet(
-            "QComboBox { background-color: #1a1a2a; color: white; border-radius: 4px; padding: 5px; }"
-            "QComboBox::drop-down { border: none; }"
-            "QComboBox QAbstractItemView { background-color: #1a1a2a; color: white; }"
-        )
-        self.filter_cat.currentTextChanged.connect(self._filter_list)
-        search_row.addWidget(self.filter_cat)
-        left_layout.addLayout(search_row)
-
-        self.available_list = QListWidget()
-        self.available_list.setStyleSheet(
-            "QListWidget { background-color: #1a1a2a; color: white; border-radius: 4px; border: 1px solid #333; }"
-            "QListWidget::item { padding: 4px 8px; }"
-            "QListWidget::item:selected { background-color: #4a9eff; }"
-        )
-        self.available_list.itemDoubleClicked.connect(self._add_scenario)
-        left_layout.addWidget(self.available_list)
-
-        add_btn = QPushButton("Add Selected ->")
-        add_btn.clicked.connect(self._add_selected)
-        left_layout.addWidget(add_btn)
-
-        splitter.addWidget(left)
-
-        right = QWidget()
-        right_layout = QVBoxLayout(right)
-        right_layout.setContentsMargins(0, 0, 0, 0)
-
-        right_layout.addWidget(QLabel("Current Routine:"))
-
-        self.routine_list = QListWidget()
-        self.routine_list.setStyleSheet(
-            "QListWidget { background-color: #1a1a2a; color: white; border-radius: 4px; border: 1px solid #333; }"
-            "QListWidget::item { padding: 4px 8px; }"
-            "QListWidget::item:selected { background-color: #ff9944; }"
-        )
-        self.routine_list.itemDoubleClicked.connect(self._remove_scenario)
-        right_layout.addWidget(self.routine_list)
-
-        btn_row = QHBoxLayout()
-        remove_btn = QPushButton("<- Remove Selected")
-        remove_btn.clicked.connect(self._remove_selected)
-        btn_row.addWidget(remove_btn)
-
-        clear_btn = QPushButton("Clear All")
-        clear_btn.clicked.connect(self._clear_routine)
-        btn_row.addWidget(clear_btn)
-        right_layout.addLayout(btn_row)
-
-        save_row = QHBoxLayout()
-        self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Routine name...")
-        self.name_input.setStyleSheet(
-            "QLineEdit { background-color: #1a1a2a; color: white; border-radius: 4px; padding: 6px; border: 1px solid #333; }"
-        )
-        save_row.addWidget(self.name_input)
-
-        save_btn = QPushButton("Save Routine")
-        save_btn.setStyleSheet(
-            "QPushButton { background-color: #44ff88; color: #111; border-radius: 4px; padding: 8px; font-weight: bold; }"
-            "QPushButton:hover { background-color: #33ee77; }"
-        )
-        save_btn.clicked.connect(self._save_routine)
-        save_row.addWidget(save_btn)
-        right_layout.addLayout(save_row)
-
-        splitter.addWidget(right)
-        splitter.setSizes([400, 400])
-        layout.addWidget(splitter, stretch=1)
-
+        splitter.setChildrenCollapsible(False)
+        splitter.addWidget(self._build_library_panel())
+        splitter.addWidget(self._build_routine_panel())
+        splitter.setSizes([580, 480])
+        root.addWidget(splitter, 1)
         self._populate_available()
 
-    def _populate_available(self):
-        self.available_list.clear()
-        installed = {name.casefold() for name in get_installed_scenario_names()}
-        for s in SCENARIOS:
-            inst = " [INSTALLED]" if s["name"].casefold() in installed else ""
-            self.available_list.addItem(f"{s['name']} ({s['category']}/{s['subcategory']}){inst}")
+    def _build_library_panel(self):
+        panel = self._card()
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(14, 12, 14, 14)
+        layout.setSpacing(9)
+        heading = QHBoxLayout()
+        heading.addWidget(self._section("Scenario library"))
+        heading.addStretch()
+        self.available_count = QLabel()
+        self.available_count.setObjectName("mutedText")
+        heading.addWidget(self.available_count)
+        layout.addLayout(heading)
 
-    def _filter_list(self):
-        text = self.search.text().lower()
-        cat = self.filter_cat.currentText()
+        filters = QHBoxLayout()
+        self.search = QLineEdit()
+        self.search.setPlaceholderText("Search by scenario name…")
+        self.search.textChanged.connect(self._filter_list)
+        filters.addWidget(self.search, 1)
+        self.filter_cat = QComboBox()
+        self.filter_cat.addItems(["All skills", "Clicking", "Tracking", "Switching"])
+        self.filter_cat.setFixedWidth(140)
+        self.filter_cat.currentTextChanged.connect(self._filter_list)
+        filters.addWidget(self.filter_cat)
+        layout.addLayout(filters)
+
+        self.available_list = QListWidget()
+        self.available_list.setAlternatingRowColors(True)
+        self.available_list.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.available_list.itemDoubleClicked.connect(self._add_scenario)
+        layout.addWidget(self.available_list, 1)
+        add = QPushButton("Add selected  →")
+        add.setObjectName("primaryButton")
+        add.clicked.connect(self._add_selected)
+        layout.addWidget(add)
+        return panel
+
+    def _build_routine_panel(self):
+        panel = self._card()
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(14, 12, 14, 14)
+        layout.setSpacing(9)
+        layout.addWidget(self._section("Current routine"))
+        helper = QLabel("Double-click an item to remove it.")
+        helper.setObjectName("mutedText")
+        layout.addWidget(helper)
+        self.routine_list = QListWidget()
+        self.routine_list.setAlternatingRowColors(True)
+        self.routine_list.itemDoubleClicked.connect(self._remove_scenario)
+        layout.addWidget(self.routine_list, 1)
+
+        actions = QHBoxLayout()
+        remove = QPushButton("Remove selected")
+        remove.setObjectName("secondaryButton")
+        remove.clicked.connect(self._remove_selected)
+        actions.addWidget(remove)
+        clear = QPushButton("Clear")
+        clear.setObjectName("secondaryButton")
+        clear.clicked.connect(self._clear_routine)
+        actions.addWidget(clear)
+        layout.addLayout(actions)
+
+        save = QHBoxLayout()
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Routine name")
+        save.addWidget(self.name_input, 1)
+        save_btn = QPushButton("Save routine")
+        save_btn.setObjectName("primaryButton")
+        save_btn.clicked.connect(self._save_routine)
+        save.addWidget(save_btn)
+        layout.addLayout(save)
+        return panel
+
+    def _populate_available(self):
+        self._filter_list()
+
+    def _filter_list(self, *_args):
+        text = self.search.text().casefold()
+        selected_category = self.filter_cat.currentText()
         installed = {name.casefold() for name in get_installed_scenario_names()}
         self.available_list.clear()
-        for s in SCENARIOS:
-            if text and text not in s["name"].lower():
+        count = 0
+        for scenario in SCENARIOS:
+            if text and text not in scenario["name"].casefold():
                 continue
-            if cat != "All" and s.get("category", "") != cat:
+            if selected_category != "All skills" and scenario.get("category", "") != selected_category:
                 continue
-            inst = " [INSTALLED]" if s["name"].casefold() in installed else ""
-            self.available_list.addItem(f"{s['name']} ({s['category']}/{s['subcategory']}){inst}")
+            installed_label = "  •  installed" if scenario["name"].casefold() in installed else ""
+            self.available_list.addItem(
+                f"{scenario['name']}    {scenario['category']} / {scenario['subcategory']}{installed_label}"
+            )
+            count += 1
+        self.available_count.setText(f"{count} shown")
 
     def _add_scenario(self, item):
-        name = item.text().split(" (")[0]
-        if name not in [e["scenario"] for e in self.custom_routine]:
+        name = item.text().split("    ")[0]
+        if name not in [entry["scenario"] for entry in self.custom_routine]:
             self.custom_routine.append({"scenario": name, "duration_min": 3})
-            self.routine_list.addItem(f"{name} (3min)")
+            self.routine_list.addItem(f"{len(self.custom_routine)}.  {name}    3 min")
+            self._update_summary()
 
     def _add_selected(self):
         for item in self.available_list.selectedItems():
             self._add_scenario(item)
 
     def _remove_scenario(self, item):
-        name = item.text().split(" (")[0]
-        self.custom_routine = [e for e in self.custom_routine if e["scenario"] != name]
-        self.routine_list.takeItem(self.routine_list.row(item))
+        row = self.routine_list.row(item)
+        if 0 <= row < len(self.custom_routine):
+            self.custom_routine.pop(row)
+        self.routine_list.takeItem(row)
+        self._rebuild_routine_list()
 
     def _remove_selected(self):
-        for item in self.routine_list.selectedItems():
+        for item in list(self.routine_list.selectedItems()):
             self._remove_scenario(item)
 
     def _clear_routine(self):
         self.custom_routine.clear()
         self.routine_list.clear()
+        self._update_summary()
+
+    def _rebuild_routine_list(self):
+        self.routine_list.clear()
+        for index, entry in enumerate(self.custom_routine, 1):
+            self.routine_list.addItem(f"{index}.  {entry['scenario']}    {entry.get('duration_min', 3)} min")
+        self._update_summary()
+
+    def _update_summary(self):
+        minutes = sum(entry.get("duration_min", 3) for entry in self.custom_routine)
+        self.routine_summary.setText(f"{len(self.custom_routine)} blocks  •  {minutes} min")
 
     def _save_routine(self):
         name = self.name_input.text().strip()
         if not name:
-            QMessageBox.warning(self, "Error", "Enter a routine name")
+            QMessageBox.warning(self, "Routine name needed", "Enter a name for this routine.")
             return
         if not self.custom_routine:
-            QMessageBox.warning(self, "Error", "Add at least one scenario")
+            QMessageBox.warning(self, "Routine is empty", "Add at least one scenario first.")
             return
-
         routine_data = {
             "name": name,
             "exercises": self.custom_routine,
             "focus": "custom",
-            "session_minutes": sum(e.get("duration_min", 3) for e in self.custom_routine),
+            "session_minutes": sum(entry.get("duration_min", 3) for entry in self.custom_routine),
         }
-
         self.db.save_routine(name, json.dumps(routine_data))
         self.name_input.clear()
-        QMessageBox.information(self, "Saved", f"Routine '{name}' saved!")
+        QMessageBox.information(self, "Routine saved", f"{name} is ready to use.")
+
+    @staticmethod
+    def _card():
+        frame = QFrame()
+        frame.setObjectName("toolCard")
+        frame.setStyleSheet("QFrame#toolCard { background: #11192b; border: 1px solid #263149; border-radius: 9px; }")
+        return frame
+
+    @staticmethod
+    def _section(text):
+        label = QLabel(text)
+        label.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
+        label.setStyleSheet("color: #cdd6f4;")
+        return label
 
     def update_profile(self, profile):
         self.profile = profile
+        self._filter_list()

@@ -1,17 +1,17 @@
-# Aim Companion 1.0.3
+# Aim Companion 1.0.4
 
-This release rebuilds Progress around useful benchmark states instead of empty charts.
+This release rebuilds every Training Tools tab for clarity and useful full-screen behavior.
 
 ## What changed
 
-- Replaced the oversized controls and panels with a compact benchmark workspace.
-- Added full-width summaries for attempts, best, latest, change, and the next official Voltaic target.
-- Added a clear baseline action when a benchmark has no recorded attempts.
-- Replaced single-point timelines with a useful baseline-to-next-rank progress view.
-- Only shows score and energy charts when enough data exists to form a real trend.
-- Fixed chart date bounds, title clipping, category colors, and sparse-data whitespace.
-- Added a compact recent-attempt history and stable recent-average comparison.
+- Redesigned Sessions with a compact logger, automatic-training explanation, and a proper empty state.
+- Rebuilt Calendar as a responsive full-width month view with training-day and monthly summaries.
+- Fixed the broken Compare chart and replaced misleading raw-score bars with per-scenario percentage change.
+- Added clear early average, recent average, best, change, and run-count comparison columns.
+- Redesigned Routine Builder into readable scenario-library and current-routine panels with live duration totals.
+- Redesigned Sensitivity as a compact two-column converter that recalculates automatically.
+- Added one-click sensitivity copying and readable conversions for every supported game.
 
-Existing scores, settings, and training history are preserved during installation.
+Existing scores, settings, routines, and training history are preserved during installation.
 This build is not Authenticode-signed; use the matching `.sha256` asset to verify
 installer integrity.

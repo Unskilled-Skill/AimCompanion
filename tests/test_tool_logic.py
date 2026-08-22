@@ -1,10 +1,12 @@
 import unittest
+import tempfile
 from datetime import datetime, timedelta
 
 from models.score import Score
 from ui.comparison import build_comparison_rows
 from ui.dashboard import DashboardWidget
 from ui.sensitivity import convert_sensitivity
+from ui.routines import prepare_scenario_launch
 
 
 def score(name, value, day):
@@ -43,6 +45,18 @@ class ToolLogicTests(unittest.TestCase):
         converted, _ = convert_sensitivity(1600, "Valorant", 0.28, "Kovaak's")
         restored, _ = convert_sensitivity(1600, "Kovaak's", converted, "Valorant")
         self.assertAlmostEqual(restored, 0.28, places=6)
+
+    def test_online_scenario_launch_does_not_require_local_file(self):
+        recommendation = {
+            "scenario": "MicroshotSpeed",
+            "runs": 3,
+            "estimated_minutes": 3,
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = prepare_scenario_launch(recommendation, [directory], directory)
+        self.assertIsNone(path)
+        self.assertFalse(recommendation["installed"])
+        self.assertEqual(recommendation["runs"], 3)
 
 
 if __name__ == "__main__":

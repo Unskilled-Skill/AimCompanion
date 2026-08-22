@@ -30,6 +30,16 @@ from core.training_intelligence import (
 KOVAAKS_PLAYLIST_DIR = _detect_kovaaks_playlists()
 
 
+def prepare_scenario_launch(recommendation, scenario_dirs, stats_dir):
+    """Enrich launch timing without requiring online scenarios to exist locally."""
+    scenario_path = find_scenario_file(recommendation["scenario"], scenario_dirs)
+    recommendation.update(quick_block_plan(
+        recommendation["scenario"], scenario_dirs, stats_dir,
+    ))
+    recommendation["installed"] = bool(scenario_path)
+    return scenario_path
+
+
 class RoutineWidget(QWidget):
     def __init__(
         self, profile: PlayerProfile, db=None, notifier=None,
@@ -662,13 +672,13 @@ class RoutineWidget(QWidget):
     def _launch_quick_scenario(self, recommendation):
         if hasattr(self, "stop_quick_btn"):
             self.stop_quick_btn.setVisible(True)
-        scenario_path = find_scenario_file(
-            recommendation["scenario"], self.config.get_scenario_dirs()
+        scenario_path = prepare_scenario_launch(
+            recommendation, self.config.get_scenario_dirs(), self.config.get_stats_dir()
         )
-        if not scenario_path:
-            self._begin_scenario_install(recommendation)
-            return
-        self._apply_downloaded_scenario_data(recommendation)
+        # Online scenarios are commonly streamed by Kovaak's and may never be
+        # written to SaveGames/Scenarios as a .sce file. A local file improves
+        # timing accuracy, but it must never gate launching the official deep link.
+        self._run_tracker.target_runs = recommendation["runs"]
         self._show_challenge_mode_notice()
         if self._quick_session_stopped:
             self._quick_session_stopped = False
@@ -689,11 +699,18 @@ class RoutineWidget(QWidget):
             f"{recommendation['runs']} runs detected"
         )
         self.quick_run_status.setStyleSheet("color: #89b4fa; font-weight: bold;")
-        self.quick_launch_status.setText(
-            "Scenario selected  ·  Keep Kovaak's FREEPLAY/CHALLENGE toggle on CHALLENGE."
-            if launched else
-            "Steam could not open it. Copy the name and search inside Kovaak's."
-        )
+        if launched and scenario_path:
+            launch_text = (
+                "Scenario selected  ·  Keep Kovaak's FREEPLAY/CHALLENGE toggle on CHALLENGE."
+            )
+        elif launched:
+            launch_text = (
+                "Online scenario requested  ·  Kovaak's will download and load it automatically. "
+                "Keep the mode on CHALLENGE."
+            )
+        else:
+            launch_text = "Steam could not open it. Copy the name and search inside Kovaak's."
+        self.quick_launch_status.setText(launch_text)
         self.quick_launch_status.setStyleSheet(
             "color: #94e2d5;" if launched else "color: #f38ba8;"
         )
@@ -1073,7 +1090,7 @@ class RoutineWidget(QWidget):
         status = QLabel(
             "Downloaded  ·  exact scenario timing available"
             if recommendation["installed"] else
-            "Download required before play  ·  the app will wait and verify it"
+            "Online scenario  ·  Kovaak's will download and load it when you press Start"
         )
         status.setStyleSheet(
             "color: #94e2d5;" if recommendation["installed"] else "color: #f9e2af;"

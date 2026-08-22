@@ -13,7 +13,8 @@ from core.recommender import (
 )
 from models.config import (
     TrainingConfig, build_routine, _detect_kovaaks_stats, score_scenario,
-    get_warmup_scenarios, _scenario_difficulty,
+    get_warmup_scenarios, _scenario_difficulty, _detect_kovaaks_install,
+    _steam_library_roots,
 )
 from models.database import Database
 from models.score import BenchmarkInfo, CategoryScore, PlayerProfile, SubcategoryScore
@@ -180,6 +181,26 @@ class RecommenderTests(unittest.TestCase):
             "FPSAimTrainer", "stats",
         )
         self.assertEqual(_detect_kovaaks_stats(savegames), expected)
+
+    def test_steam_library_file_is_used_for_zero_click_detection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            steam = os.path.join(directory, "Steam")
+            library = os.path.join(directory, "Games")
+            os.makedirs(os.path.join(steam, "steamapps"))
+            expected = os.path.join(
+                library, "steamapps", "common", "FPSAimTrainer",
+                "FPSAimTrainer", "Saved", "SaveGames",
+            )
+            os.makedirs(expected)
+            escaped_library = library.replace("\\", "\\\\")
+            with open(
+                os.path.join(steam, "steamapps", "libraryfolders.vdf"),
+                "w", encoding="utf-8",
+            ) as file:
+                file.write(f'"libraryfolders" {{ "0" {{ "path" "{escaped_library}" }} }}')
+            roots = _steam_library_roots(steam)
+            self.assertIn(os.path.normpath(library), roots)
+            self.assertEqual(_detect_kovaaks_install(roots), expected)
 
     def test_live_tracker_counts_only_new_matching_kovaaks_runs(self):
         with tempfile.TemporaryDirectory() as stats_dir:

@@ -1,5 +1,5 @@
 #define MyAppName "Aim Companion"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "Unskilled-Skill"
 #define MyAppURL "https://github.com/Unskilled-Skill/AimCompanion"
 #define MyAppExeName "AimCompanion.exe"
@@ -50,4 +50,3 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
-

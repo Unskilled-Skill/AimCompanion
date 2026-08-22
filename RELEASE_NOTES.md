@@ -1,25 +1,23 @@
-# Aim Companion 1.0.0
+# Aim Companion 1.0.1
 
-The first public Windows release of Aim Companion.
+Aim Companion now starts with zero mandatory setup.
 
-## Highlights
+## What changed
 
-- Three-to-five-minute adaptive training blocks for training throughout the day.
-- Well-rounded rotation across all nine Voltaic benchmark skills.
-- Weakness weighting without allowing stronger skills to fall out of maintenance.
-- Confidence-aware benchmark checks, next-rank targets, and skill trends.
-- Automatic difficulty progression from results and post-block feedback.
-- Fatigue detection and scenario effectiveness learning.
-- General, Apex Legends, Counter-Strike, and Valorant warm-up recommendations.
-- Automatic, SHA-256-verified updates through GitHub Releases.
+- Removed the blocking first-launch setup dialog.
+- Automatically reads Steam's configured library folders.
+- Automatically detects Kovaak's, its stats folder, and playlists across drives.
+- Automatically imports scores and starts with safe general-training defaults.
+- Settings remain available for optional overrides.
+- Score syncing now consistently respects an overridden Kovaak's folder.
+
+The adaptive nine-skill training engine, verified automatic updater, and all
+version 1.0 features remain included.
 
 ## Installation
 
-Download `AimCompanion-Setup.exe`, run it, and follow the installer. Aim Companion
-stores scores, settings, and training history separately in
-`%LOCALAPPDATA%\AimCompanion`, so upgrades preserve user data.
+Download `AimCompanion-Setup.exe` and run it. Existing scores, settings, and
+training history in `%LOCALAPPDATA%\AimCompanion` are preserved.
 
-This initial build is not Authenticode-signed, so Windows SmartScreen may show an
-Unknown Publisher warning. The matching `.sha256` file can be used to verify the
-installer before running it.
-
+This build is not Authenticode-signed, so Windows SmartScreen may show an Unknown
+Publisher warning. The matching `.sha256` file verifies installer integrity.

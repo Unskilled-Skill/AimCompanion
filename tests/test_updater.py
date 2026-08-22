@@ -27,6 +27,25 @@ class UpdaterTests(unittest.TestCase):
         self.assertEqual(release["version"], "1.1.0")
         self.assertEqual(release["expected_hash"], digest)
 
+    def test_first_launch_completes_without_blocking_dialog(self):
+        from ui.main_window import MainWindow
+
+        class SettingsDatabase:
+            def __init__(self):
+                self.values = {}
+
+            def get_settings_value(self, key):
+                return self.values.get(key)
+
+            def set_settings_value(self, key, value):
+                self.values[key] = value
+
+        window_shell = type("WindowShell", (), {"db": SettingsDatabase()})()
+        MainWindow._run_first_setup(window_shell)
+        self.assertEqual(
+            window_shell.db.get_settings_value("onboarding_complete"), "1"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

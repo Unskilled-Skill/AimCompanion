@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import re
 from dataclasses import dataclass, asdict
 from core.paths import writable_path
 from core.warmups import get_warmup_routine
@@ -43,23 +44,65 @@ SCENARIO_DURATION_MAP = {
 }
 
 KNOWN_DRIVES = ["C:", "D:", "E:", "F:", "G:", "H:", "I:", "J:"]
-KOVAAKS_RELATIVE = os.path.join(
-    "SteamLibrary", "steamapps", "common",
-    "FPSAimTrainer", "FPSAimTrainer", "Saved", "SaveGames"
+KOVAAKS_STEAM_RELATIVE = os.path.join(
+    "steamapps", "common", "FPSAimTrainer", "FPSAimTrainer", "Saved", "SaveGames"
 )
 
 
-def _detect_kovaaks_install() -> str:
-    for drive in KNOWN_DRIVES:
-        candidate = os.path.join(drive + os.sep, KOVAAKS_RELATIVE)
+def _registry_steam_root() -> str:
+    if os.name != "nt":
+        return ""
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Valve\Steam") as key:
+            return winreg.QueryValueEx(key, "SteamPath")[0]
+    except (OSError, ImportError):
+        return ""
+
+
+def _steam_library_roots(steam_root: str = None) -> list[str]:
+    roots = []
+    primary = steam_root or _registry_steam_root()
+    if primary:
+        roots.append(os.path.normpath(primary))
+        library_file = os.path.join(primary, "steamapps", "libraryfolders.vdf")
+        try:
+            with open(library_file, encoding="utf-8", errors="ignore") as file:
+                contents = file.read()
+            for value in re.findall(r'"(?:path|\d+)"\s+"([^"]+)"', contents):
+                roots.append(os.path.normpath(value.replace(r"\\", "\\")))
+        except OSError:
+            pass
+    if steam_root is None:
+        for drive in KNOWN_DRIVES:
+            roots.extend((
+                os.path.join(drive + os.sep, "SteamLibrary"),
+                os.path.join(drive + os.sep, "Steam"),
+            ))
+        roots.extend(filter(None, (
+            os.path.join(os.environ.get("PROGRAMFILES(X86)", ""), "Steam")
+            if os.environ.get("PROGRAMFILES(X86)") else "",
+            os.path.join(os.environ.get("PROGRAMFILES", ""), "Steam")
+            if os.environ.get("PROGRAMFILES") else "",
+        )))
+    unique = []
+    seen = set()
+    for root in roots:
+        key = os.path.normcase(os.path.abspath(root))
+        if key not in seen:
+            seen.add(key)
+            unique.append(root)
+    return unique
+
+
+def _detect_kovaaks_install(library_roots: list[str] = None) -> str:
+    roots = library_roots if library_roots is not None else _steam_library_roots()
+    for root in roots:
+        candidate = os.path.join(root, KOVAAKS_STEAM_RELATIVE)
         if os.path.isdir(candidate):
             return candidate
-    for drive in KNOWN_DRIVES:
-        candidate = os.path.join(drive + os.sep, "Steam", "steamapps", "common",
-                                 "FPSAimTrainer", "FPSAimTrainer", "Saved", "SaveGames")
-        if os.path.isdir(candidate):
-            return candidate
-    return os.path.join("G:", os.sep, KOVAAKS_RELATIVE)
+    fallback_root = roots[0] if roots else os.path.join("C:\\", "Program Files (x86)", "Steam")
+    return os.path.join(fallback_root, KOVAAKS_STEAM_RELATIVE)
 
 
 def _detect_kovaaks_playlists() -> str:

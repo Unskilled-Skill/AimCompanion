@@ -11,7 +11,7 @@ Download `AimCompanion-Setup.exe` from the
 then run the installer. The app installs for the current Windows user and does
 not require administrator access by default.
 
-Version 1.0.0 is not Authenticode-signed, so Windows may display an Unknown
+Current releases are not Authenticode-signed, so Windows may display an Unknown
 Publisher warning. Every release includes `AimCompanion-Setup.exe.sha256` for
 independent integrity verification.
 

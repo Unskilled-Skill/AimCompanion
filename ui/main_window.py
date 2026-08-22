@@ -377,7 +377,10 @@ class MainWindow(QMainWindow):
         self.refresh_btn.setEnabled(False)
         self.refresh_btn.setText("Syncing…")
         self.statusBar().showMessage("Checking for new Kovaak's scores…")
-        self._sync_worker = ScoreSyncWorker(self.db.db_path, parent=self)
+        from models.config import TrainingConfig
+        self._sync_worker = ScoreSyncWorker(
+            self.db.db_path, TrainingConfig.load().get_stats_dir(), parent=self
+        )
         self._sync_worker.completed.connect(self._on_sync_complete)
         self._sync_worker.failed.connect(self._on_sync_failed)
         self._sync_worker.start()
@@ -427,9 +430,9 @@ class MainWindow(QMainWindow):
     def _run_first_setup(self):
         if self.db.get_settings_value("onboarding_complete") == "1":
             return
-        dialog = SetupDialog(self, first_run=True)
-        if dialog.exec():
-            self.db.set_settings_value("onboarding_complete", "1")
+        # First launch is zero-click: defaults and Steam libraries are detected
+        # automatically. The Settings dialog remains available for overrides.
+        self.db.set_settings_value("onboarding_complete", "1")
 
     def _open_settings(self):
         dialog = SetupDialog(self)

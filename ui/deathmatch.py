@@ -22,6 +22,10 @@ class DeathmatchProgressWidget(QWidget):
         self.show_summary = show_summary
         self.show_source = show_source
         self.controls = {}
+        self.block_labels = {}
+        self.active_block_ids = {
+            block["id"] for block in DEATHMATCH_GUIDE["blocks"]
+        }
         self._build_ui()
         self.refresh()
 
@@ -61,6 +65,7 @@ class DeathmatchProgressWidget(QWidget):
             copy = QLabel(f"{block['title']}  |  {block['weapon']}")
             copy.setWordWrap(True)
             copy.setObjectName("mutedText")
+            self.block_labels[block["id"]] = copy
             row.addWidget(copy, 1)
             if block["matches"] == 1:
                 control = QCheckBox("Done")
@@ -123,10 +128,14 @@ class DeathmatchProgressWidget(QWidget):
         return {
             block_id: self._completed(control)
             for block_id, control in self.controls.items()
+            if block_id in self.active_block_ids
         }
 
     def _update_progress_label(self):
-        total = sum(block["matches"] for block in DEATHMATCH_GUIDE["blocks"])
+        total = sum(
+            block["matches"] for block in DEATHMATCH_GUIDE["blocks"]
+            if block["id"] in self.active_block_ids
+        )
         completed = sum(self._counts().values())
         self.progress_label.setText(
             f"Today: {completed} of {total} focused deathmatches complete"
@@ -154,6 +163,36 @@ class DeathmatchProgressWidget(QWidget):
             else:
                 control.setValue(value)
             control.blockSignals(False)
+        self._update_progress_label()
+
+    def set_plan(self, block_ids):
+        selected = set(block_ids or [])
+        valid = {
+            block["id"] for block in DEATHMATCH_GUIDE["blocks"]
+        }
+        self.active_block_ids = selected.intersection(valid) or valid
+        for block_id, control in self.controls.items():
+            visible = block_id in self.active_block_ids
+            control.setVisible(visible)
+            self.block_labels[block_id].setVisible(visible)
+        current = self.block_combo.currentData() or {}
+        current_id = current.get("id")
+        self.block_combo.blockSignals(True)
+        self.block_combo.clear()
+        for block in DEATHMATCH_GUIDE["blocks"]:
+            if block["id"] in self.active_block_ids:
+                self.block_combo.addItem(block["title"], block)
+        index = next(
+            (
+                item_index
+                for item_index in range(self.block_combo.count())
+                if self.block_combo.itemData(item_index).get("id") == current_id
+            ),
+            -1,
+        )
+        self.block_combo.setCurrentIndex(max(0, index))
+        self.block_combo.blockSignals(False)
+        self._update_details()
         self._update_progress_label()
 
     def reset(self):

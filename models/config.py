@@ -143,6 +143,8 @@ class TrainingConfig:
     automatic_updates: bool = True
     daily_fps_minutes: int = 120
     training_mode: str = "focused"
+    training_method: str = "adaptive_weakness"
+    preferred_routine: str = ""
 
     def save(self):
         directory = os.path.dirname(CONFIG_PATH) or "."
@@ -330,7 +332,7 @@ def build_routine(
     include_tracking: bool = True,
     day: int = 1,
 ) -> dict:
-    from core.recommender import SCENARIOS
+    from core.recommender import ROUTINES, SCENARIOS
     from core.scenario_files import installed_scenario_names
 
     session_minutes, warmup_minutes, training_minutes, cooldown_minutes = _allocate_budget(
@@ -345,16 +347,24 @@ def build_routine(
     installed = installed_scenario_names(config.get_scenario_dirs())
 
     best_routine = None
-    if config.game != "General / Fundamentals":
+    if config.preferred_routine:
+        best_routine = next(
+            (
+                routine for routine in ROUTINES
+                if routine.get("name") == config.preferred_routine
+            ),
+            None,
+        )
+    if best_routine is None and config.game != "General / Fundamentals":
         best_routine = _find_best_game_routine(
             config.game, weaknesses, profile.overall_tier,
             effective_focus, training_minutes,
         )
-    elif effective_focus == "weakest":
+    elif best_routine is None and effective_focus == "weakest":
         best_routine = _find_best_premade_routine(
             weaknesses, profile.overall_tier, training_minutes
         )
-    elif effective_focus == "balanced" and include_tracking:
+    elif best_routine is None and effective_focus == "balanced" and include_tracking:
         best_routine = _find_fundamental_routine(
             profile.overall_tier, training_minutes
         )

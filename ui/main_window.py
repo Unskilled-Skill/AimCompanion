@@ -97,6 +97,7 @@ class MainWindow(QMainWindow):
         self.import_view = DragDropImport(self.db, on_import_complete=self._refresh_scores)
         self.export_view = ExportWidget(self.profile, self.db, on_restore=self._rebuild_profile)
         self.aim_hub_view = AimHubWidget(self.profile, self.db)
+        self.aim_hub_view.train_requested.connect(self._start_training_method)
         self.tools_view = ToolsWidget(self.profile, self.db)
         self.skill_overview = SkillOverviewWidget(self.rank_profile, self.db)
 
@@ -106,7 +107,7 @@ class MainWindow(QMainWindow):
                 ("routines", "Today", "Complete one focused 3–5 minute block whenever you feel fresh", self.routine_view),
             ]),
             ("LEARN", [
-                ("aim_hub", "Training guide", "Technique, progression, and game transfer", self.aim_hub_view),
+                ("aim_hub", "Training methods", "Choose a philosophy and set up its session", self.aim_hub_view),
                 ("scenarios", "Scenario library", "Find official scenarios by skill", self.scenario_view),
             ]),
             ("REVIEW", [
@@ -325,6 +326,11 @@ class MainWindow(QMainWindow):
             f"{recommendation['scenario']} · {recommendation['runs']} "
             f"{'run' if recommendation['runs'] == 1 else 'runs'}"
         )
+
+    def _start_training_method(self, method_id):
+        self._navigate("routines")
+        self.routine_view.select_training_method(method_id)
+        self.statusBar().showMessage("Training method ready")
 
     def _update_tier_label(self):
         self.tier_label.setText(self.rank_profile.overall_tier)

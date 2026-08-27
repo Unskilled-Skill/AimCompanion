@@ -28,6 +28,7 @@ from core.training_intelligence import (
     build_adaptive_schedule, build_scenario_signals, build_skill_intelligence,
     build_weekly_plan, detect_fatigue,
 )
+from core.training_methods import METHOD_MAP, methods_for_mode
 from ui.deathmatch import DeathmatchProgressWidget
 
 KOVAAKS_PLAYLIST_DIR = _detect_kovaaks_playlists()
@@ -170,12 +171,14 @@ class RoutineWidget(QWidget):
     def _build_mode_selector(self):
         frame = QFrame()
         frame.setObjectName("trainingModes")
-        layout = QHBoxLayout(frame)
+        layout = QVBoxLayout(frame)
         layout.setContentsMargins(12, 8, 12, 8)
-        layout.setSpacing(4)
+        layout.setSpacing(8)
+        mode_row = QHBoxLayout()
+        mode_row.setSpacing(4)
         label = QLabel("TRAINING MODE")
         label.setObjectName("fieldLabel")
-        layout.addWidget(label)
+        mode_row.addWidget(label)
         self.mode_group = QButtonGroup(self)
         self.mode_group.setExclusive(True)
         self.mode_buttons = {}
@@ -192,10 +195,132 @@ class RoutineWidget(QWidget):
             )
             self.mode_group.addButton(button)
             self.mode_buttons[key] = button
-            layout.addWidget(button)
-        layout.addStretch()
+            mode_row.addWidget(button)
+        mode_row.addStretch()
+        layout.addLayout(mode_row)
+
+        method_row = QHBoxLayout()
+        method_row.setSpacing(10)
+        method_label = QLabel("TRAINING PHILOSOPHY")
+        method_label.setObjectName("fieldLabel")
+        method_row.addWidget(method_label)
+        self.method_combo = QComboBox()
+        self.method_combo.setMinimumWidth(250)
+        self.method_combo.currentIndexChanged.connect(self._method_changed)
+        method_row.addWidget(self.method_combo, 1)
+        self.method_duration = QSpinBox()
+        self.method_duration.setRange(15, 120)
+        self.method_duration.setSuffix(" min")
+        self.method_duration.setValue(self.config.session_minutes)
+        method_row.addWidget(self.method_duration)
+        self.start_method_button = QPushButton()
+        self.start_method_button.setObjectName("primaryButton")
+        self.start_method_button.clicked.connect(self._start_selected_method)
+        method_row.addWidget(self.start_method_button)
+        layout.addLayout(method_row)
+
+        detail_row = QHBoxLayout()
+        self.method_description = QLabel()
+        self.method_description.setObjectName("mutedText")
+        self.method_description.setWordWrap(True)
+        detail_row.addWidget(self.method_description, 1)
+        self.advanced_settings_toggle = QPushButton("Session details")
+        self.advanced_settings_toggle.setObjectName("textButton")
+        self.advanced_settings_toggle.setCheckable(True)
+        self.advanced_settings_toggle.toggled.connect(
+            self._toggle_advanced_session_details
+        )
+        detail_row.addWidget(self.advanced_settings_toggle)
+        layout.addLayout(detail_row)
         self.mode_selector_frame = frame
         self.content_layout.addWidget(frame)
+
+    def _populate_methods(self, mode):
+        methods = methods_for_mode(mode)
+        selected = getattr(self.config, "training_method", "")
+        self.method_combo.blockSignals(True)
+        self.method_combo.clear()
+        for method in methods:
+            self.method_combo.addItem(method["title"], method["id"])
+        index = self.method_combo.findData(selected)
+        self.method_combo.setCurrentIndex(max(0, index))
+        self.method_combo.blockSignals(False)
+        self._method_changed()
+
+    def _method_changed(self, *args):
+        method = METHOD_MAP.get(self.method_combo.currentData())
+        if not method:
+            return
+        self.method_description.setText(
+            method["summary"] + "  Best for: " + method["best_for"]
+        )
+        self.method_duration.setValue(
+            method.get("duration", self.config.session_minutes)
+        )
+        self.config.preferred_routine = method.get("preferred_routine", "")
+        if method.get("focus"):
+            self.config.focus = method["focus"]
+            focus_index = self.focus_combo.findData(self.config.focus)
+            self.focus_combo.setCurrentIndex(max(0, focus_index))
+        if method.get("duration"):
+            self.config.session_minutes = method["duration"]
+            self.dur_spin.setValue(self.config.session_minutes)
+        if method.get("preferred_routine"):
+            self.game_combo.setCurrentText("Valorant & Counterstrike")
+        if method["mode"] == "deathmatch" and hasattr(
+            self, "deathmatch_mode_widget"
+        ):
+            self.deathmatch_mode_widget.set_plan(
+                method.get("deathmatch_blocks", [])
+            )
+        self.config.training_method = method["id"]
+        self.config.save()
+
+    def _start_selected_method(self):
+        method = METHOD_MAP.get(self.method_combo.currentData())
+        if not method:
+            return
+        self.config.training_method = method["id"]
+        if method["mode"] == "focused":
+            self.config.focus = method.get("focus", "weakest")
+            focus_index = self.focus_combo.findData(self.config.focus)
+            self.focus_combo.setCurrentIndex(max(0, focus_index))
+            self.config.save()
+            self.show_quick_scenario(False)
+        elif method["mode"] == "routine":
+            self.config.focus = method.get("focus", "balanced")
+            self.config.session_minutes = self.method_duration.value()
+            self.dur_spin.setValue(self.config.session_minutes)
+            focus_index = self.focus_combo.findData(self.config.focus)
+            self.focus_combo.setCurrentIndex(max(0, focus_index))
+            if method.get("preferred_routine"):
+                self.game_combo.setCurrentText("Valorant & Counterstrike")
+            self.config.save()
+            self._generate()
+            self.scroll.ensureWidgetVisible(self.routine_frame)
+        else:
+            self.deathmatch_mode_widget.set_plan(
+                method.get("deathmatch_blocks", [])
+            )
+            self.deathmatch_mode_widget.refresh()
+            self.scroll.ensureWidgetVisible(self.deathmatch_mode_frame)
+
+    def select_training_method(self, method_id):
+        method = METHOD_MAP.get(method_id)
+        if not method:
+            return
+        self._set_training_mode(method["mode"])
+        index = self.method_combo.findData(method_id)
+        if index >= 0:
+            self.method_combo.setCurrentIndex(index)
+
+    def _toggle_advanced_session_details(self, visible):
+        self.settings_frame.setVisible(
+            visible and self.training_mode == "routine"
+        )
+        self.advanced_settings_toggle.setText(
+            "Hide details" if visible else "Session details"
+        )
 
     def _build_deathmatch_mode(self):
         frame = QFrame()
@@ -225,11 +350,22 @@ class RoutineWidget(QWidget):
         self.weekly_plan_frame.setVisible(is_focused)
         self.game_review_frame.setVisible(is_focused)
         self.settings_frame.setVisible(is_routine)
+        self.settings_frame.setVisible(
+            is_routine and self.advanced_settings_toggle.isChecked()
+        )
         self.playlist_library_frame.setVisible(
             is_routine and self.library_toggle.isChecked()
         )
         if is_deathmatch:
             self.deathmatch_mode_widget.refresh()
+        self.method_duration.setVisible(is_routine)
+        self.advanced_settings_toggle.setVisible(is_routine)
+        self.start_method_button.setText({
+            "focused": "Start block",
+            "routine": "Build routine",
+            "deathmatch": "Load checklist",
+        }[mode])
+        self._populate_methods(mode)
         if persist:
             self.config.training_mode = mode
             self.config.save()

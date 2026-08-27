@@ -181,6 +181,65 @@ QFrame#deathmatchMode {
     border-radius: 8px;
 }
 
+QFrame#methodNav {
+    background-color: #0f1728;
+    border: 1px solid #222e45;
+    border-radius: 8px;
+}
+
+QListWidget#methodList {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+QListWidget#methodList::item {
+    color: #b9c3d5;
+    padding: 10px 9px;
+    border-radius: 5px;
+}
+
+QListWidget#methodList::item:hover {
+    background-color: #172238;
+    color: #edf1f8;
+}
+
+QListWidget#methodList::item:selected {
+    background-color: #293558;
+    color: #eef0ff;
+    border-left: 3px solid #8b9cfb;
+}
+
+QLabel#methodEyebrow,
+QLabel#methodSection {
+    color: #8fa4cf;
+    font-size: 8pt;
+    font-weight: 800;
+}
+
+QLabel#methodTitle {
+    color: #f4f6fb;
+    font-size: 18pt;
+    font-weight: 750;
+}
+
+QLabel#methodSummary {
+    color: #aeb8ca;
+    font-size: 11pt;
+}
+
+QLabel#methodBody {
+    color: #d3d9e5;
+    font-size: 10pt;
+}
+
+QFrame#methodWarning {
+    background-color: #151a28;
+    border: 1px solid #3a3544;
+    border-radius: 7px;
+}
+
 QLabel#modeSummary {
     color: #cdd6f4;
     font-weight: 700;

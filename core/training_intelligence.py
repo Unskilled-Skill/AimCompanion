@@ -5,6 +5,71 @@ from statistics import mean, pstdev
 from models.benchmark import TIERS, energy_to_score, score_to_energy
 
 
+WEEKLY_TEMPLATE = (
+    ("Weakness practice", "weakness"),
+    ("Game transfer", "game"),
+    ("Weakness practice", "weakness"),
+    ("Benchmark check", "benchmark"),
+    ("Weakness practice", "weakness"),
+    ("Game transfer", "game"),
+    ("Benchmark check", "benchmark"),
+)
+
+
+def build_weekly_plan(db, daily_fps_minutes: int, now: datetime | None = None) -> dict:
+    """Summarize a rolling week and today's 20% aim-training guideline."""
+    now = now or datetime.now()
+    today = now.date()
+    start = today - timedelta(days=6)
+    sessions = db.get_sessions_since(start.isoformat()) if db else []
+    benchmark_days = set(
+        db.get_benchmark_days_since(start.isoformat()) if db else []
+    )
+    weakness_days = set()
+    game_days = set()
+    for session in sessions:
+        if session.get("warmup"):
+            continue
+        day = session["timestamp"][:10]
+        focus = (session.get("focus") or "").casefold()
+        if " / " in focus or focus == "weakest":
+            weakness_days.add(day)
+        else:
+            game_days.add(day)
+
+    today_key = today.isoformat()
+    used_minutes = sum(
+        max(0, int(session.get("duration_minutes") or 0))
+        for session in sessions if session["timestamp"][:10] == today_key
+    )
+    fps_minutes = max(30, int(daily_fps_minutes or 0))
+    aim_cap = max(5, round(fps_minutes * 0.20))
+    focus_label, focus_key = WEEKLY_TEMPLATE[today.weekday()]
+    if focus_key == "benchmark" and len(benchmark_days) >= 2 and today_key not in benchmark_days:
+        focus_label, focus_key = "Game practice or recovery", "game"
+
+    completed_for = {
+        "weakness": today_key in weakness_days,
+        "game": today_key in game_days,
+        "benchmark": today_key in benchmark_days,
+    }
+    return {
+        "start": start.isoformat(),
+        "end": today_key,
+        "focus": focus_key,
+        "focus_label": focus_label,
+        "today_complete": completed_for[focus_key],
+        "weakness_days": len(weakness_days),
+        "game_days": len(game_days),
+        "benchmark_days": len(benchmark_days),
+        "daily_fps_minutes": fps_minutes,
+        "aim_cap_minutes": aim_cap,
+        "used_minutes": used_minutes,
+        "remaining_minutes": max(0, aim_cap - used_minutes),
+        "over_budget": used_minutes > aim_cap,
+    }
+
+
 def _days_since(timestamp: str | None) -> int:
     if not timestamp:
         return 999
@@ -25,6 +90,7 @@ def build_skill_intelligence(profile, db) -> list[dict]:
     """Build evidence, progression, maintenance, and next-rank data for all skills."""
     last_training = db.get_last_training_by_focus()
     skill_feedback = db.get_skill_feedback_summary()
+    game_observations = db.get_latest_observation_by_skill()
     skills = []
     for category in profile.categories:
         for subcategory in category.subcategories:
@@ -72,6 +138,7 @@ def build_skill_intelligence(profile, db) -> list[dict]:
 
             focus_key = f"{category.name} / {subcategory.name}"
             feedback = skill_feedback.get(focus_key.casefold(), {})
+            observation = game_observations.get(focus_key.casefold())
             latest_rating = feedback.get("latest_rating")
             if latest_rating == "too_easy":
                 progression = "advance"
@@ -103,6 +170,13 @@ def build_skill_intelligence(profile, db) -> list[dict]:
                 "trend_pct": trend_pct,
                 "progression": progression,
                 "latest_feedback": latest_rating,
+                "latest_issue": (
+                    observation["issue"] if observation else
+                    feedback.get("latest_notes", "")
+                ),
+                "observation_id": observation["id"] if observation else None,
+                "observed_game": observation["game"] if observation else "",
+                "observation_note": observation["notes"] if observation else "",
                 "last_trained": last_training.get(focus_key),
                 "training_age_days": training_days,
                 "next_tier": next_tier["name"] if next_tier else None,
@@ -120,6 +194,8 @@ def build_skill_intelligence(profile, db) -> list[dict]:
         evidence_factor = 0.5 + skill["confidence_score"] * 0.5
         skill["weakness_severity"] = weakness
         skill["priority"] = (weakness * 0.7 + overdue * 0.3) * evidence_factor
+        if skill["observation_id"]:
+            skill["priority"] += 0.25
         skill["benchmark_due"] = (
             skill["confidence"] == "low" or skill["test_age_days"] > 30
         )

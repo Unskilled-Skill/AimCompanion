@@ -73,6 +73,17 @@ class SetupDialog(QDialog):
         self.minutes.setMaximumWidth(160)
         form.addRow("Default session", self.minutes)
 
+        self.daily_fps_minutes = QSpinBox()
+        self.daily_fps_minutes.setRange(30, 600)
+        self.daily_fps_minutes.setSingleStep(15)
+        self.daily_fps_minutes.setSuffix(" min")
+        self.daily_fps_minutes.setValue(self.config.daily_fps_minutes)
+        self.daily_fps_minutes.setMaximumWidth(160)
+        self.daily_fps_minutes.setToolTip(
+            "Used to calculate a flexible aim-training guideline of up to 20%."
+        )
+        form.addRow("Daily FPS playtime", self.daily_fps_minutes)
+
         self.prefer_installed = QCheckBox("Prefer installed scenarios when fit is equal")
         self.prefer_installed.setChecked(self.config.prioritize_installed)
         form.addRow("Scenario choice", self.prefer_installed)
@@ -125,6 +136,7 @@ class SetupDialog(QDialog):
                 else self.config.game
             )
         self.config.session_minutes = self.minutes.value()
+        self.config.daily_fps_minutes = self.daily_fps_minutes.value()
         self.config.prioritize_installed = self.prefer_installed.isChecked()
         self.config.avoid_continuous_turns = self.avoid_turns.isChecked()
         self.config.automatic_updates = self.automatic_updates.isChecked()

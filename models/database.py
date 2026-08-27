@@ -116,6 +116,23 @@ class Database:
             ON block_feedback(scenario)
         """)
 
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS game_observations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT NOT NULL,
+                game TEXT DEFAULT '',
+                category TEXT NOT NULL,
+                subcategory TEXT NOT NULL,
+                issue TEXT NOT NULL,
+                notes TEXT DEFAULT '',
+                resolved_at TEXT
+            )
+        """)
+        self.conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_game_observations_open
+            ON game_observations(resolved_at, category, subcategory)
+        """)
+
         self.conn.commit()
 
     def _ensure_columns(self, table: str, columns: dict[str, str]):
@@ -442,6 +459,66 @@ class Database:
         """, (limit,)).fetchall()
         return [dict(row) for row in rows]
 
+    def get_sessions_since(self, timestamp: str) -> list[dict]:
+        rows = self.conn.execute("""
+            SELECT * FROM sessions
+            WHERE timestamp >= ?
+            ORDER BY timestamp ASC
+        """, (timestamp,)).fetchall()
+        return [dict(row) for row in rows]
+
+    def get_benchmark_days_since(self, timestamp: str) -> list[str]:
+        rows = self.conn.execute("""
+            SELECT DISTINCT DATE(timestamp) AS day
+            FROM scores
+            WHERE timestamp >= ? AND category != 'Unknown'
+            ORDER BY day ASC
+        """, (timestamp,)).fetchall()
+        return [row["day"] for row in rows if row["day"]]
+
+    def record_game_observation(
+        self, game: str, category: str, subcategory: str,
+        issue: str, notes: str = "",
+    ) -> int:
+        cursor = self.conn.execute("""
+            INSERT INTO game_observations
+                (timestamp, game, category, subcategory, issue, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            datetime.now().isoformat(timespec="seconds"), game, category,
+            subcategory, issue, notes,
+        ))
+        self.conn.commit()
+        return cursor.lastrowid
+
+    def get_open_game_observations(self, limit: int = 20) -> list[dict]:
+        rows = self.conn.execute("""
+            SELECT * FROM game_observations
+            WHERE resolved_at IS NULL
+            ORDER BY timestamp DESC, id DESC
+            LIMIT ?
+        """, (limit,)).fetchall()
+        return [dict(row) for row in rows]
+
+    def get_latest_observation_by_skill(self) -> dict[str, dict]:
+        observations = self.get_open_game_observations(limit=200)
+        latest = {}
+        for observation in observations:
+            key = (
+                f"{observation['category']} / {observation['subcategory']}"
+                .casefold()
+            )
+            latest.setdefault(key, observation)
+        return latest
+
+    def resolve_game_observation(self, observation_id: int):
+        self.conn.execute("""
+            UPDATE game_observations
+            SET resolved_at = ?
+            WHERE id = ? AND resolved_at IS NULL
+        """, (datetime.now().isoformat(timespec="seconds"), observation_id))
+        self.conn.commit()
+
     def record_block_feedback(
         self, scenario: str, rating: str, notes: str = "",
         category: str = "", subcategory: str = "",
@@ -473,7 +550,7 @@ class Database:
             item = summaries.setdefault(key, {"ratings": {}})
             item["ratings"][row["rating"]] = row["count"]
         latest_rows = self.conn.execute("""
-            SELECT category, subcategory, rating, timestamp
+            SELECT category, subcategory, rating, notes, timestamp
             FROM block_feedback
             WHERE category != '' AND subcategory != ''
             ORDER BY id DESC
@@ -484,6 +561,7 @@ class Database:
             if "latest_rating" not in item:
                 item["latest"] = row["timestamp"]
                 item["latest_rating"] = row["rating"]
+                item["latest_notes"] = row["notes"] or ""
         return summaries
 
     def get_scenario_feedback_summary(self) -> dict[str, dict]:

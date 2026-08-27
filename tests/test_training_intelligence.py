@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from core.recommender import generate_quick_scenario
 from core.training_intelligence import (
     build_adaptive_schedule, build_scenario_signals, build_skill_intelligence,
-    detect_fatigue, plan_benchmark_checks,
+    build_weekly_plan, detect_fatigue, plan_benchmark_checks,
 )
 from models.config import TrainingConfig
 from models.database import Database
@@ -97,6 +97,85 @@ class TrainingIntelligenceTests(unittest.TestCase):
             migrated.close()
             self.assertIn("category", columns)
             self.assertIn("subcategory", columns)
+
+    def test_latest_review_issue_is_carried_into_skill_intelligence(self):
+        self.db.record_block_feedback(
+            "Static Practice", "productive", notes="overflicking",
+            category="Clicking", subcategory="Static",
+        )
+        skills = build_skill_intelligence(self.profile, self.db)
+        static = next(
+            skill for skill in skills
+            if skill["category"] == "Clicking" and skill["subcategory"] == "Static"
+        )
+        self.assertEqual(static["latest_issue"], "overflicking")
+
+    def test_adaptive_pick_uses_latest_review_as_its_correction_cue(self):
+        self.db.record_block_feedback(
+            "Static Practice", "productive", notes="overflicking",
+            category="Clicking", subcategory="Static",
+        )
+        skills = build_skill_intelligence(self.profile, self.db)
+        static = next(
+            skill for skill in skills
+            if skill["category"] == "Clicking" and skill["subcategory"] == "Static"
+        )
+        recommendation = generate_quick_scenario(
+            self.profile, training_schedule=[static],
+            config=TrainingConfig(kovaaks_install_dir="Z:/missing"),
+        )
+        self.assertEqual(recommendation["focus_issue"], "overflicking")
+        self.assertIn("stop just short", recommendation["coaching_cue"])
+
+    def test_game_observation_prioritizes_skill_and_closes_after_resolution(self):
+        observation_id = self.db.record_game_observation(
+            "Apex Legends", "Tracking", "Reactive", "predicting",
+            "Guessed close-range direction changes",
+        )
+        skills = build_skill_intelligence(self.profile, self.db)
+        reactive = next(
+            skill for skill in skills
+            if skill["category"] == "Tracking" and skill["subcategory"] == "Reactive"
+        )
+        self.assertEqual(reactive["observation_id"], observation_id)
+        self.assertEqual(reactive["latest_issue"], "predicting")
+        self.assertEqual(reactive["observed_game"], "Apex Legends")
+        recommendation = generate_quick_scenario(
+            self.profile, training_schedule=[reactive],
+            config=TrainingConfig(kovaaks_install_dir="Z:/missing"),
+        )
+        self.assertEqual(recommendation["observation_id"], observation_id)
+        self.assertIn("Apex Legends review", recommendation["reason"])
+        self.assertIn("do not guess", recommendation["coaching_cue"])
+        self.db.resolve_game_observation(observation_id)
+        refreshed = build_skill_intelligence(self.profile, self.db)
+        reactive = next(
+            skill for skill in refreshed
+            if skill["category"] == "Tracking" and skill["subcategory"] == "Reactive"
+        )
+        self.assertIsNone(reactive["observation_id"])
+
+    def test_weekly_plan_counts_activity_and_applies_twenty_percent_budget(self):
+        now = datetime.now().replace(hour=18, minute=0, second=0, microsecond=0)
+        self.db.log_session(
+            "Clicking / Static", 12,
+            timestamp=now.replace(hour=10).isoformat(),
+        )
+        self.db.log_session(
+            "balanced", 8,
+            timestamp=now.replace(hour=11).isoformat(),
+        )
+        add_score(
+            self.db, "Test Clicking Static", "Test Clicking Static", 5000,
+            now.replace(hour=12),
+        )
+        plan = build_weekly_plan(self.db, 120, now=now)
+        self.assertEqual(plan["weakness_days"], 1)
+        self.assertEqual(plan["game_days"], 1)
+        self.assertEqual(plan["benchmark_days"], 1)
+        self.assertEqual(plan["aim_cap_minutes"], 24)
+        self.assertEqual(plan["used_minutes"], 20)
+        self.assertEqual(plan["remaining_minutes"], 4)
 
     def test_schedule_weights_weakness_but_keeps_all_nine_skills(self):
         skills = []

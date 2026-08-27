@@ -72,6 +72,21 @@ class DatabaseActivityTests(unittest.TestCase):
         self.assertIsNone(result["baseline_score"])
         self.assertIsNone(result["score_delta_pct"])
 
+    def test_game_observation_inbox_persists_and_resolves(self):
+        observation_id = self.db.record_game_observation(
+            "Valorant & Counterstrike", "Clicking", "Static",
+            "overflicking", "Wide-angle fights",
+        )
+        open_items = self.db.get_open_game_observations()
+        self.assertEqual(len(open_items), 1)
+        self.assertEqual(open_items[0]["id"], observation_id)
+        by_skill = self.db.get_latest_observation_by_skill()
+        self.assertEqual(
+            by_skill["clicking / static"]["notes"], "Wide-angle fights"
+        )
+        self.db.resolve_game_observation(observation_id)
+        self.assertEqual(self.db.get_open_game_observations(), [])
+
     def test_database_backup_can_be_restored(self):
         self.db.log_session("Balanced", 20, "before backup")
         backup_path = self.path + ".backup"

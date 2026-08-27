@@ -140,6 +140,7 @@ class TrainingConfig:
     challenge_mode_notice_seen: bool = False
     warmup_routine_version: int = 1
     automatic_updates: bool = True
+    daily_fps_minutes: int = 120
 
     def save(self):
         with open(CONFIG_PATH, "w") as f:

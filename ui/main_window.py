@@ -92,6 +92,7 @@ class MainWindow(QMainWindow):
             self.training_profile, self.db, self.notifier,
             on_scores_updated=self._rebuild_profile,
         )
+        self.routine_view.navigate_requested.connect(self._navigate)
         self.progress_view = ProgressWidget(self.profile, self.db)
         self.scenario_view = ScenarioBrowser(self.db)
         self.import_view = DragDropImport(self.db, on_import_complete=self._refresh_scores)

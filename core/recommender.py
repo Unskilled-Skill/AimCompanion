@@ -360,6 +360,16 @@ def _scenario_training_targets(scenario: dict) -> set[str]:
     return {f"{scenario.get('category')}_{scenario.get('subcategory')}"}
 
 
+ISSUE_FOCUS_CUES = {
+    "overflicking": "Bias the initial movement to stop just short, then correct forward without reversing direction.",
+    "curved_path": "Prioritize a straight target-to-target path, even if the first movement needs to be slower.",
+    "shaky_tense": "Relax your grip and shoulder; reduce pace until the movement stays smooth.",
+    "overcorrecting": "After a direction change, make one small correction toward the target's inner edge and settle.",
+    "predicting": "React only to movement you can see; do not guess the next direction change.",
+    "target_selection": "Choose the next efficient target before finishing the current one.",
+}
+
+
 def generate_quick_scenario(
     profile: PlayerProfile,
     warmup: bool = False,
@@ -376,6 +386,10 @@ def generate_quick_scenario(
     selection_basis = "warm-up"
     selection_tier = profile.overall_tier
     progression = "hold"
+    focus_issue = ""
+    observation_id = None
+    observed_game = ""
+    observation_note = ""
     if not warmup:
         if training_schedule:
             target = training_schedule[rotation_index % len(training_schedule)]
@@ -383,6 +397,10 @@ def generate_quick_scenario(
             target_subcategory = target["subcategory"]
             selection_tier = target["tier"]
             progression = target.get("progression", "hold")
+            focus_issue = target.get("latest_issue", "")
+            observation_id = target.get("observation_id")
+            observed_game = target.get("observed_game", "")
+            observation_note = target.get("observation_note", "")
             selection_basis = (
                 "evidence-building" if target.get("benchmark_due") else
                 "adaptive weakness" if target.get("weakness_severity", 0) >= 0.12 else
@@ -509,6 +527,29 @@ def generate_quick_scenario(
     block_plan = quick_block_plan(
         scenario["name"], install_dirs, config.get_stats_dir()
     )
+    issue_cue = ISSUE_FOCUS_CUES.get(focus_issue, "")
+    reason = (
+        (
+            "Selected for smooth, controlled preparation without tiring you. "
+            "It does not require continuous turning."
+            if config.avoid_continuous_turns else
+            "Selected for smooth, controlled preparation without tiring you."
+        )
+        if warmup and warmup_context == "Aim training" else
+        f"Selected to prepare you for the main aiming demands of {target_label} without creating fatigue."
+        if warmup else
+        f"Selected from your adaptive Voltaic priority: {target_label}. "
+        "Weak areas recur more often while every category stays in rotation."
+        if selection_basis in ("benchmark weakness", "adaptive weakness", "evidence-building") else
+        f"Scheduled maintenance for {target_label} so stronger skills do not fall off."
+    )
+    if issue_cue:
+        reason += (
+            f" Your {observed_game} review identified this correction."
+            if observed_game else
+            " Your last review identified a specific correction for this skill."
+        )
+
     return {
         "scenario": scenario["name"],
         "category": category,
@@ -525,22 +566,11 @@ def generate_quick_scenario(
         "target_tier": selection_tier,
         "progression": progression,
         "game_context": config.game,
-        "reason": (
-            (
-                "Selected for smooth, controlled preparation without tiring you. "
-                "It does not require continuous turning."
-                if config.avoid_continuous_turns else
-                "Selected for smooth, controlled preparation without tiring you."
-            )
-            if warmup and warmup_context == "Aim training" else
-            f"Selected to prepare you for the main aiming demands of {target_label} without creating fatigue."
-            if warmup else
-            f"Selected from your adaptive Voltaic priority: {target_label}. "
-            "Weak areas recur more often while every category stays in rotation."
-            if not warmup and selection_basis in ("benchmark weakness", "adaptive weakness", "evidence-building") else
-            f"Scheduled maintenance for {target_label} so stronger skills do not fall off."
-        ),
-        "coaching_cue": get_exercise_cue(category, subcategory),
+        "reason": reason,
+        "focus_issue": focus_issue if issue_cue else "",
+        "observation_id": observation_id,
+        "observation_note": observation_note,
+        "coaching_cue": issue_cue or get_exercise_cue(category, subcategory),
     }
 
 

@@ -5,9 +5,9 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
     QScrollArea, QPushButton, QSpinBox, QCheckBox,
     QMessageBox, QComboBox, QApplication, QSizePolicy, QAbstractSpinBox,
-    QProgressBar, QMenu, QToolButton,
+    QProgressBar, QMenu, QToolButton, QLineEdit,
 )
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QAction, QFont
 
 from models.score import PlayerProfile
@@ -24,10 +24,30 @@ from core.parser import import_all_scores
 from core.warmups import get_warmup_routine, warmup_minutes
 from core.training_intelligence import (
     build_adaptive_schedule, build_scenario_signals, build_skill_intelligence,
-    detect_fatigue,
+    build_weekly_plan, detect_fatigue,
 )
 
 KOVAAKS_PLAYLIST_DIR = _detect_kovaaks_playlists()
+
+REVIEW_ISSUES = (
+    ("No recurring error", ""),
+    ("Overflicking", "overflicking"),
+    ("Curved or jagged path", "curved_path"),
+    ("Shaky or tense", "shaky_tense"),
+    ("Repeated overcorrection", "overcorrecting"),
+    ("Predicting movement", "predicting"),
+    ("Inefficient target choice", "target_selection"),
+)
+
+SKILL_OPTIONS = tuple(
+    (category, subcategory)
+    for category, subcategories in (
+        ("Clicking", ("Static", "Dynamic", "Linear")),
+        ("Tracking", ("Precise", "Reactive", "Control")),
+        ("Switching", ("Speed", "Evasive", "Stability")),
+    )
+    for subcategory in subcategories
+)
 
 
 def prepare_scenario_launch(recommendation, scenario_dirs, stats_dir):
@@ -41,6 +61,8 @@ def prepare_scenario_launch(recommendation, scenario_dirs, stats_dir):
 
 
 class RoutineWidget(QWidget):
+    navigate_requested = pyqtSignal(str)
+
     def __init__(
         self, profile: PlayerProfile, db=None, notifier=None,
         on_scores_updated=None,
@@ -120,6 +142,8 @@ class RoutineWidget(QWidget):
         self.content_layout = QVBoxLayout(scroll_content)
 
         self._build_quick_actions()
+        self._build_weekly_plan()
+        self._build_game_review()
         self._build_settings()
         self._build_routine_display()
         self._build_share_codes()
@@ -136,7 +160,7 @@ class RoutineWidget(QWidget):
         frame = QFrame()
         frame.setObjectName("quickTraining")
         frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
-        layout = QHBoxLayout(frame)
+        layout = QVBoxLayout(frame)
         layout.setContentsMargins(20, 17, 20, 17)
         layout.setSpacing(12)
 
@@ -195,18 +219,220 @@ class RoutineWidget(QWidget):
         copy.addWidget(self.limited_space_check)
         self._update_daily_progress()
         self._update_sync_health()
-        layout.addLayout(copy, 1)
+        layout.addLayout(copy)
 
+        action_row = QHBoxLayout()
         warmup = QPushButton("Warm up instead")
         warmup.setObjectName("quietButton")
         warmup.clicked.connect(lambda: self.show_quick_scenario(True))
-        layout.addWidget(warmup)
+        action_row.addWidget(warmup)
         self.full_routine_toggle = QPushButton("Build full routine")
         self.full_routine_toggle.setObjectName("textButton")
         self.full_routine_toggle.setCheckable(True)
         self.full_routine_toggle.toggled.connect(self._toggle_full_routine)
-        layout.addWidget(self.full_routine_toggle)
+        action_row.addWidget(self.full_routine_toggle)
+        action_row.addStretch()
+        layout.addLayout(action_row)
         self.content_layout.addWidget(frame)
+
+    def _build_weekly_plan(self):
+        frame = QFrame()
+        frame.setObjectName("nextSteps")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(18, 14, 18, 14)
+        layout.setSpacing(16)
+
+        copy = QVBoxLayout()
+        title = QLabel("Weekly training balance")
+        title.setObjectName("smallTitle")
+        self.weekly_focus = QLabel()
+        self.weekly_focus.setStyleSheet("color: #94e2d5; font-weight: bold;")
+        self.weekly_counts = QLabel()
+        self.weekly_counts.setObjectName("mutedText")
+        self.weekly_counts.setWordWrap(True)
+        self.budget_label = QLabel()
+        self.budget_label.setObjectName("mutedText")
+        self.budget_label.setWordWrap(True)
+        copy.addWidget(title)
+        copy.addWidget(self.weekly_focus)
+        copy.addWidget(self.weekly_counts)
+        copy.addWidget(self.budget_label)
+        layout.addLayout(copy, 1)
+
+        budget = QVBoxLayout()
+        budget_label = QLabel("DAILY FPS PLAYTIME")
+        budget_label.setObjectName("fieldLabel")
+        self.fps_budget_spin = QSpinBox()
+        self.fps_budget_spin.setRange(30, 600)
+        self.fps_budget_spin.setSingleStep(15)
+        self.fps_budget_spin.setSuffix(" min")
+        self.fps_budget_spin.setValue(self.config.daily_fps_minutes)
+        self.fps_budget_spin.setMaximumWidth(140)
+        self.fps_budget_spin.valueChanged.connect(self._set_fps_budget)
+        budget.addWidget(budget_label)
+        budget.addWidget(self.fps_budget_spin)
+        budget.addStretch()
+        layout.addLayout(budget)
+        self.weekly_action = QPushButton()
+        self.weekly_action.setObjectName("primaryButton")
+        self.weekly_action.clicked.connect(self._run_weekly_action)
+        layout.addWidget(self.weekly_action, 0, Qt.AlignmentFlag.AlignBottom)
+        self.content_layout.addWidget(frame)
+        self._refresh_weekly_plan()
+
+    def _set_fps_budget(self, minutes):
+        self.config.daily_fps_minutes = minutes
+        self.config.save()
+        self._refresh_weekly_plan()
+
+    def _refresh_weekly_plan(self):
+        if not hasattr(self, "weekly_focus"):
+            return
+        plan = build_weekly_plan(self.db, self.config.daily_fps_minutes)
+        self._weekly_plan = plan
+        completion = "Complete" if plan["today_complete"] else "Next target"
+        self.weekly_focus.setText(f"{completion}  ·  {plan['focus_label']}")
+        self.weekly_counts.setText(
+            "Last 7 days  ·  "
+            f"Weakness {plan['weakness_days']}/3  ·  "
+            f"Game/fundamentals {plan['game_days']}/2  ·  "
+            f"Benchmarks {plan['benchmark_days']}/2"
+        )
+        budget_text = (
+            f"Aim training today  ·  {plan['used_minutes']} min used  ·  "
+            f"{plan['remaining_minutes']} min remaining of the flexible "
+            f"{plan['aim_cap_minutes']} min guideline"
+        )
+        self.budget_label.setText(budget_text)
+        self.budget_label.setStyleSheet(
+            "color: #f9e2af;" if plan["over_budget"] else ""
+        )
+        self.weekly_action.setText({
+            "weakness": "Start focused block",
+            "game": "Build transfer routine",
+            "benchmark": "View benchmark checks",
+        }[plan["focus"]])
+
+    def _run_weekly_action(self):
+        focus = self._weekly_plan["focus"]
+        if focus == "benchmark":
+            self.navigate_requested.emit("skills")
+        elif focus == "game":
+            self.full_routine_toggle.setChecked(True)
+            self._generate()
+            self.scroll.ensureWidgetVisible(self.settings_frame)
+        else:
+            self.show_quick_scenario(False)
+
+    def _build_game_review(self):
+        frame = QFrame()
+        frame.setObjectName("nextSteps")
+        layout = QVBoxLayout(frame)
+        layout.setContentsMargins(18, 14, 18, 14)
+        layout.setSpacing(10)
+        title = QLabel("Post-game observations")
+        title.setObjectName("smallTitle")
+        layout.addWidget(title)
+
+        form = QVBoxLayout()
+        selector_row = QHBoxLayout()
+        self.observation_game = QComboBox()
+        self.observation_game.addItems(get_game_options()[1:])
+        configured = self.config.game
+        if configured in get_game_options()[1:]:
+            self.observation_game.setCurrentText(configured)
+        selector_row.addWidget(self.observation_game, 1)
+        self.observation_skill = QComboBox()
+        for category, subcategory in SKILL_OPTIONS:
+            self.observation_skill.addItem(
+                f"{category} · {subcategory}", (category, subcategory)
+            )
+        selector_row.addWidget(self.observation_skill, 1)
+        self.observation_issue = QComboBox()
+        for label, issue in REVIEW_ISSUES[1:]:
+            self.observation_issue.addItem(label, issue)
+        selector_row.addWidget(self.observation_issue, 1)
+        for combo in (
+            self.observation_game, self.observation_skill,
+            self.observation_issue,
+        ):
+            combo.setSizeAdjustPolicy(
+                QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+            )
+            combo.setMinimumContentsLength(14)
+        form.addLayout(selector_row)
+        context_row = QHBoxLayout()
+        self.observation_note = QLineEdit()
+        self.observation_note.setPlaceholderText("Optional context")
+        context_row.addWidget(self.observation_note, 1)
+        save = QPushButton("Add observation")
+        save.setObjectName("primaryButton")
+        save.clicked.connect(self._save_game_observation)
+        context_row.addWidget(save)
+        form.addLayout(context_row)
+        layout.addLayout(form)
+
+        self.observation_list = QVBoxLayout()
+        self.observation_list.setSpacing(4)
+        layout.addLayout(self.observation_list)
+        self.content_layout.addWidget(frame)
+        self._refresh_game_observations()
+
+    def _save_game_observation(self):
+        if not self.db:
+            return
+        category, subcategory = self.observation_skill.currentData()
+        self.db.record_game_observation(
+            self.observation_game.currentText(), category, subcategory,
+            self.observation_issue.currentData(),
+            self.observation_note.text().strip(),
+        )
+        self.observation_note.clear()
+        self._refresh_game_observations()
+        if self.on_scores_updated:
+            self.on_scores_updated()
+
+    def _refresh_game_observations(self):
+        if not hasattr(self, "observation_list"):
+            return
+        self._clear_layout(self.observation_list)
+        observations = self.db.get_open_game_observations(3) if self.db else []
+        if not observations:
+            empty = QLabel("No open observations")
+            empty.setObjectName("mutedText")
+            self.observation_list.addWidget(empty)
+            return
+        labels = dict(REVIEW_ISSUES)
+        for observation in observations:
+            row = QHBoxLayout()
+            text = (
+                f"{observation['game']}  ·  {observation['category']} / "
+                f"{observation['subcategory']}  ·  "
+                f"{labels.get(observation['issue'], observation['issue'])}"
+            )
+            if observation["notes"]:
+                text += f"  ·  {observation['notes']}"
+            label = QLabel(text)
+            label.setObjectName("mutedText")
+            label.setWordWrap(True)
+            label.setSizePolicy(
+                QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
+            )
+            row.addWidget(label, 1)
+            resolve = QPushButton("Resolve")
+            resolve.setObjectName("textButton")
+            resolve.clicked.connect(
+                lambda checked=False, value=observation["id"]:
+                self._resolve_game_observation(value)
+            )
+            row.addWidget(resolve)
+            self.observation_list.addLayout(row)
+
+    def _resolve_game_observation(self, observation_id):
+        self.db.resolve_game_observation(observation_id)
+        self._refresh_game_observations()
+        if self.on_scores_updated:
+            self.on_scores_updated()
 
     def _continue_today(self):
         self.show_quick_scenario(False)
@@ -854,6 +1080,7 @@ class RoutineWidget(QWidget):
             self._run_poll_timer.stop()
             self._save_daily_state()
             self._update_daily_progress()
+            self._refresh_weekly_plan()
             if self.on_scores_updated:
                 QTimer.singleShot(0, self.on_scores_updated)
         if automated:
@@ -906,11 +1133,16 @@ class RoutineWidget(QWidget):
     def _record_block_feedback(self, recommendation, rating):
         if not self.db:
             return
+        issue = self.issue_combo.currentData() or ""
         self.db.record_block_feedback(
-            recommendation["scenario"], rating,
+            recommendation["scenario"], rating, notes=issue,
             category=recommendation.get("category", ""),
             subcategory=recommendation.get("subcategory", ""),
         )
+        observation_id = recommendation.get("observation_id")
+        if observation_id:
+            self.db.resolve_game_observation(observation_id)
+            self._refresh_game_observations()
         labels = {
             "too_easy": "Too easy saved — a harder variant can be considered.",
             "productive": "Productive saved — this scenario gains preference.",
@@ -1029,6 +1261,8 @@ class RoutineWidget(QWidget):
             f"{recommendation['category']} / {recommendation['subcategory']}"
         )
         meta.setStyleSheet("color: #89b4fa; font-weight: bold;")
+        meta.setWordWrap(True)
+        meta.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         self.routine_layout.addWidget(meta)
 
         self.quick_run_status = QLabel(
@@ -1075,6 +1309,10 @@ class RoutineWidget(QWidget):
             history_text += f"  ·  {history['warmup_blocks']} as warm-up"
         scenario_history = QLabel(history_text)
         scenario_history.setStyleSheet("color: #cba6f7; font-weight: bold;")
+        scenario_history.setWordWrap(True)
+        scenario_history.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
+        )
         self.routine_layout.addWidget(scenario_history)
 
         reason = QLabel(recommendation["reason"])
@@ -1095,6 +1333,8 @@ class RoutineWidget(QWidget):
         status.setStyleSheet(
             "color: #94e2d5;" if recommendation["installed"] else "color: #f9e2af;"
         )
+        status.setWordWrap(True)
+        status.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         self.routine_layout.addWidget(status)
         challenge_required = QLabel(
             "Challenge mode required for live tracking  ·  Free Play does not create a completed-run result."
@@ -1108,24 +1348,50 @@ class RoutineWidget(QWidget):
 
         self.feedback_frame = QFrame()
         self.feedback_frame.setObjectName("focusPanel")
-        feedback_layout = QHBoxLayout(self.feedback_frame)
-        self.feedback_label = QLabel("How did this block feel?")
+        feedback_layout = QVBoxLayout(self.feedback_frame)
+        feedback_layout.setSpacing(8)
+        self.feedback_label = QLabel("Review the block while the movement is fresh")
         self.feedback_label.setObjectName("mutedText")
-        feedback_layout.addWidget(self.feedback_label, 1)
+        feedback_layout.addWidget(self.feedback_label)
+        issue_row = QHBoxLayout()
+        issue_label = QLabel("Recurring error")
+        issue_label.setObjectName("mutedText")
+        issue_row.addWidget(issue_label)
+        self.issue_combo = QComboBox()
+        self.issue_combo.setToolTip(
+            "Choose the recurring movement error you noticed, not the result of one miss."
+        )
+        for label, issue in REVIEW_ISSUES:
+            self.issue_combo.addItem(label, issue)
+        self.issue_combo.setMinimumWidth(205)
+        self.issue_combo.setMaximumWidth(360)
+        issue_row.addWidget(self.issue_combo)
+        issue_row.addStretch()
+        feedback_layout.addLayout(issue_row)
+        rating_label = QLabel("Difficulty")
+        rating_label.setObjectName("mutedText")
+        feedback_layout.addWidget(rating_label)
+        rating_rows = [QHBoxLayout(), QHBoxLayout()]
+        for row in rating_rows:
+            row.setSpacing(8)
         self.feedback_buttons = []
-        for label, rating in (
+        for index, (label, rating) in enumerate((
             ("Too easy", "too_easy"), ("Productive", "productive"),
             ("Too hard", "too_hard"), ("Discomfort", "discomfort"),
-        ):
+        )):
             button = QPushButton(label)
             button.setObjectName("quietButton")
+            button.setMaximumWidth(220)
             button.clicked.connect(
                 lambda checked=False, value=rating: self._record_block_feedback(
                     recommendation, value
                 )
             )
-            feedback_layout.addWidget(button)
+            rating_rows[index // 2].addWidget(button)
             self.feedback_buttons.append(button)
+        for row in rating_rows:
+            row.addStretch()
+            feedback_layout.addLayout(row)
         self.feedback_frame.setVisible(False)
         self.routine_layout.addWidget(self.feedback_frame)
 
@@ -1429,6 +1695,8 @@ class RoutineWidget(QWidget):
 
     def update_profile(self, profile: PlayerProfile):
         self.profile = profile
+        self._refresh_weekly_plan()
+        self._refresh_game_observations()
         # Profile refreshes can happen while Kovaak's is active. Preserve the
         # current session card instead of rebuilding and losing its state.
 
@@ -1448,6 +1716,8 @@ class RoutineWidget(QWidget):
         if focus_index >= 0:
             self.focus_combo.setCurrentIndex(focus_index)
         self.installed_check.setChecked(self.config.prioritize_installed)
+        self.fps_budget_spin.setValue(self.config.daily_fps_minutes)
+        self._refresh_weekly_plan()
         self._update_sync_health()
 
     def _clear_layout(self, layout):

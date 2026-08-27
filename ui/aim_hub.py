@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
     QScrollArea, QPushButton, QGridLayout, QTextEdit, QStackedWidget, QComboBox,
-    QToolButton, QMenu, QMessageBox
+    QToolButton, QMenu, QMessageBox, QSpinBox, QCheckBox
 )
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtGui import QDesktopServices, QFont, QColor
@@ -13,7 +13,8 @@ from models.database import Database
 from models.score import PlayerProfile
 from models.benchmark import TIERS, score_to_energy, energy_to_tier
 from core.recommender import (
-    AIM_GLOSSARY, GUIDANCE, TACFPS_GUIDE, get_scenario_info, SCENARIOS,
+    AIM_GLOSSARY, DEATHMATCH_GUIDE, GUIDANCE, TACFPS_GUIDE,
+    get_scenario_info, SCENARIOS,
 )
 from core.kovaaks_launcher import open_kovaaks
 from core.playlist_export import export_playlist
@@ -173,6 +174,7 @@ class AimHubWidget(QWidget):
 
         self._add_voltaic_foundations()
         self._add_tacfps_guide()
+        self._add_deathmatch_guide()
         self._add_technique_library()
         self._add_issue_and_transfer_guidance()
         self._add_mindset_and_glossary()
@@ -369,6 +371,135 @@ class AimHubWidget(QWidget):
         )
         message.setDetailedText("\n".join(paths))
         message.exec()
+
+    def _deathmatch_state(self):
+        empty = {
+            "date": datetime.now().date().isoformat(),
+            "counts": {},
+        }
+        if not self.db:
+            return empty
+        raw = self.db.get_settings_value("deathmatch_daily_v1")
+        if not raw:
+            return empty
+        try:
+            state = json.loads(raw)
+        except (TypeError, json.JSONDecodeError):
+            return empty
+        if state.get("date") != empty["date"] or not isinstance(
+            state.get("counts"), dict
+        ):
+            return empty
+        return state
+
+    def _add_deathmatch_guide(self):
+        card, layout = self._card(
+            "Valorant deathmatch transfer", "#a6e3a1"
+        )
+        layout.addWidget(self._text(
+            DEATHMATCH_GUIDE["summary"], "#cdd6f4", True, 10
+        ))
+        self.deathmatch_controls = {}
+        state = self._deathmatch_state()
+        for block in DEATHMATCH_GUIDE["blocks"]:
+            row = QHBoxLayout()
+            copy = QLabel(
+                f"{block['title']}  |  {block['weapon']}"
+            )
+            copy.setWordWrap(True)
+            copy.setStyleSheet("color: #bac2de;")
+            row.addWidget(copy, 1)
+            completed = min(
+                block["matches"],
+                max(0, int(state["counts"].get(block["id"], 0))),
+            )
+            if block["matches"] == 1:
+                control = QCheckBox("Done")
+                control.setChecked(bool(completed))
+                control.toggled.connect(self._update_deathmatch_progress)
+            else:
+                control = QSpinBox()
+                control.setRange(0, block["matches"])
+                control.setValue(completed)
+                control.setSuffix(f" / {block['matches']}")
+                control.valueChanged.connect(self._update_deathmatch_progress)
+            control.setProperty("deathmatch_id", block["id"])
+            self.deathmatch_controls[block["id"]] = control
+            row.addWidget(control)
+            layout.addLayout(row)
+
+        self.deathmatch_progress = self._text("", "#a6e3a1", True, 10)
+        layout.addWidget(self.deathmatch_progress)
+        self.deathmatch_block_combo = QComboBox()
+        for block in DEATHMATCH_GUIDE["blocks"]:
+            self.deathmatch_block_combo.addItem(block["title"], block)
+        layout.addWidget(self.deathmatch_block_combo)
+        self.deathmatch_details = self._text("", "#a6adc8", size=10)
+        layout.addWidget(self.deathmatch_details)
+        self.deathmatch_block_combo.currentIndexChanged.connect(
+            self._update_deathmatch_details
+        )
+        self._update_deathmatch_details()
+
+        actions = QHBoxLayout()
+        reset = QPushButton("Reset today")
+        reset.setObjectName("quietButton")
+        reset.clicked.connect(self._reset_deathmatch_progress)
+        actions.addWidget(reset)
+        source = QPushButton("Open original routine")
+        source.setObjectName("quietButton")
+        source.clicked.connect(
+            lambda: QDesktopServices.openUrl(QUrl(DEATHMATCH_GUIDE["source_url"]))
+        )
+        actions.addWidget(source)
+        actions.addStretch()
+        layout.addLayout(actions)
+        layout.addWidget(self._text(
+            DEATHMATCH_GUIDE["progression"] + " "
+            + DEATHMATCH_GUIDE["review_rule"], "#94e2d5", size=10
+        ))
+        self._update_deathmatch_progress(save=False)
+        self.content_layout.addWidget(card)
+
+    def _deathmatch_completed(self, control):
+        if isinstance(control, QCheckBox):
+            return 1 if control.isChecked() else 0
+        return control.value()
+
+    def _update_deathmatch_progress(self, *args, save=True):
+        counts = {
+            block_id: self._deathmatch_completed(control)
+            for block_id, control in self.deathmatch_controls.items()
+        }
+        total = sum(block["matches"] for block in DEATHMATCH_GUIDE["blocks"])
+        completed = sum(counts.values())
+        self.deathmatch_progress.setText(
+            f"Today: {completed} of {total} focused deathmatches complete"
+        )
+        if save and self.db:
+            self.db.set_settings_value("deathmatch_daily_v1", json.dumps({
+                "date": datetime.now().date().isoformat(),
+                "counts": counts,
+            }))
+
+    def _reset_deathmatch_progress(self):
+        for control in self.deathmatch_controls.values():
+            control.blockSignals(True)
+            if isinstance(control, QCheckBox):
+                control.setChecked(False)
+            else:
+                control.setValue(0)
+            control.blockSignals(False)
+        self._update_deathmatch_progress()
+
+    def _update_deathmatch_details(self):
+        block = self.deathmatch_block_combo.currentData()
+        if not block:
+            return
+        rules = "\n".join("- " + rule for rule in block["rules"])
+        self.deathmatch_details.setText(
+            f"Goal: {block['goal']}\n{rules}"
+        )
 
     def _add_technique_library(self):
         card, layout = self._card("Technique by skill", "#94e2d5", expanded=True)

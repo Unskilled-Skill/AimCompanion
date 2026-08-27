@@ -7,8 +7,8 @@ from datetime import datetime
 from pathlib import Path
 
 from core.recommender import (
-    AIM_GLOSSARY, GAME_WARMUP_TARGETS, GUIDANCE, ROUTINES, SCENARIOS,
-    TACFPS_GUIDE,
+    AIM_GLOSSARY, DEATHMATCH_GUIDE, GAME_WARMUP_TARGETS, GUIDANCE, ROUTINES,
+    SCENARIOS, TACFPS_GUIDE,
     generate_routine, get_game_options, get_training_guidance,
     generate_quick_scenario, get_scenario_info,
 )
@@ -339,6 +339,21 @@ class RecommenderTests(unittest.TestCase):
         names = {scenario["name"] for scenario in SCENARIOS}
         self.assertFalse(any("Writing, Formatting" in name for name in names))
         self.assertFalse(any(name.endswith(" - Writing") for name in names))
+
+    def test_deathmatch_guide_preserves_the_eight_match_order(self):
+        self.assertEqual(
+            [block["matches"] for block in DEATHMATCH_GUIDE["blocks"]],
+            [3, 1, 2, 1, 1],
+        )
+        self.assertEqual(
+            [block["id"] for block in DEATHMATCH_GUIDE["blocks"]],
+            [
+                "crosshair_placement", "sheriff_accuracy_1",
+                "movement_peeking", "sheriff_accuracy_2",
+                "operator_or_weakness",
+            ],
+        )
+        self.assertTrue(all(block["goal"] and block["rules"] for block in DEATHMATCH_GUIDE["blocks"]))
 
     def test_catalog_covers_every_benchmark_subcategory(self):
         expected = {

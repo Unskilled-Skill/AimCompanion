@@ -11,6 +11,7 @@ datas = [
     ("data/voltaic_routines.json", "data"),
     ("data/aim_glossary.json", "data"),
     ("data/tacfps_guide.json", "data"),
+    ("data/deathmatch_guide.json", "data"),
     ("assets/AimCompanion.ico", "assets"),
 ]
 

@@ -28,6 +28,9 @@ with open(os.path.join(DATA_DIR, "aim_glossary.json"), "r", encoding="utf-8") as
 with open(os.path.join(DATA_DIR, "tacfps_guide.json"), "r", encoding="utf-8") as f:
     TACFPS_GUIDE = json.load(f)
 
+with open(os.path.join(DATA_DIR, "deathmatch_guide.json"), "r", encoding="utf-8") as f:
+    DEATHMATCH_GUIDE = json.load(f)
+
 ROUTINES = [*_ROUTINE_DATA["routines"], *TACFPS_GUIDE["routines"]]
 
 

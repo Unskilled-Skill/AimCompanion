@@ -1,0 +1,67 @@
+{
+  "title": "Valorant Deathmatch Transfer Routine",
+  "author": "hnA",
+  "source_url": "https://docs.google.com/document/d/12CNp25ARXz7QiZoOj6O3JrZ7BQ5XE60AEN528XqVZ9Q/edit?tab=t.0",
+  "summary": "Deathmatch integrates mouse control with movement, crosshair placement, weapon recovery, angle isolation, peeking, and target awareness. Play each block with one explicit goal instead of chasing the lobby result.",
+  "progression": "Default cycle: 8 deathmatches. Scale the volume to available time and recovery; consistent focused sessions are more useful than occasional marathons.",
+  "review_rule": "After a death, identify one mechanical cause you could control. Do not turn every lost duel into an aim diagnosis; positioning and decision quality still matter.",
+  "blocks": [
+    {
+      "id": "crosshair_placement",
+      "title": "Crosshair placement",
+      "matches": 3,
+      "weapon": "Rifle, 2-4 bullet bursts",
+      "goal": "Keep the crosshair at head height and choose the correct distance from each corner for the expected peek.",
+      "rules": [
+        "Do not spray; burst, reset, and take the next accurate burst.",
+        "Ignore kills and placement. Notice whether the crosshair began too low, too tight, or too wide.",
+        "Move the crosshair to the next plausible angle when an opponent has had time to reposition."
+      ]
+    },
+    {
+      "id": "sheriff_accuracy_1",
+      "title": "First-bullet accuracy I",
+      "matches": 1,
+      "weapon": "Sheriff, headshots only",
+      "goal": "Acquire the head with one deliberate shot and respect the weapon's accuracy reset.",
+      "rules": [
+        "Do not spam the head or body.",
+        "After a miss, wait until the Sheriff has visually settled before shooting again."
+      ]
+    },
+    {
+      "id": "movement_peeking",
+      "title": "Movement and peeking",
+      "matches": 2,
+      "weapon": "Rifle, burst or spray by situation",
+      "goal": "Isolate one angle at a time and arrive ready to shoot rather than exposing yourself to several positions.",
+      "rules": [
+        "Practise short swings, wide swings, jiggles, and wide crouch peeks deliberately.",
+        "After losing a duel, ask whether another peek style or an information jiggle fit the situation better.",
+        "When spraying fails, consider whether taking time to reset and burst would have won the duel."
+      ]
+    },
+    {
+      "id": "sheriff_accuracy_2",
+      "title": "First-bullet accuracy II",
+      "matches": 1,
+      "weapon": "Sheriff, headshots only",
+      "goal": "Repeat the deliberate first-bullet block after movement practice and keep every shot fully accurate.",
+      "rules": [
+        "Use one shot per complete accuracy reset.",
+        "Keep crosshair placement and clean movement from the earlier blocks."
+      ]
+    },
+    {
+      "id": "operator_or_weakness",
+      "title": "Operator or weakest skill",
+      "matches": 1,
+      "weapon": "Operator for regular users; otherwise repeat your weakest block",
+      "goal": "With the Operator, seek active and difficult peeks instead of passively holding easy angles.",
+      "rules": [
+        "Practise initiating fights and handling unexpected close or off-angle targets.",
+        "If the Operator is not relevant to your role, spend this match on the weakest earlier skill."
+      ]
+    }
+  ]
+}

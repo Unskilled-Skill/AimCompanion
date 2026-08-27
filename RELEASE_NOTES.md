@@ -1,22 +1,20 @@
-# Aim Companion 1.4.0
+# Aim Companion 1.5.0
 
-This release adds the supplied Aimgud TacFPS routines and their training guide.
+This release adds the supplied Valorant deathmatch transfer routine.
 
 ## What changed
 
-- Added all three routines from `Aimgud Routines.zip`, preserving the exact 19
-  scenario names, order, and run counts.
-- Added an expandable TacFPS guide covering speed and stopping, the
-  speed-to-precision bridge, smooth pathing, routine rotation, sensitivity
-  ranges, accuracy targets, and the execution cue for every exercise.
-- Added one-click installation of all three routines into Kovaak's Local
-  Playlists. Kovaak's resolves any missing referenced scenarios when opened.
-- Added the Aimgud drills to the recommended scenario pack and adaptive catalog.
-- Fixed exported Kovaak playlist fields to use `scenarioName` and `playCount`.
-- Removed seven contributor-credit lines that had been incorrectly indexed as
-  downloadable scenarios.
+- Added the exact eight-match order from the hnA Valorant Deathmatch Routine:
+  three crosshair-placement matches, one Sheriff accuracy match, two movement
+  and peeking matches, another Sheriff match, and one Operator or weakness match.
+- Added focused guidance for crosshair width, burst discipline, weapon reset,
+  angle isolation, peek selection, spraying decisions, and active Operator use.
+- Added compact daily progress controls that persist across app restarts and
+  reset automatically on the next day.
+- Kept the new material collapsed by default and show detailed coaching for only
+  one selected block at a time.
+- Linked the original source from inside the app.
 
-The guide is a structured paraphrase of the linked hnA TacFPS Aim Guide by
-trgjtk. The exact routine definitions come from the user-supplied ZIP. Existing
-scores, settings, training history, and automatic update preferences are
-preserved during installation.
+The guide content is a structured paraphrase of the linked hnA document.
+Existing scores, settings, training history, routines, and automatic update
+preferences are preserved during installation.

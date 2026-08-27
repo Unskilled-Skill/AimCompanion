@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
     QFileDialog, QPushButton, QTextEdit, QProgressBar
 )
-from PyQt6.QtCore import Qt, QMimeData
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QDragEnterEvent, QDropEvent
 
 from models.database import Database
@@ -154,9 +154,10 @@ class DragDropImport(QWidget):
                         imported += 1
                         self.log.append(f"  -> {score.scenario}: {score.score:.0f}")
                     else:
-                        self.log.append(f"  -> Already imported")
+                        self.db.mark_score_path_imported(path)
+                        self.log.append("  -> Already imported")
                 else:
-                    self.log.append(f"  -> Failed to parse")
+                    self.log.append("  -> Failed to parse")
             except Exception as e:
                 self.log.append(f"  -> Error: {str(e)}")
 

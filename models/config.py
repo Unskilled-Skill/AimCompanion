@@ -2,6 +2,7 @@ import json
 import os
 import random
 import re
+import tempfile
 from dataclasses import dataclass, asdict
 from core.paths import writable_path
 from core.warmups import get_warmup_routine
@@ -143,14 +144,32 @@ class TrainingConfig:
     daily_fps_minutes: int = 120
 
     def save(self):
-        with open(CONFIG_PATH, "w") as f:
-            json.dump(asdict(self), f, indent=2)
+        directory = os.path.dirname(CONFIG_PATH) or "."
+        os.makedirs(directory, exist_ok=True)
+        temp_path = ""
+        try:
+            with tempfile.NamedTemporaryFile(
+                "w", encoding="utf-8", dir=directory, delete=False
+            ) as file:
+                temp_path = file.name
+                json.dump(asdict(self), file, indent=2)
+                file.flush()
+                os.fsync(file.fileno())
+            os.replace(temp_path, CONFIG_PATH)
+        finally:
+            if temp_path and os.path.exists(temp_path):
+                os.remove(temp_path)
 
     @classmethod
     def load(cls) -> "TrainingConfig":
         if os.path.exists(CONFIG_PATH):
-            with open(CONFIG_PATH) as f:
-                data = json.load(f)
+            try:
+                with open(CONFIG_PATH, encoding="utf-8") as file:
+                    data = json.load(file)
+            except (OSError, json.JSONDecodeError):
+                return cls()
+            if not isinstance(data, dict):
+                return cls()
             if "warmup_routine_version" not in data:
                 data["warmup_minutes"] = 14
                 data["warmup_routine_version"] = 1

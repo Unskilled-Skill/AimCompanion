@@ -5,14 +5,13 @@ import tempfile
 import zipfile
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QFileDialog, QMessageBox, QFrame, QScrollArea, QTextEdit
+    QFileDialog, QMessageBox, QFrame
 )
-from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
 from models.database import Database
 from models.score import PlayerProfile
-from models.benchmark import TIERS, score_to_energy, energy_to_tier
+from models.benchmark import score_to_energy, energy_to_tier
 from models.config import CONFIG_PATH
 
 
@@ -84,8 +83,8 @@ class ExportWidget(QWidget):
         frame = QFrame()
         frame.setObjectName("exportCard")
         frame.setFrameShape(QFrame.Shape.StyledPanel)
-        frame.setStyleSheet(f"""
-            QFrame#exportCard {{ background-color: #11192b; border-radius: 10px; border: 1px solid #263149; }}
+        frame.setStyleSheet("""
+            QFrame#exportCard { background-color: #11192b; border-radius: 10px; border: 1px solid #263149; }
         """)
         layout = QVBoxLayout(frame)
 
@@ -112,7 +111,7 @@ class ExportWidget(QWidget):
         if not path:
             return
 
-        scores = self.db.get_best_scores()
+        scores = self.db.get_all_scores()
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["Benchmark", "Scenario", "Category", "Subcategory",
@@ -179,7 +178,7 @@ class ExportWidget(QWidget):
         if not path:
             return
 
-        sessions = self.db.get_sessions(limit=1000)
+        sessions = self.db.get_sessions(limit=None)
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["Date", "Duration (min)", "Focus", "Notes"])

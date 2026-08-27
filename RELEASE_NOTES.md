@@ -1,18 +1,21 @@
-# Aim Companion 1.1.0
+# Aim Companion 1.1.1
 
-This release turns post-game observations into adaptive practice and adds a rolling
-weekly training plan.
+This maintenance release improves data safety, background score syncing, and
+exports.
 
 ## What changed
 
-- Added a 3/2/2 weekly balance for weakness practice, game transfer, and benchmark checks.
-- Added a configurable daily FPS playtime budget with a flexible 20% aim-training guideline.
-- Added a post-game observation inbox for recurring mechanical errors and optional context.
-- Open observations now raise the matching skill priority and replace generic advice with a specific correction cue.
-- Completing and rating the targeted block automatically resolves its observation.
-- Added post-block deliberate review for overflicking, curved paths, tension, overcorrection, prediction, and target selection.
-- Fixed Today-page controls and long status text clipping at the minimum window width.
+- Configuration saves are now atomic, preventing an interrupted write from
+  leaving the app unable to start.
+- Invalid or truncated configuration files now fall back to safe defaults.
+- Enabled SQLite write-ahead logging and a longer busy timeout to reduce
+  conflicts between background score sync and UI activity.
+- Duplicate copies of an already-imported score are remembered instead of
+  being parsed again during every sync.
+- Score export now includes every attempt rather than only personal bests.
+- Session export now includes the full history rather than the latest 1,000.
+- Future-dated activity no longer creates an incorrect training streak.
 
-Existing scores, settings, routines, training history, and update preferences are
-preserved during installation. This build is not Authenticode-signed; use the
-matching `.sha256` asset to verify installer integrity.
+Existing scores, settings, routines, training history, and update preferences
+are preserved during installation. This build is not Authenticode-signed; use
+the matching `.sha256` asset to verify installer integrity.

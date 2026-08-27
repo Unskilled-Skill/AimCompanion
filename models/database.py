@@ -1,7 +1,6 @@
-import sqlite3
-import os
 import json
-from datetime import datetime, timedelta
+import sqlite3
+from datetime import datetime
 from models.score import Score
 from core.paths import writable_path
 
@@ -11,8 +10,11 @@ DB_PATH = writable_path("kovaaks.db")
 class Database:
     def __init__(self, db_path: str = DB_PATH):
         self.db_path = db_path
-        self.conn = sqlite3.connect(db_path)
+        self.conn = sqlite3.connect(db_path, timeout=10)
         self.conn.row_factory = sqlite3.Row
+        self.conn.execute("PRAGMA busy_timeout = 10000")
+        if db_path != ":memory:":
+            self.conn.execute("PRAGMA journal_mode = WAL")
         self._create_tables()
 
     def _create_tables(self):
@@ -132,6 +134,12 @@ class Database:
             CREATE INDEX IF NOT EXISTS idx_game_observations_open
             ON game_observations(resolved_at, category, subcategory)
         """)
+        self.conn.execute("""
+            CREATE TABLE IF NOT EXISTS imported_files (
+                csv_path TEXT PRIMARY KEY,
+                imported_at TEXT NOT NULL
+            )
+        """)
 
         self.conn.commit()
 
@@ -154,9 +162,22 @@ class Database:
 
     def get_imported_score_paths(self) -> set[str]:
         rows = self.conn.execute(
-            "SELECT csv_path FROM scores WHERE csv_path IS NOT NULL AND csv_path != ''"
+            """
+            SELECT csv_path FROM scores WHERE csv_path IS NOT NULL AND csv_path != ''
+            UNION
+            SELECT csv_path FROM imported_files
+            """
         ).fetchall()
         return {row["csv_path"] for row in rows}
+
+    def mark_score_path_imported(self, csv_path: str):
+        if not csv_path:
+            return
+        self.conn.execute("""
+            INSERT OR IGNORE INTO imported_files (csv_path, imported_at)
+            VALUES (?, ?)
+        """, (csv_path, datetime.now().isoformat(timespec="seconds")))
+        self.conn.commit()
 
     def score_record_exists(self, score: Score) -> bool:
         row = self.conn.execute("""
@@ -180,7 +201,18 @@ class Database:
             score.misses, score.fight_time, score.avg_ttk,
             score.accuracy, score.avg_fps, score.resolution, csv_path
         ))
+        if csv_path:
+            self.conn.execute("""
+                INSERT OR IGNORE INTO imported_files (csv_path, imported_at)
+                VALUES (?, ?)
+            """, (csv_path, datetime.now().isoformat(timespec="seconds")))
         self.conn.commit()
+
+    def get_all_scores(self) -> list[Score]:
+        rows = self.conn.execute(
+            "SELECT * FROM scores ORDER BY timestamp DESC"
+        ).fetchall()
+        return [self._row_to_score(row) for row in rows]
 
     def get_latest_scores(self, difficulty: str = None) -> list[Score]:
         query = """
@@ -330,10 +362,12 @@ class Database:
         ))
         self.conn.commit()
 
-    def get_sessions(self, limit: int = 50) -> list[dict]:
-        rows = self.conn.execute("""
-            SELECT * FROM sessions ORDER BY timestamp DESC LIMIT ?
-        """, (limit,)).fetchall()
+    def get_sessions(self, limit: int | None = 50) -> list[dict]:
+        query = "SELECT * FROM sessions ORDER BY timestamp DESC"
+        if limit is None:
+            rows = self.conn.execute(query).fetchall()
+        else:
+            rows = self.conn.execute(f"{query} LIMIT ?", (limit,)).fetchall()
         return [dict(r) for r in rows]
 
     def add_favorite(self, item_type: str, item_name: str):
@@ -684,19 +718,21 @@ class Database:
 
         streak = 0
         today = datetime.now().date()
+        previous_day = None
         for r in rows:
             day = datetime.fromisoformat(r["day"]).date()
-            if streak == 0:
-                if (today - day).days <= 1:
+            if previous_day is None:
+                days_ago = (today - day).days
+                if 0 <= days_ago <= 1:
                     streak = 1
                 else:
                     break
             else:
-                if (prev - day).days == 1:
+                if (previous_day - day).days == 1:
                     streak += 1
                 else:
                     break
-            prev = day
+            previous_day = day
 
         return streak
 

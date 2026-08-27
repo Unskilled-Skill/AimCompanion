@@ -42,6 +42,45 @@ class DatabaseActivityTests(unittest.TestCase):
 
         self.assertEqual(self.db.get_streak(), 3)
 
+    def test_future_activity_does_not_start_a_streak(self):
+        future = datetime.now() + timedelta(days=2)
+        self.db.log_session("Balanced", 10, timestamp=future.isoformat())
+
+        self.assertEqual(self.db.get_streak(), 0)
+
+    def test_all_scores_returns_every_attempt(self):
+        now = datetime.now()
+        for index, value in enumerate((100, 110, 105)):
+            self.db.insert_score(Score(
+                benchmark_name="Test Scenario", scenario="Test Scenario",
+                category="Tracking", subcategory="Reactive", difficulty="Novice",
+                score=value, timestamp=now + timedelta(seconds=index),
+            ), f"attempt-{index}.csv")
+
+        scores = self.db.get_all_scores()
+
+        self.assertEqual([score.score for score in scores], [105, 110, 100])
+
+    def test_unlimited_session_query_returns_full_history(self):
+        for index in range(4):
+            self.db.log_session("Balanced", 10, timestamp=f"2026-01-0{index + 1}T12:00:00")
+
+        self.assertEqual(len(self.db.get_sessions(limit=2)), 2)
+        self.assertEqual(len(self.db.get_sessions(limit=None)), 4)
+
+    def test_file_tracking_is_independent_from_score_rows(self):
+        self.db.mark_score_path_imported("duplicate.csv")
+
+        self.assertIn("duplicate.csv", self.db.get_imported_score_paths())
+        self.assertFalse(self.db.score_exists("duplicate.csv"))
+
+    def test_file_database_enables_concurrent_access_pragmas(self):
+        journal_mode = self.db.conn.execute("PRAGMA journal_mode").fetchone()[0]
+        busy_timeout = self.db.conn.execute("PRAGMA busy_timeout").fetchone()[0]
+
+        self.assertEqual(journal_mode.lower(), "wal")
+        self.assertGreaterEqual(busy_timeout, 10_000)
+
     def test_training_effectiveness_compares_recent_runs_to_baseline(self):
         now = datetime.now()
         for index, value in enumerate((90, 100, 110, 100, 100, 110, 120)):

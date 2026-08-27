@@ -177,7 +177,10 @@ def import_all_scores(db, stats_dir: str = None) -> int:
         if filepath in imported_paths:
             continue
         score = parse_csv_file(filepath)
-        if score and not db.score_record_exists(score):
-            db.insert_score(score, filepath)
-            imported += 1
+        if score:
+            if db.score_record_exists(score):
+                db.mark_score_path_imported(filepath)
+            else:
+                db.insert_score(score, filepath)
+                imported += 1
     return imported

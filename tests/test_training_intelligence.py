@@ -379,10 +379,14 @@ class TrainingIntelligenceTests(unittest.TestCase):
 
         self.assertEqual(widget.training_mode, "routine")
         self.assertEqual(widget.method_combo.currentData(), "smooth_pathing")
-        self.assertEqual(widget.config.preferred_routine, "TacFPS - Smooth Pathing")
+        self.assertEqual(
+            widget.config.preferred_routine,
+            "hnA TacFPS Routine - Smooth Pathing",
+        )
         widget.start_method_button.click()
         self.assertEqual(
-            widget._current_routine["source_routine"], "TacFPS - Smooth Pathing"
+            widget._current_routine["source_routine"],
+            "hnA TacFPS Routine - Smooth Pathing",
         )
         self.assertTrue(widget._current_routine["authored_run_plan"])
         self.assertEqual(widget._current_routine["warmup_minutes"], 0)
@@ -451,7 +455,7 @@ class TrainingIntelligenceTests(unittest.TestCase):
             "ui.routines.KOVAAKS_PLAYLIST_DIR", directory
         ), patch("ui.routines.QMessageBox.information"):
             widget._export()
-            path = os.path.join(directory, "Aimgud 1 - Speed and Stopping.json")
+            path = os.path.join(directory, "hnA TacFPS 1 - Speed and Stopping.json")
             with open(path, encoding="utf-8") as file:
                 playlist = json.load(file)
 

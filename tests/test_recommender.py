@@ -312,11 +312,11 @@ class RecommenderTests(unittest.TestCase):
         voltaic = [routine for routine in ROUTINES if routine["source"].startswith("Voltaic")]
         self.assertTrue(all(routine["share_code"] for routine in voltaic))
 
-    def test_tacfps_guide_matches_supplied_aimgud_playlists(self):
+    def test_hna_tacfps_guide_preserves_supplied_playlist_runs(self):
         expected = {
-            "Aimgud 1 - Speed and Stopping": [7, 5, 3, 5, 5, 5, 5],
-            "Aimgud 2 - Speed-to-Precision": [5, 10, 7, 5, 5, 3],
-            "Aimgud 3 - Smooth Pathing": [10, 5, 5, 5, 5, 5],
+            "hnA TacFPS 1 - Speed and Stopping": [7, 5, 3, 5, 5, 5, 5],
+            "hnA TacFPS 2 - Speed-to-Precision": [5, 10, 7, 5, 5, 3],
+            "hnA TacFPS 3 - Smooth Pathing": [10, 5, 5, 5, 5, 5],
         }
         self.assertEqual(len(TACFPS_GUIDE["routines"]), 3)
         self.assertEqual(

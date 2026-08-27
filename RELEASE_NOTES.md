@@ -1,13 +1,14 @@
-# Aim Companion 1.8.3
+# Aim Companion 1.8.4
 
-This hotfix restores application startup after the Training Methods redesign.
+This release corrects the user-facing name of the supplied authored routines.
 
 ## What changed
 
-- Fixed a fatal callback error triggered when automatic score synchronization
-  refreshed the Training Methods view during startup.
-- Restored the shared profile-refresh contract on the redesigned view.
-- Added regression coverage and a timed startup smoke test.
+- Renamed the training family to hnA TacFPS Routine throughout the app.
+- The three choices are now hnA: Speed and stopping, hnA: Speed-to-precision,
+  and hnA: Smooth pathing.
+- Active session headings and instruction panels use the full hnA TacFPS name.
+- Newly exported playlists use hnA TacFPS names instead of Aimgud names.
 
 Existing scores, settings, training history, routines, and automatic update
 preferences are preserved during installation.

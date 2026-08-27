@@ -19,10 +19,10 @@
   "rotation": "Default cycle: Speed and Stopping, Speed-to-Precision, Smooth Pathing. When uncertain, repeat that three-day cycle. A speed-biased cycle can repeat the first routine before continuing to the second and third.",
   "routines": [
     {
-      "name": "TacFPS - Speed and Stopping",
+      "name": "hnA TacFPS Routine - Speed and Stopping",
       "kind": "game",
       "group": "Valorant & Counterstrike",
-      "variant": "hnA TacFPS - Speed and Stopping",
+      "variant": "hnA TacFPS Routine - Speed and Stopping",
       "description": "Raw acquisition speed and controlled deceleration. Hold Mouse1 continuously, snap aggressively, and reacquire immediately after a miss rather than polishing the path.",
       "sensitivity": "Use normal in-game sensitivity; the source assumes roughly 35-70 cm/360.",
       "author_guidance": [
@@ -39,7 +39,7 @@
       "targets": ["Clicking_Static", "Switching_Speed", "Switching_Stability"],
       "source": "hnA TacFPS Aim Guide",
       "source_url": "https://docs.google.com/document/d/1WZbVuSqRiDhY77jsVDOOVaylWtHiKc06S0Xvw2QJveo/edit?tab=t.0",
-      "playlist_name": "Aimgud 1 - Speed and Stopping",
+      "playlist_name": "hnA TacFPS 1 - Speed and Stopping",
       "exercises": [
         {"scenario": "voxTS Voltaic mini", "alternatives": [], "duration": "7 runs", "duration_min": 7, "duration_max": 7, "optional": false, "focus": "Use horizontal short, medium, and long switches to practise rapid stops."},
         {"scenario": "devTS Goated NR Static Small", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Accelerate and stop over the smaller movements common after sound crosshair placement."},
@@ -51,10 +51,10 @@
       ]
     },
     {
-      "name": "TacFPS - Speed-to-Precision",
+      "name": "hnA TacFPS Routine - Speed-to-Precision",
       "kind": "game",
       "group": "Valorant & Counterstrike",
-      "variant": "hnA TacFPS - Speed-to-Precision",
+      "variant": "hnA TacFPS Routine - Speed-to-Precision",
       "description": "Bridge raw speed into consistent static acquisition. Perform the speed runs first, then retain the initial pace while cleaning up the final correction during accuracy runs.",
       "sensitivity": "The source recommends roughly 25-35 cm/360 for this block.",
       "author_guidance": [
@@ -72,7 +72,7 @@
       "targets": ["Clicking_Static", "Switching_Speed"],
       "source": "hnA TacFPS Aim Guide",
       "source_url": "https://docs.google.com/document/d/1WZbVuSqRiDhY77jsVDOOVaylWtHiKc06S0Xvw2QJveo/edit?tab=t.0",
-      "playlist_name": "Aimgud 2 - Speed-to-Precision",
+      "playlist_name": "hnA TacFPS 2 - Speed-to-Precision",
       "exercises": [
         {"scenario": "fuglaaPressure 6 bots", "alternatives": ["fuglaaPressure 4 bots"], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Attempt every target before it disappears. Use the four-target version when accuracy remains below 60%."},
         {"scenario": "1w4ts Voltaic", "alternatives": [], "duration": "10 runs", "duration_min": 10, "duration_max": 10, "optional": false, "focus": "Do 7 speed runs at 60-80% accuracy, then 3 disciplined accuracy runs at 90-95%."},
@@ -83,10 +83,10 @@
       ]
     },
     {
-      "name": "TacFPS - Smooth Pathing",
+      "name": "hnA TacFPS Routine - Smooth Pathing",
       "kind": "game",
       "group": "Valorant & Counterstrike",
-      "variant": "hnA TacFPS - Smooth Pathing",
+      "variant": "hnA TacFPS Routine - Smooth Pathing",
       "description": "Train the opposite end of the spectrum: direct lines, minimal correction, and clean stops. Slow down enough to make the path deliberate rather than chasing score.",
       "sensitivity": "The source recommends roughly 20-25 cm/360 for this block.",
       "author_guidance": [
@@ -103,7 +103,7 @@
       "targets": ["Clicking_Static", "Tracking_Precise"],
       "source": "hnA TacFPS Aim Guide",
       "source_url": "https://docs.google.com/document/d/1WZbVuSqRiDhY77jsVDOOVaylWtHiKc06S0Xvw2QJveo/edit?tab=t.0",
-      "playlist_name": "Aimgud 3 - Smooth Pathing",
+      "playlist_name": "hnA TacFPS 3 - Smooth Pathing",
       "exercises": [
         {"scenario": "1w4ts reload 30% smaller", "alternatives": [], "duration": "10 runs", "duration_min": 10, "duration_max": 10, "optional": false, "focus": "Draw straight paths and stop cleanly with as few micro-corrections as possible."},
         {"scenario": "10 Sphere Hipfire Extra Small", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Prioritize line efficiency and deliberate stops over pace."},

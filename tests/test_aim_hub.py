@@ -34,7 +34,7 @@ class AimHubTests(unittest.TestCase):
             == "speed_stopping"
         )
         self.widget.method_list.setCurrentItem(target)
-        self.assertEqual(self.widget.method_title.text(), "Speed and stopping")
+        self.assertEqual(self.widget.method_title.text(), "hnA: Speed and stopping")
         self.assertIn("voxTS Voltaic mini", self.widget.session_label.text())
         self.assertFalse(self.widget.source_button.isHidden())
 

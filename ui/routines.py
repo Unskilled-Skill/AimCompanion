@@ -1743,7 +1743,7 @@ class RoutineWidget(QWidget):
         self._clear_layout(self.routine_layout)
 
         if routine.get("authored_run_plan"):
-            header_text = "hnA routine ({} prescribed runs)".format(
+            header_text = "hnA TacFPS routine ({} prescribed runs)".format(
                 routine["training_minutes"]
             )
         else:
@@ -1807,7 +1807,7 @@ class RoutineWidget(QWidget):
             source_layout = QVBoxLayout(source_frame)
             source_layout.setContentsMargins(14, 12, 14, 12)
             source_layout.setSpacing(6)
-            source_title = QLabel("hnA AUTHOR INSTRUCTIONS")
+            source_title = QLabel("hnA TACFPS ROUTINE INSTRUCTIONS")
             source_title.setObjectName("fieldLabel")
             source_layout.addWidget(source_title)
             source_notice = QLabel(
@@ -1832,7 +1832,7 @@ class RoutineWidget(QWidget):
                 rotation_label.setObjectName("mutedText")
                 rotation_label.setWordWrap(True)
                 source_layout.addWidget(rotation_label)
-            source_button = QPushButton("Open original hnA guide")
+            source_button = QPushButton("Open original hnA TacFPS guide")
             source_button.setObjectName("secondaryButton")
             source_button.clicked.connect(
                 lambda checked=False, url=routine.get("source_url", ""):

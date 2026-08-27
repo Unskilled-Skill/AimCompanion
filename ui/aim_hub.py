@@ -249,7 +249,7 @@ class AimHubWidget(QWidget):
 
     @staticmethod
     def _source_url(method):
-        if method["category"] == "TacFPS":
+        if method["category"] == "hnA TacFPS Routine":
             return TACFPS_GUIDE["source_url"]
         if method["mode"] == "deathmatch":
             return DEATHMATCH_GUIDE["source_url"]

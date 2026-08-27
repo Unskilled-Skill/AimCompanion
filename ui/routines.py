@@ -227,6 +227,10 @@ class RoutineWidget(QWidget):
         self.method_description.setObjectName("mutedText")
         self.method_description.setWordWrap(True)
         detail_row.addWidget(self.method_description, 1)
+        self.choose_hna_button = QPushButton("Help me choose hnA")
+        self.choose_hna_button.setObjectName("quietButton")
+        self.choose_hna_button.clicked.connect(self._show_hna_chooser)
+        detail_row.addWidget(self.choose_hna_button)
         self.advanced_settings_toggle = QPushButton("Session details")
         self.advanced_settings_toggle.setObjectName("textButton")
         self.advanced_settings_toggle.setCheckable(True)
@@ -254,9 +258,11 @@ class RoutineWidget(QWidget):
         method = METHOD_MAP.get(self.method_combo.currentData())
         if not method:
             return
-        self.method_description.setText(
-            method["summary"] + "  Best for: " + method["best_for"]
-        )
+        description = method["summary"] + "  Best for: " + method["best_for"]
+        recommended_id, reason = self._recommended_hna_method()
+        if method["id"] == recommended_id:
+            description = "Recommended today: " + reason + "  " + description
+        self.method_description.setText(description)
         self.method_duration.setValue(
             method.get("duration", self.config.session_minutes)
         )
@@ -300,6 +306,14 @@ class RoutineWidget(QWidget):
                 self.game_combo.setCurrentText("Valorant & Counterstrike")
             self.config.save()
             self._generate()
+            if method["id"] in ("speed_stopping", "speed_precision", "smooth_pathing"):
+                cycle = {
+                    "speed_stopping": "speed_precision",
+                    "speed_precision": "smooth_pathing",
+                    "smooth_pathing": "speed_stopping",
+                }
+                self.config.hna_next_method = cycle[method["id"]]
+                self.config.save()
             self.scroll.ensureWidgetVisible(self.routine_frame)
         else:
             self.deathmatch_mode_widget.set_plan(
@@ -316,6 +330,83 @@ class RoutineWidget(QWidget):
         index = self.method_combo.findData(method_id)
         if index >= 0:
             self.method_combo.setCurrentIndex(index)
+
+    def _recommended_hna_method(self):
+        issue_map = {
+            "overflicking": (
+                "speed_stopping",
+                "your latest observation reports overflicking, which points to stopping power",
+            ),
+            "underflicking": (
+                "speed_stopping",
+                "your latest observation reports underflicking, which points to acquisition and stopping",
+            ),
+            "curved_path": (
+                "smooth_pathing",
+                "your latest observation reports curved or inefficient paths",
+            ),
+            "overcorrecting": (
+                "smooth_pathing",
+                "your latest observation reports repeated corrections near the target",
+            ),
+            "shaky_tense": (
+                "smooth_pathing",
+                "your latest observation reports shaky or tense movement",
+            ),
+        }
+        if self.db:
+            observations = self.db.get_open_game_observations(limit=20)
+            for observation in observations:
+                issue = (observation.get("issue") or "").casefold()
+                if issue in issue_map:
+                    return issue_map[issue]
+            summaries = self.db.get_skill_feedback_summary()
+            recent = sorted(
+                summaries.values(),
+                key=lambda item: item.get("latest", ""),
+                reverse=True,
+            )
+            for item in recent:
+                issue = (item.get("latest_notes") or "").casefold()
+                if issue in issue_map:
+                    return issue_map[issue]
+        next_method = getattr(self.config, "hna_next_method", "speed_stopping")
+        if next_method not in ("speed_stopping", "speed_precision", "smooth_pathing"):
+            next_method = "speed_stopping"
+        return next_method, "it is next in the hnA three-session rotation"
+
+    def _choose_hna_method(self, method_id):
+        index = self.method_combo.findData(method_id)
+        if index >= 0:
+            self.method_combo.setCurrentIndex(index)
+
+    def _show_hna_chooser(self):
+        menu = QMenu(self)
+        recommended_id, reason = self._recommended_hna_method()
+        recommended = METHOD_MAP[recommended_id]
+        action = menu.addAction("Recommended: " + recommended["title"])
+        action.setToolTip(reason)
+        action.triggered.connect(
+            lambda checked=False, method_id=recommended_id:
+            self._choose_hna_method(method_id)
+        )
+        menu.addSeparator()
+        choices = (
+            ("Flick feels slow or hard to stop", "speed_stopping"),
+            ("Fast but inconsistent on small targets", "speed_precision"),
+            ("Curved path or too many corrections", "smooth_pathing"),
+        )
+        for label, method_id in choices:
+            choice = menu.addAction(label)
+            choice.triggered.connect(
+                lambda checked=False, value=method_id:
+                self._choose_hna_method(value)
+            )
+        menu.exec(
+            self.choose_hna_button.mapToGlobal(
+                self.choose_hna_button.rect().bottomLeft()
+            )
+        )
 
     def _toggle_advanced_session_details(self, visible):
         self.settings_frame.setVisible(
@@ -362,6 +453,7 @@ class RoutineWidget(QWidget):
         if is_deathmatch:
             self.deathmatch_mode_widget.refresh()
         self.method_duration.setVisible(is_routine)
+        self.choose_hna_button.setVisible(is_routine)
         self.advanced_settings_toggle.setVisible(is_routine)
         self.start_method_button.setText({
             "focused": "Start block",

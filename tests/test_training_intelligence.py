@@ -412,6 +412,27 @@ class TrainingIntelligenceTests(unittest.TestCase):
         widget.deleteLater()
         app.processEvents()
 
+    def test_hna_chooser_uses_observations_and_advances_rotation(self):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from PyQt6.QtWidgets import QApplication
+        from ui.routines import RoutineWidget
+
+        self.db.record_game_observation(
+            "Valorant & Counterstrike", "Clicking", "Static",
+            "curved_path", "Flick path bends before reaching the target",
+        )
+        app = QApplication.instance() or QApplication([])
+        widget = RoutineWidget(self.profile, self.db)
+        method_id, reason = widget._recommended_hna_method()
+        self.assertEqual(method_id, "smooth_pathing")
+        self.assertIn("curved", reason)
+
+        widget.select_training_method("speed_stopping")
+        widget.start_method_button.click()
+        self.assertEqual(widget.config.hna_next_method, "speed_precision")
+        widget.deleteLater()
+        app.processEvents()
+
     def test_full_routine_export_uses_kovaaks_playlist_fields(self):
         os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
         from unittest.mock import patch

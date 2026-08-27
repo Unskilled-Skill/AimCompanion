@@ -145,6 +145,7 @@ class TrainingConfig:
     training_mode: str = "focused"
     training_method: str = "adaptive_weakness"
     preferred_routine: str = ""
+    hna_next_method: str = "speed_stopping"
 
     def save(self):
         directory = os.path.dirname(CONFIG_PATH) or "."

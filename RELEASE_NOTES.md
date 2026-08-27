@@ -1,14 +1,19 @@
-# Aim Companion 1.8.4
+# Aim Companion 1.9.0
 
-This release corrects the user-facing name of the supplied authored routines.
+This release adds source-based guidance for choosing an hnA TacFPS routine.
 
 ## What changed
 
-- Renamed the training family to hnA TacFPS Routine throughout the app.
-- The three choices are now hnA: Speed and stopping, hnA: Speed-to-precision,
-  and hnA: Smooth pathing.
-- Active session headings and instruction panels use the full hnA TacFPS name.
-- Newly exported playlists use hnA TacFPS names instead of Aimgud names.
+- Added a Help me choose hnA menu to Full routine mode.
+- Recommendations use recorded aiming observations such as overflicking,
+  curved paths, shaking, and repeated corrections.
+- The chooser maps slow acquisition or stopping problems to Speed and stopping,
+  inconsistent speed/precision to Speed-to-precision, and inefficient paths to
+  Smooth pathing.
+- With no matching observation, the app follows hnA's default three-session
+  rotation: Speed and stopping, Speed-to-precision, then Smooth pathing.
+- Starting an hnA session advances and remembers the next rotation choice.
+- The selected recommendation explains why it fits today.
 
 Existing scores, settings, training history, routines, and automatic update
 preferences are preserved during installation.

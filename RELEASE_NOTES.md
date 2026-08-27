@@ -1,13 +1,14 @@
-# Aim Companion 1.9.1
+# Aim Companion 1.9.2
 
-This release makes the hnA chooser contextual.
+This release simplifies the Today deathmatch workflow.
 
 ## What changed
 
-- Help me choose hnA appears only when an hnA TacFPS routine is selected.
-- The control stays hidden for adaptive blocks, fundamentals, other full
-  routines, and deathmatch plans.
-- Added visibility regression coverage across training modes and methods.
+- Deathmatch plan selection now applies immediately, without a redundant
+  Load checklist step.
+- Training focus, routine, and deathmatch selectors now use labels that match
+  their purpose instead of sharing the vague Training philosophy label.
+- Plan progress and the current deathmatch focus have clearer visual hierarchy.
 
 Existing scores, settings, training history, routines, and automatic update
 preferences are preserved during installation.

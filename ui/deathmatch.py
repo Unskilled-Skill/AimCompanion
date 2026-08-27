@@ -60,6 +60,10 @@ class DeathmatchProgressWidget(QWidget):
             summary.setWordWrap(True)
             layout.addWidget(summary)
 
+        plan_label = QLabel("PLAN PROGRESS")
+        plan_label.setObjectName("fieldLabel")
+        layout.addWidget(plan_label)
+
         for block in DEATHMATCH_GUIDE["blocks"]:
             row = QHBoxLayout()
             copy = QLabel(f"{block['title']}  |  {block['weapon']}")
@@ -82,6 +86,9 @@ class DeathmatchProgressWidget(QWidget):
         self.progress_label = QLabel()
         self.progress_label.setObjectName("modeProgress")
         layout.addWidget(self.progress_label)
+        focus_label = QLabel("CURRENT FOCUS")
+        focus_label.setObjectName("fieldLabel")
+        layout.addWidget(focus_label)
         self.block_combo = QComboBox()
         for block in DEATHMATCH_GUIDE["blocks"]:
             self.block_combo.addItem(block["title"], block)

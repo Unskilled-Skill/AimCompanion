@@ -204,9 +204,9 @@ class RoutineWidget(QWidget):
 
         method_row = QHBoxLayout()
         method_row.setSpacing(10)
-        method_label = QLabel("TRAINING PHILOSOPHY")
-        method_label.setObjectName("fieldLabel")
-        method_row.addWidget(method_label)
+        self.method_label = QLabel()
+        self.method_label.setObjectName("fieldLabel")
+        method_row.addWidget(self.method_label)
         self.method_combo = QComboBox()
         self.method_combo.setMinimumWidth(250)
         self.method_combo.currentIndexChanged.connect(self._method_changed)
@@ -425,7 +425,7 @@ class RoutineWidget(QWidget):
         layout = QVBoxLayout(frame)
         layout.setContentsMargins(18, 14, 18, 16)
         layout.setSpacing(10)
-        title = QLabel("Valorant deathmatch transfer")
+        title = QLabel("Your deathmatch session")
         title.setObjectName("smallTitle")
         layout.addWidget(title)
         self.deathmatch_mode_widget = DeathmatchProgressWidget(self.db)
@@ -458,10 +458,16 @@ class RoutineWidget(QWidget):
         self.method_duration.setVisible(is_routine)
         self.choose_hna_button.setVisible(False)
         self.advanced_settings_toggle.setVisible(is_routine)
+        self.method_label.setText({
+            "focused": "TRAINING FOCUS",
+            "routine": "ROUTINE",
+            "deathmatch": "DEATHMATCH PLAN",
+        }[mode])
+        self.start_method_button.setVisible(not is_deathmatch)
         self.start_method_button.setText({
             "focused": "Start block",
             "routine": "Build routine",
-            "deathmatch": "Load checklist",
+            "deathmatch": "",
         }[mode])
         self._populate_methods(mode)
         if persist:

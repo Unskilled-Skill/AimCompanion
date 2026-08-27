@@ -753,7 +753,7 @@ class RoutineWidget(QWidget):
         layout.addWidget(sub)
 
         self.official_routine_combo = QComboBox()
-        for routine in ROUTINES:
+        for routine in (item for item in ROUTINES if item.get("share_code")):
             kind = routine.get("kind", "routine").title()
             self.official_routine_combo.addItem(
                 f"{kind} · {routine['name']}", routine

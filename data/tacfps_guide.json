@@ -1,0 +1,95 @@
+{
+  "title": "hnA TacFPS Aim Guide",
+  "author": "trgjtk",
+  "source_url": "https://docs.google.com/document/d/1WZbVuSqRiDhY77jsVDOOVaylWtHiKc06S0Xvw2QJveo/edit?tab=t.0",
+  "scope": "TacFPS practice for Valorant and other low-time-to-kill games. Aim training develops the mouse-control component and must be paired with in-game deathmatch or an equivalent transfer activity.",
+  "concepts": [
+    "Transfer depends on practising the mouse movement the game demands, not merely raising an aim-trainer score.",
+    "A flick combines the path toward the target with the ability to decelerate and stop on it. Fast TacFPS acquisition puts unusual emphasis on stopping power.",
+    "Misses tend to extend along the direction of travel: at higher speed, overshoot and undershoot grow more than sideways path error.",
+    "Large static targets permit speed without enough precision; tiny static targets often reward accuracy at a slower speed. Training should deliberately cover both ends and the transition between them.",
+    "Horizontal and vertical acquisition impose different joint and lever demands, so both need exposure rather than assuming one transfers perfectly to the other."
+  ],
+  "practice_rules": [
+    "Follow the execution goal for the current routine; the same scenario produces a different adaptation when played for raw speed versus clean pathing.",
+    "Pair the routines with game-specific deathmatch so mouse control is integrated with movement, crosshair placement, target recognition, and decisions.",
+    "Rotate the three routines one per day. Use Speed and Stopping more often when fast acquisition is the main limitation; use Smooth Pathing more often when lines and corrections are uncontrolled.",
+    "Treat discomfort as a stop signal. Productive speed work may involve brief controlled tension, but pain and sustained gripping are not training goals."
+  ],
+  "rotation": "Default cycle: Speed and Stopping, Speed-to-Precision, Smooth Pathing. When uncertain, repeat that three-day cycle. A speed-biased cycle can repeat the first routine before continuing to the second and third.",
+  "routines": [
+    {
+      "name": "TacFPS - Speed and Stopping",
+      "kind": "game",
+      "group": "Valorant & Counterstrike",
+      "variant": "hnA TacFPS - Speed and Stopping",
+      "description": "Raw acquisition speed and controlled deceleration. Hold fire where the scenario supports it, snap aggressively, and reacquire immediately after a miss rather than polishing the path.",
+      "sensitivity": "Use normal in-game sensitivity; the source assumes roughly 35-70 cm/360.",
+      "duration_minutes": 35,
+      "duration_max_minutes": 35,
+      "recommended_ranks": ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Jade", "Master", "Grandmaster", "Nova", "Astra", "Celestial", "Radiant"],
+      "min_rank": "Iron",
+      "targets": ["Clicking_Static", "Switching_Speed", "Switching_Stability"],
+      "source": "hnA TacFPS Aim Guide",
+      "source_url": "https://docs.google.com/document/d/1WZbVuSqRiDhY77jsVDOOVaylWtHiKc06S0Xvw2QJveo/edit?tab=t.0",
+      "playlist_name": "Aimgud 1 - Speed and Stopping",
+      "exercises": [
+        {"scenario": "voxTS Voltaic mini", "alternatives": [], "duration": "7 runs", "duration_min": 7, "duration_max": 7, "optional": false, "focus": "Use horizontal short, medium, and long switches to practise rapid stops."},
+        {"scenario": "devTS Goated NR Static Small", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Accelerate and stop over the smaller movements common after sound crosshair placement."},
+        {"scenario": "xenTargetSwitch", "alternatives": [], "duration": "3 runs", "duration_min": 3, "duration_max": 3, "optional": false, "focus": "Keep the same aggressive acquisition while handling more vertical displacement."},
+        {"scenario": "Pokeball Frenzy Auto 1w4ts", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Snap quickly, then stabilize on the small target."},
+        {"scenario": "Pokeball Frenzy Auto Wide Wall 3 Targets", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Apply fast stops across wider target spacing."},
+        {"scenario": "Pokeball 5 Sphere Hipfire Extra Small", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Combine a forceful initial movement with precise stabilization."},
+        {"scenario": "Flicker Plaza Final Bot", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Reacquire the blinking target immediately, like correcting onto an unexpected swing."}
+      ]
+    },
+    {
+      "name": "TacFPS - Speed-to-Precision",
+      "kind": "game",
+      "group": "Valorant & Counterstrike",
+      "variant": "hnA TacFPS - Speed-to-Precision",
+      "description": "Bridge raw speed into consistent static acquisition. Perform the speed runs first, then retain the initial pace while cleaning up the final correction during accuracy runs.",
+      "sensitivity": "The source recommends roughly 25-35 cm/360 for this block.",
+      "duration_minutes": 35,
+      "duration_max_minutes": 35,
+      "recommended_ranks": ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Jade", "Master", "Grandmaster", "Nova", "Astra", "Celestial", "Radiant"],
+      "min_rank": "Iron",
+      "targets": ["Clicking_Static", "Switching_Speed"],
+      "source": "hnA TacFPS Aim Guide",
+      "source_url": "https://docs.google.com/document/d/1WZbVuSqRiDhY77jsVDOOVaylWtHiKc06S0Xvw2QJveo/edit?tab=t.0",
+      "playlist_name": "Aimgud 2 - Speed-to-Precision",
+      "exercises": [
+        {"scenario": "fuglaaPressure 6 bots", "alternatives": ["fuglaaPressure 4 bots"], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Attempt every target before it disappears. Use the four-target version when accuracy remains below 60%."},
+        {"scenario": "1w4ts Voltaic", "alternatives": [], "duration": "10 runs", "duration_min": 10, "duration_max": 10, "optional": false, "focus": "Do 7 speed runs at 60-80% accuracy, then 3 disciplined accuracy runs at 90-95%."},
+        {"scenario": "6 sphere hipfire voltaic extra small", "alternatives": [], "duration": "7 runs", "duration_min": 7, "duration_max": 7, "optional": false, "focus": "Do 5 speed runs at 60-80% accuracy, then 2 accuracy runs at 90-95%."},
+        {"scenario": "Wide Wall 3 Targets", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Do 3 speed runs at 60-80% accuracy, then 2 accuracy runs at 90-95%."},
+        {"scenario": "Reflex Micro Flick 250ms", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Use one movement out and back. Increase time scale above 50% accuracy; reduce it below 25%."},
+        {"scenario": "Reflex Flick - Hard", "alternatives": ["Reflex Flick"], "duration": "3 runs", "duration_min": 3, "duration_max": 3, "optional": false, "focus": "Use one decisive movement to the target and one back to center; switch to an easier version below 25% accuracy."}
+      ]
+    },
+    {
+      "name": "TacFPS - Smooth Pathing",
+      "kind": "game",
+      "group": "Valorant & Counterstrike",
+      "variant": "hnA TacFPS - Smooth Pathing",
+      "description": "Train the opposite end of the spectrum: direct lines, minimal correction, and clean stops. Slow down enough to make the path deliberate rather than chasing score.",
+      "sensitivity": "The source recommends roughly 20-25 cm/360 for this block.",
+      "duration_minutes": 35,
+      "duration_max_minutes": 35,
+      "recommended_ranks": ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Jade", "Master", "Grandmaster", "Nova", "Astra", "Celestial", "Radiant"],
+      "min_rank": "Iron",
+      "targets": ["Clicking_Static", "Tracking_Precise"],
+      "source": "hnA TacFPS Aim Guide",
+      "source_url": "https://docs.google.com/document/d/1WZbVuSqRiDhY77jsVDOOVaylWtHiKc06S0Xvw2QJveo/edit?tab=t.0",
+      "playlist_name": "Aimgud 3 - Smooth Pathing",
+      "exercises": [
+        {"scenario": "1w4ts reload 30% smaller", "alternatives": [], "duration": "10 runs", "duration_min": 10, "duration_max": 10, "optional": false, "focus": "Draw straight paths and stop cleanly with as few micro-corrections as possible."},
+        {"scenario": "10 Sphere Hipfire Extra Small", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Prioritize line efficiency and deliberate stops over pace."},
+        {"scenario": "Wide Wall 4 Targets Small", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Keep long movements straight and settle without extra correction."},
+        {"scenario": "Pokeball Frenzy Auto Small Wide", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Maintain a clean line into stable contact on each target."},
+        {"scenario": "SmoothBot Invincible Goated", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Track the slow target without visible shake to clean up pathing and final corrections."},
+        {"scenario": "Centering II 180 no strafes", "alternatives": [], "duration": "5 runs", "duration_min": 5, "duration_max": 5, "optional": false, "focus": "Use precise smooth pursuit without introducing corrective jitter."}
+      ]
+    }
+  ]
+}

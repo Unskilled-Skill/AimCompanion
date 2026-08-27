@@ -60,9 +60,10 @@ class ScenarioBrowserTests(unittest.TestCase):
             with open(path, encoding="utf-8") as file:
                 playlist = json.load(file)
 
-        names = [item["scenario_name"] for item in playlist["scenarioList"]]
+        names = [item["scenarioName"] for item in playlist["scenarioList"]]
         self.assertEqual(len(names), len(self.browser.all_scenarios))
         self.assertEqual(len(names), len(set(names)))
+        self.assertTrue(all(item["playCount"] == 1 for item in playlist["scenarioList"]))
 
 
 if __name__ == "__main__":

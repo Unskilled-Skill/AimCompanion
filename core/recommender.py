@@ -25,7 +25,10 @@ with open(os.path.join(DATA_DIR, "voltaic_guidance.json"), "r", encoding="utf-8"
 with open(os.path.join(DATA_DIR, "aim_glossary.json"), "r", encoding="utf-8") as f:
     AIM_GLOSSARY = json.load(f)
 
-ROUTINES = _ROUTINE_DATA["routines"]
+with open(os.path.join(DATA_DIR, "tacfps_guide.json"), "r", encoding="utf-8") as f:
+    TACFPS_GUIDE = json.load(f)
+
+ROUTINES = [*_ROUTINE_DATA["routines"], *TACFPS_GUIDE["routines"]]
 
 
 def _normalize_name(name: str) -> str:

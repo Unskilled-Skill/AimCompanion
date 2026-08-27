@@ -6664,69 +6664,6 @@
           "duration_max": 2,
           "optional": false,
           "focus": ""
-        },
-        {
-          "scenario": "Empyrean - Scenario/Routine Conception & Creation, Writing, Formatting",
-          "alternatives": [],
-          "duration": "3m",
-          "duration_min": 3,
-          "duration_max": 3,
-          "optional": false,
-          "focus": ""
-        },
-        {
-          "scenario": "Hasin - Scenario/Routine Conception & Creation, Writing, Formatting",
-          "alternatives": [],
-          "duration": "3m",
-          "duration_min": 3,
-          "duration_max": 3,
-          "optional": false,
-          "focus": ""
-        },
-        {
-          "scenario": "Krascsi - Routine Conception & Creation",
-          "alternatives": [],
-          "duration": "3m",
-          "duration_min": 3,
-          "duration_max": 3,
-          "optional": false,
-          "focus": ""
-        },
-        {
-          "scenario": "HotRodRe - Writing",
-          "alternatives": [],
-          "duration": "3m",
-          "duration_min": 3,
-          "duration_max": 3,
-          "optional": false,
-          "focus": ""
-        },
-        {
-          "scenario": "Grissom - Writing",
-          "alternatives": [],
-          "duration": "3m",
-          "duration_min": 3,
-          "duration_max": 3,
-          "optional": false,
-          "focus": ""
-        },
-        {
-          "scenario": "BecKz - Writing",
-          "alternatives": [],
-          "duration": "3m",
-          "duration_min": 3,
-          "duration_max": 3,
-          "optional": false,
-          "focus": ""
-        },
-        {
-          "scenario": "sini - Scenario Conception, Feedback, Formatting, GFX",
-          "alternatives": [],
-          "duration": "3m",
-          "duration_min": 3,
-          "duration_max": 3,
-          "optional": false,
-          "focus": ""
         }
       ]
     }

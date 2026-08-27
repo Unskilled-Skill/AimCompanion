@@ -1,5 +1,5 @@
 #define MyAppName "Aim Companion"
-#define MyAppVersion "1.3.0"
+#define MyAppVersion "1.4.0"
 #define MyAppPublisher "Unskilled-Skill"
 #define MyAppURL "https://github.com/Unskilled-Skill/AimCompanion"
 #define MyAppExeName "AimCompanion.exe"

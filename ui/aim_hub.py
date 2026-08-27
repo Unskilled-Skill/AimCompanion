@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
     QScrollArea, QPushButton, QGridLayout, QTextEdit, QStackedWidget, QComboBox,
-    QToolButton, QMenu
+    QToolButton, QMenu, QMessageBox
 )
 from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
 from PyQt6.QtGui import QDesktopServices, QFont, QColor
@@ -12,7 +12,12 @@ from PyQt6.QtGui import QDesktopServices, QFont, QColor
 from models.database import Database
 from models.score import PlayerProfile
 from models.benchmark import TIERS, score_to_energy, energy_to_tier
-from core.recommender import AIM_GLOSSARY, GUIDANCE, get_scenario_info, SCENARIOS
+from core.recommender import (
+    AIM_GLOSSARY, GUIDANCE, TACFPS_GUIDE, get_scenario_info, SCENARIOS,
+)
+from core.kovaaks_launcher import open_kovaaks
+from core.playlist_export import export_playlist
+from models.config import TrainingConfig
 from core.warmups import RECOMMENDED_WARMUP_ROUTINE, RECOMMENDED_WARMUP_MINUTES
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
@@ -167,6 +172,7 @@ class AimHubWidget(QWidget):
                 item.widget().deleteLater()
 
         self._add_voltaic_foundations()
+        self._add_tacfps_guide()
         self._add_technique_library()
         self._add_issue_and_transfer_guidance()
         self._add_mindset_and_glossary()
@@ -271,6 +277,98 @@ class AimHubWidget(QWidget):
         sources.setMenu(source_menu)
         layout.addWidget(sources, 0, Qt.AlignmentFlag.AlignLeft)
         self.content_layout.addWidget(card)
+
+    def _add_tacfps_guide(self):
+        card, layout = self._card(
+            "TacFPS: speed, stopping, and clean pathing", "#f9e2af"
+        )
+        layout.addWidget(self._text(TACFPS_GUIDE["scope"], "#cdd6f4", True, 10))
+
+        for concept in TACFPS_GUIDE["concepts"]:
+            layout.addWidget(self._text("- " + concept, "#bac2de", size=10))
+
+        layout.addWidget(self._text("PRACTICE RULES", "#71809b", True, 9))
+        for rule in TACFPS_GUIDE["practice_rules"]:
+            layout.addWidget(self._text("- " + rule, "#a6adc8", size=10))
+
+        self.tacfps_routine_combo = QComboBox()
+        for routine in TACFPS_GUIDE["routines"]:
+            self.tacfps_routine_combo.addItem(routine["name"], routine)
+        layout.addWidget(self.tacfps_routine_combo)
+        self.tacfps_routine_summary = self._text("", "#f9e2af", True, 10)
+        self.tacfps_exercises = self._text("", "#bac2de", size=10)
+        layout.addWidget(self.tacfps_routine_summary)
+        layout.addWidget(self.tacfps_exercises)
+        self.tacfps_routine_combo.currentIndexChanged.connect(
+            self._update_tacfps_routine
+        )
+        self._update_tacfps_routine()
+
+        actions = QHBoxLayout()
+        install = QPushButton("Install 3 Aimgud routines")
+        install.setObjectName("primaryButton")
+        install.clicked.connect(self._install_tacfps_playlists)
+        actions.addWidget(install)
+        source = QPushButton("Open original guide")
+        source.setObjectName("quietButton")
+        source.clicked.connect(
+            lambda: QDesktopServices.openUrl(QUrl(TACFPS_GUIDE["source_url"]))
+        )
+        actions.addWidget(source)
+        actions.addStretch()
+        layout.addLayout(actions)
+        layout.addWidget(self._text(
+            "Rotation: " + TACFPS_GUIDE["rotation"], "#94e2d5", size=10
+        ))
+        self.content_layout.addWidget(card)
+
+    def _update_tacfps_routine(self):
+        routine = self.tacfps_routine_combo.currentData()
+        if not routine:
+            return
+        self.tacfps_routine_summary.setText(
+            f"{routine['description']} {routine['sensitivity']}"
+        )
+        lines = [
+            f"{exercise['duration']}  |  {exercise['scenario']}\n"
+            f"    {exercise['focus']}"
+            for exercise in routine["exercises"]
+        ]
+        self.tacfps_exercises.setText("\n".join(lines))
+
+    def _install_tacfps_playlists(self):
+        output_dir = TrainingConfig.load().get_playlists_dir()
+        paths = []
+        try:
+            for routine in TACFPS_GUIDE["routines"]:
+                scenarios = [
+                    {
+                        "name": exercise["scenario"],
+                        "count": exercise["duration_min"],
+                    }
+                    for exercise in routine["exercises"]
+                ]
+                paths.append(export_playlist(
+                    scenarios,
+                    name=routine["playlist_name"],
+                    output_dir=output_dir,
+                ))
+        except OSError as error:
+            QMessageBox.critical(self, "Could not install routines", str(error))
+            return
+
+        launched = open_kovaaks()
+        message = QMessageBox(self)
+        message.setWindowTitle("Aimgud routines installed")
+        message.setIcon(QMessageBox.Icon.Information)
+        message.setText("Installed all three Aimgud routines in Kovaak's Local Playlists.")
+        message.setInformativeText(
+            "Open Local Playlists and select a routine. Kovaak's will fetch any "
+            "referenced scenarios that are missing."
+            + ("" if launched else " Open Kovaak's manually to continue.")
+        )
+        message.setDetailedText("\n".join(paths))
+        message.exec()
 
     def _add_technique_library(self):
         card, layout = self._card("Technique by skill", "#94e2d5", expanded=True)

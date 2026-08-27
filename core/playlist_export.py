@@ -21,8 +21,8 @@ def export_playlist(scenarios: list[dict], name: str = None, output_dir: str = N
 
     for s in scenarios:
         playlist["scenarioList"].append({
-            "scenario_name": s["name"],
-            "play_Count": s.get("count", 1)
+            "scenarioName": s["name"],
+            "playCount": s.get("count", 1)
         })
 
     filepath = os.path.join(output_dir, f"{name}.json")

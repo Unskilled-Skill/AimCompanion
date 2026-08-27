@@ -8,6 +8,7 @@ from pathlib import Path
 
 from core.recommender import (
     AIM_GLOSSARY, GAME_WARMUP_TARGETS, GUIDANCE, ROUTINES, SCENARIOS,
+    TACFPS_GUIDE,
     generate_routine, get_game_options, get_training_guidance,
     generate_quick_scenario, get_scenario_info,
 )
@@ -307,7 +308,37 @@ class RecommenderTests(unittest.TestCase):
             {"game", "issue", "fundamentals"},
         )
         self.assertGreaterEqual(len(ROUTINES), 44)
-        self.assertTrue(all(routine["share_code"] for routine in ROUTINES))
+        voltaic = [routine for routine in ROUTINES if routine["source"].startswith("Voltaic")]
+        self.assertTrue(all(routine["share_code"] for routine in voltaic))
+
+    def test_tacfps_guide_matches_supplied_aimgud_playlists(self):
+        expected = {
+            "Aimgud 1 - Speed and Stopping": [7, 5, 3, 5, 5, 5, 5],
+            "Aimgud 2 - Speed-to-Precision": [5, 10, 7, 5, 5, 3],
+            "Aimgud 3 - Smooth Pathing": [10, 5, 5, 5, 5, 5],
+        }
+        self.assertEqual(len(TACFPS_GUIDE["routines"]), 3)
+        self.assertEqual(
+            {
+                routine["playlist_name"]: [
+                    exercise["duration_min"] for exercise in routine["exercises"]
+                ]
+                for routine in TACFPS_GUIDE["routines"]
+            },
+            expected,
+        )
+        scenarios = {
+            exercise["scenario"]
+            for routine in TACFPS_GUIDE["routines"]
+            for exercise in routine["exercises"]
+        }
+        self.assertEqual(len(scenarios), 19)
+        self.assertTrue(all(get_scenario_info(name) for name in scenarios))
+
+    def test_contributor_credits_are_not_scenarios(self):
+        names = {scenario["name"] for scenario in SCENARIOS}
+        self.assertFalse(any("Writing, Formatting" in name for name in names))
+        self.assertFalse(any(name.endswith(" - Writing") for name in names))
 
     def test_catalog_covers_every_benchmark_subcategory(self):
         expected = {

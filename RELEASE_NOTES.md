@@ -1,23 +1,22 @@
-# Aim Companion 1.3.0
+# Aim Companion 1.4.0
 
-This release adds a recommended scenario pack and faster scenario launching.
+This release adds the supplied Aimgud TacFPS routines and their training guide.
 
 ## What changed
 
-- Added a Download all missing action for Aim Companion's 242 curated scenarios.
-- The action creates a Kovaak's playlist containing only scenarios that are not
-  currently available locally, then opens Kovaak's for automatic acquisition.
-- Added Play or Download & play directly to every Scenario Library card.
-- Installed scenario counts refresh when returning to Aim Companion.
-- Scenario detection now compares normalized names across local and Steam
-  Workshop storage.
-- Choosing Different pick no longer launches Kovaak's before the new scenario
-  is confirmed.
+- Added all three routines from `Aimgud Routines.zip`, preserving the exact 19
+  scenario names, order, and run counts.
+- Added an expandable TacFPS guide covering speed and stopping, the
+  speed-to-precision bridge, smooth pathing, routine rotation, sensitivity
+  ranges, accuracy targets, and the execution cue for every exercise.
+- Added one-click installation of all three routines into Kovaak's Local
+  Playlists. Kovaak's resolves any missing referenced scenarios when opened.
+- Added the Aimgud drills to the recommended scenario pack and adaptive catalog.
+- Fixed exported Kovaak playlist fields to use `scenarioName` and `playCount`.
+- Removed seven contributor-credit lines that had been incorrectly indexed as
+  downloadable scenarios.
 
-Kovaak's does not provide a supported silent API for downloading its entire
-50,000+ item Workshop. The scenario pack therefore stays focused on the vetted
-set used by Aim Companion's recommendations and routines.
-
-Existing scores, settings, routines, training history, and update preferences
-are preserved during installation. This build is not Authenticode-signed; use
-the matching `.sha256` asset to verify installer integrity.
+The guide is a structured paraphrase of the linked hnA TacFPS Aim Guide by
+trgjtk. The exact routine definitions come from the user-supplied ZIP. Existing
+scores, settings, training history, and automatic update preferences are
+preserved during installation.

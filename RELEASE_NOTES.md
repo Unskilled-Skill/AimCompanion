@@ -1,25 +1,20 @@
-# Aim Companion 1.8.0
+# Aim Companion 1.8.1
 
-This release rebuilds the training flow around choosing an outcome and a
-practice philosophy before starting.
+This release makes the three hnA TacFPS routines source-faithful training plans.
 
 ## What changed
 
-- Today now opens with a compact session builder: training mode, philosophy,
-  duration, and one clear action.
-- Added 13 trainable methods across adaptive practice, fundamentals, Aimgud
-  TacFPS routines, and Valorant deathmatch transfer.
-- Replaced the long Training Guide with a searchable Training Methods browser
-  that shows one philosophy at a time.
-- Every method explains who it is for, why it works, how to execute it, and
-  which mistakes to avoid.
-- Aimgud methods preview their exact scenarios and build the matching supplied
-  routine rather than a generic approximation.
-- Deathmatch methods can load the full cycle or a focused crosshair, accuracy,
-  or movement subset.
-- Advanced routine controls are hidden behind Session details so the normal
-  starting flow stays focused.
-- Original source guides remain available from the methods that use them.
+- Added prominent hnA author instructions, sensitivity guidance, rotation advice,
+  and per-scenario execution cues inside generated hnA sessions.
+- Corrected Routine 1 wording to explicitly hold Mouse1 continuously, matching
+  the source guide.
+- hnA routines now preserve every authored scenario and all 35 prescribed runs.
+- Removed app-added warm-up and cooldown blocks from exact hnA plans.
+- Speed-to-Precision displays the authored speed/accuracy run splits and target
+  accuracy ranges.
+- Exported hnA playlists now preserve exact play counts and original playlist
+  names instead of converting run counts from generic time estimates.
+- Added a direct link to the original hnA document from the active routine.
 
 Existing scores, settings, training history, routines, and automatic update
 preferences are preserved during installation.

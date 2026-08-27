@@ -240,6 +240,13 @@ QFrame#methodWarning {
     border-radius: 7px;
 }
 
+QFrame#sourceRoutineGuide {
+    background-color: #111b28;
+    border: 1px solid #31566a;
+    border-left: 3px solid #70c1b3;
+    border-radius: 7px;
+}
+
 QLabel#modeSummary {
     color: #cdd6f4;
     font-weight: 700;

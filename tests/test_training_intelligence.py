@@ -378,6 +378,21 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertEqual(
             widget._current_routine["source_routine"], "TacFPS - Smooth Pathing"
         )
+        self.assertTrue(widget._current_routine["authored_run_plan"])
+        self.assertEqual(widget._current_routine["warmup_minutes"], 0)
+        self.assertEqual(widget._current_routine["cooldown_minutes"], 0)
+        self.assertEqual(
+            [exercise["prescribed_runs"] for exercise in widget._current_routine["exercises"]],
+            [10, 5, 5, 5, 5, 5],
+        )
+        self.assertTrue(widget._current_routine["source_guidance"])
+        self.assertTrue(
+            all(
+                exercise.get("authored_instruction")
+                and exercise.get("description")
+                for exercise in widget._current_routine["exercises"]
+            )
+        )
 
         widget.select_training_method("deathmatch_accuracy")
         self.assertEqual(
@@ -411,6 +426,32 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertEqual(
             playlist["scenarioList"],
             [{"scenarioName": "1w3ts", "playCount": 2}],
+        )
+        widget.deleteLater()
+        app.processEvents()
+
+    def test_hna_export_preserves_authored_run_counts(self):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from unittest.mock import patch
+        from PyQt6.QtWidgets import QApplication
+        from ui.routines import RoutineWidget
+
+        app = QApplication.instance() or QApplication([])
+        widget = RoutineWidget(self.profile, self.db)
+        widget.select_training_method("speed_stopping")
+        widget.start_method_button.click()
+
+        with tempfile.TemporaryDirectory() as directory, patch(
+            "ui.routines.KOVAAKS_PLAYLIST_DIR", directory
+        ), patch("ui.routines.QMessageBox.information"):
+            widget._export()
+            path = os.path.join(directory, "Aimgud 1 - Speed and Stopping.json")
+            with open(path, encoding="utf-8") as file:
+                playlist = json.load(file)
+
+        self.assertEqual(
+            [item["playCount"] for item in playlist["scenarioList"]],
+            [7, 5, 3, 5, 5, 5, 5],
         )
         widget.deleteLater()
         app.processEvents()

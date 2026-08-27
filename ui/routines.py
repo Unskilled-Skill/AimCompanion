@@ -7,8 +7,8 @@ from PyQt6.QtWidgets import (
     QMessageBox, QComboBox, QApplication, QSizePolicy, QAbstractSpinBox,
     QProgressBar, QMenu, QToolButton, QLineEdit, QButtonGroup,
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QAction, QFont
+from PyQt6.QtCore import Qt, QTimer, QUrl, pyqtSignal
+from PyQt6.QtGui import QAction, QDesktopServices, QFont
 
 from models.score import PlayerProfile
 from models.config import TrainingConfig, FOCUS_OPTIONS, _detect_kovaaks_playlists
@@ -1739,7 +1739,13 @@ class RoutineWidget(QWidget):
 
         self._clear_layout(self.routine_layout)
 
-        header = QLabel("Routine ({} min)".format(routine["total_minutes"]))
+        if routine.get("authored_run_plan"):
+            header_text = "hnA routine ({} prescribed runs)".format(
+                routine["training_minutes"]
+            )
+        else:
+            header_text = "Routine ({} min)".format(routine["total_minutes"])
+        header = QLabel(header_text)
         header.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
         header.setStyleSheet("color: #cdd6f4;")
         self.routine_layout.addWidget(header)
@@ -1762,16 +1768,17 @@ class RoutineWidget(QWidget):
         description_lbl.setWordWrap(True)
         self.routine_layout.addWidget(description_lbl)
 
-        weakness_text = ", ".join(routine["weakness_areas"])
-        if weakness_text:
-            weakness_text = "Measured weaknesses: " + weakness_text
-        else:
-            weakness_text = "Complete benchmark runs to unlock weakness-based recommendations"
-        weakness_lbl = QLabel(weakness_text)
-        weakness_lbl.setStyleSheet("color: #a6adc8;")
-        weakness_lbl.setFont(QFont("Segoe UI", 10))
-        weakness_lbl.setWordWrap(True)
-        self.routine_layout.addWidget(weakness_lbl)
+        if not routine.get("authored_run_plan"):
+            weakness_text = ", ".join(routine["weakness_areas"])
+            if weakness_text:
+                weakness_text = "Measured weaknesses: " + weakness_text
+            else:
+                weakness_text = "Complete benchmark runs to unlock weakness-based recommendations"
+            weakness_lbl = QLabel(weakness_text)
+            weakness_lbl.setStyleSheet("color: #a6adc8;")
+            weakness_lbl.setFont(QFont("Segoe UI", 10))
+            weakness_lbl.setWordWrap(True)
+            self.routine_layout.addWidget(weakness_lbl)
 
         allocation = routine.get("focus_allocation")
         if allocation:
@@ -1789,6 +1796,47 @@ class RoutineWidget(QWidget):
             allocation_label.setStyleSheet("color: #a6e3a1; font-weight: bold;")
             allocation_label.setWordWrap(True)
             self.routine_layout.addWidget(allocation_label)
+
+        source_guidance = routine.get("source_guidance", [])
+        if source_guidance:
+            source_frame = QFrame()
+            source_frame.setObjectName("sourceRoutineGuide")
+            source_layout = QVBoxLayout(source_frame)
+            source_layout.setContentsMargins(14, 12, 14, 12)
+            source_layout.setSpacing(6)
+            source_title = QLabel("hnA AUTHOR INSTRUCTIONS")
+            source_title.setObjectName("fieldLabel")
+            source_layout.addWidget(source_title)
+            source_notice = QLabel(
+                "Follow these instructions for the intended adaptation. "
+                "The execution matters more than the aim-trainer score."
+            )
+            source_notice.setStyleSheet("color: #f9e2af; font-weight: bold;")
+            source_notice.setWordWrap(True)
+            source_layout.addWidget(source_notice)
+            sensitivity = QLabel(routine.get("source_sensitivity", ""))
+            sensitivity.setStyleSheet("color: #94e2d5;")
+            sensitivity.setWordWrap(True)
+            source_layout.addWidget(sensitivity)
+            for index, instruction in enumerate(source_guidance, 1):
+                instruction_label = QLabel(f"{index}. {instruction}")
+                instruction_label.setObjectName("methodBody")
+                instruction_label.setWordWrap(True)
+                source_layout.addWidget(instruction_label)
+            rotation = routine.get("source_rotation", "")
+            if rotation:
+                rotation_label = QLabel("Rotation: " + rotation)
+                rotation_label.setObjectName("mutedText")
+                rotation_label.setWordWrap(True)
+                source_layout.addWidget(rotation_label)
+            source_button = QPushButton("Open original hnA guide")
+            source_button.setObjectName("secondaryButton")
+            source_button.clicked.connect(
+                lambda checked=False, url=routine.get("source_url", ""):
+                QDesktopServices.openUrl(QUrl(url))
+            )
+            source_layout.addWidget(source_button, 0, Qt.AlignmentFlag.AlignLeft)
+            self.routine_layout.addWidget(source_frame)
 
         guide_frame = QFrame()
         guide_frame.setObjectName("routineGuide")
@@ -1832,7 +1880,8 @@ class RoutineWidget(QWidget):
             recovery.setStyleSheet("color: #fab387;")
             recovery.setWordWrap(True)
             guide_layout.addWidget(recovery)
-        self.routine_layout.addWidget(guide_frame)
+        if not source_guidance:
+            self.routine_layout.addWidget(guide_frame)
 
         if routine["warmup_minutes"] > 0:
             warmup = QLabel("Warm-up · {} min".format(routine["warmup_minutes"]))
@@ -1856,7 +1905,12 @@ class RoutineWidget(QWidget):
                     warmup_detail.setWordWrap(True)
                     self.routine_layout.addWidget(warmup_detail)
 
-        training_header = QLabel("Main training · {} min".format(routine["training_minutes"]))
+        training_label = (
+            "Main training · {} prescribed runs".format(routine["training_minutes"])
+            if routine.get("authored_run_plan") else
+            "Main training · {} min".format(routine["training_minutes"])
+        )
+        training_header = QLabel(training_label)
         training_header.setStyleSheet("color: #cdd6f4;")
         training_header.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
         self.routine_layout.addWidget(training_header)
@@ -1875,7 +1929,12 @@ class RoutineWidget(QWidget):
             )
             row.addWidget(scenario_lbl, 1)
 
-            info = QLabel("{}min [{}]".format(ex["duration_min"], ex["subcategory"]))
+            amount = (
+                "{} runs".format(ex["prescribed_runs"])
+                if ex.get("prescribed_runs") else
+                "{} min".format(ex["duration_min"])
+            )
+            info = QLabel("{} [{}]".format(amount, ex["subcategory"]))
             info.setStyleSheet("color: #a6adc8;")
             info.setFont(QFont("Segoe UI", 9))
             row.addWidget(info)
@@ -1896,7 +1955,12 @@ class RoutineWidget(QWidget):
 
             description = ex.get("description", "")
             if description:
-                description_label = QLabel("    Purpose: " + description)
+                prefix = (
+                    "    hnA instruction: "
+                    if ex.get("authored_instruction") else
+                    "    Purpose: "
+                )
+                description_label = QLabel(prefix + description)
                 description_label.setObjectName("mutedText")
                 description_label.setWordWrap(True)
                 self.routine_layout.addWidget(description_label)
@@ -1944,8 +2008,8 @@ class RoutineWidget(QWidget):
         )
         for ex in all_exercises:
             duration = ex["duration_min"]
-            if duration <= 1:
-                count = 1
+            if ex.get("prescribed_runs"):
+                count = ex["prescribed_runs"]
             elif duration <= 3:
                 count = 1
             else:
@@ -1953,11 +2017,14 @@ class RoutineWidget(QWidget):
             scenario_list.append({"name": ex["scenario"], "count": count})
 
         try:
+            playlist_name = self._current_routine.get("source_playlist_name")
+            if not playlist_name:
+                playlist_name = "VT Routine - {}min".format(
+                    self._current_routine["training_minutes"]
+                )
             path = export_playlist(
                 scenario_list,
-                name="VT Routine - {}min".format(
-                    self._current_routine["training_minutes"]
-                ),
+                name=playlist_name,
                 output_dir=KOVAAKS_PLAYLIST_DIR,
             )
             QMessageBox.information(

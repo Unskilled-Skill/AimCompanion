@@ -23,8 +23,15 @@
       "kind": "game",
       "group": "Valorant & Counterstrike",
       "variant": "hnA TacFPS - Speed and Stopping",
-      "description": "Raw acquisition speed and controlled deceleration. Hold fire where the scenario supports it, snap aggressively, and reacquire immediately after a miss rather than polishing the path.",
+      "description": "Raw acquisition speed and controlled deceleration. Hold Mouse1 continuously, snap aggressively, and reacquire immediately after a miss rather than polishing the path.",
       "sensitivity": "Use normal in-game sensitivity; the source assumes roughly 35-70 cm/360.",
+      "author_guidance": [
+        "Hold Mouse1 continuously for every scenario in this routine.",
+        "Snap onto each target as fast as physically possible; large misses are acceptable while training this speed.",
+        "Reacquire immediately after a miss. Both the initial flick and the correction should be fast, and the correction does not need to be one clean movement.",
+        "Do not optimize for smoothness in this routine. The intended adaptation is raw acquisition speed and stopping power.",
+        "Use the target-switching and static exercises together to practise rapid acquisition across different movement sizes and directions."
+      ],
       "duration_minutes": 35,
       "duration_max_minutes": 35,
       "recommended_ranks": ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Jade", "Master", "Grandmaster", "Nova", "Astra", "Celestial", "Radiant"],
@@ -50,6 +57,14 @@
       "variant": "hnA TacFPS - Speed-to-Precision",
       "description": "Bridge raw speed into consistent static acquisition. Perform the speed runs first, then retain the initial pace while cleaning up the final correction during accuracy runs.",
       "sensitivity": "The source recommends roughly 25-35 cm/360 for this block.",
+      "author_guidance": [
+        "Use this routine to carry the speed from Routine 1 into more consistent and precise acquisition.",
+        "In fuglaaPressure, attempt every target before it disappears; missing matters less than making every attempt.",
+        "For the three static scenarios, always complete the prescribed speed runs before the accuracy runs.",
+        "During speed runs, increase shots fired while keeping accuracy between 60% and 80%.",
+        "During accuracy runs, target 90-95% accuracy while retaining the fast initial flick and making the final micro-correction disciplined.",
+        "For the reflex scenarios, use one motion to the target and one back to center; adjust time scale or difficulty using the stated accuracy thresholds."
+      ],
       "duration_minutes": 35,
       "duration_max_minutes": 35,
       "recommended_ranks": ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Jade", "Master", "Grandmaster", "Nova", "Astra", "Celestial", "Radiant"],
@@ -74,6 +89,13 @@
       "variant": "hnA TacFPS - Smooth Pathing",
       "description": "Train the opposite end of the spectrum: direct lines, minimal correction, and clean stops. Slow down enough to make the path deliberate rather than chasing score.",
       "sensitivity": "The source recommends roughly 20-25 cm/360 for this block.",
+      "author_guidance": [
+        "This routine deliberately trains the smoothness and pathing end of the spectrum rather than raw speed.",
+        "For the static and pokeball exercises, use the straightest possible path, minimize micro-corrections, and stop cleanly on target.",
+        "Move slowly enough to preserve that efficient path; score and maximum pace are not the objective here.",
+        "For the two tracking exercises, follow the slow target precisely without shaking off it.",
+        "Use the tracking work to clean up flick paths and final micro-adjustments."
+      ],
       "duration_minutes": 35,
       "duration_max_minutes": 35,
       "recommended_ranks": ["Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Jade", "Master", "Grandmaster", "Nova", "Astra", "Celestial", "Radiant"],

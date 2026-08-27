@@ -311,6 +311,24 @@ def enrich_routine_with_guidance(
         if source_routine else
         "An adaptive routine built from your selected focus, available time, and current measurements."
     )
+    routine["source_name"] = source_routine.get("source", "") if source_routine else ""
+    routine["source_sensitivity"] = (
+        source_routine.get("sensitivity", "") if source_routine else ""
+    )
+    routine["source_playlist_name"] = (
+        source_routine.get("playlist_name", "") if source_routine else ""
+    )
+    routine["source_guidance"] = (
+        source_routine.get("author_guidance", []) if source_routine else []
+    )
+    routine["source_rotation"] = (
+        TACFPS_GUIDE.get("rotation", "")
+        if routine["source_name"] == "hnA TacFPS Aim Guide" else ""
+    )
+    routine["authored_run_plan"] = bool(
+        routine["source_name"] == "hnA TacFPS Aim Guide"
+        and routine.get("exercises")
+    )
     routine["session_cues"] = list(dict.fromkeys(cues))[:5]
     routine["progression_guidance"] = GUIDANCE["difficulty_and_progression"]["summary"]
     routine["practice_mode"] = "Learning Zone"

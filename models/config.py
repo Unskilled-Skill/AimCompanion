@@ -373,6 +373,18 @@ def build_routine(
     rng = random.Random(seed)
 
     if best_routine:
+        is_authored_hna = (
+            bool(config.preferred_routine)
+            and best_routine.get("source") == "hnA TacFPS Aim Guide"
+        )
+        if is_authored_hna:
+            training_minutes = sum(
+                exercise.get("duration_min", 0)
+                for exercise in best_routine.get("exercises", [])
+            )
+            session_minutes = training_minutes
+            warmup_minutes = 0
+            cooldown_minutes = 0
         focus_allocation = None
         use_balance_guard = (
             effective_focus == "weakest"
@@ -689,6 +701,23 @@ def _adapt_premade_routine(
             scenario_name, routine.get("targets", []), scenario_info
         )
         prepared.append((ex, scenario_name, scenario_info, category, subcategory))
+
+    if routine.get("source") == "hnA TacFPS Aim Guide":
+        return [
+            {
+                "scenario": scenario_name,
+                "category": category,
+                "subcategory": subcategory,
+                "duration_min": ex.get("duration_min", 1),
+                "prescribed_runs": ex.get("duration_min", 1),
+                "prescription": ex.get("duration", ""),
+                "installed": scenario_name.casefold() in installed,
+                "tags": scenario_info.get("tags", []),
+                "focus": ex.get("focus", ""),
+                "authored_instruction": True,
+            }
+            for ex, scenario_name, scenario_info, category, subcategory in prepared
+        ]
 
     declared_duration = routine.get("duration_minutes") or sum(
         _parse_duration(ex.get("duration", "3m")) for ex in raw_exercises

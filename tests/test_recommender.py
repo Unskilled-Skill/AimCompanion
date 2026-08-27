@@ -335,6 +335,14 @@ class RecommenderTests(unittest.TestCase):
         }
         self.assertEqual(len(scenarios), 19)
         self.assertTrue(all(get_scenario_info(name) for name in scenarios))
+        guides = [
+            exercise.get("performance_guide", {})
+            for routine in TACFPS_GUIDE["routines"]
+            for exercise in routine["exercises"]
+        ]
+        self.assertTrue(all(guide.get("setup") for guide in guides))
+        self.assertTrue(all(len(guide.get("steps", [])) >= 3 for guide in guides))
+        self.assertTrue(all(guide.get("success") for guide in guides))
 
     def test_contributor_credits_are_not_scenarios(self):
         names = {scenario["name"] for scenario in SCENARIOS}

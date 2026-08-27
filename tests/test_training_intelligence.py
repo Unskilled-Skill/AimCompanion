@@ -380,7 +380,7 @@ class TrainingIntelligenceTests(unittest.TestCase):
 
     def test_training_method_builds_exact_source_routine(self):
         os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
-        from PyQt6.QtWidgets import QApplication
+        from PyQt6.QtWidgets import QApplication, QLabel, QToolButton
         from ui.routines import RoutineWidget
 
         app = QApplication.instance() or QApplication([])
@@ -410,9 +410,23 @@ class TrainingIntelligenceTests(unittest.TestCase):
             all(
                 exercise.get("authored_instruction")
                 and exercise.get("description")
+                and exercise.get("performance_guide")
                 for exercise in widget._current_routine["exercises"]
             )
         )
+        guide_buttons = [
+            button for button in widget.routine_frame.findChildren(QToolButton)
+            if button.text() == "How to perform this scenario"
+        ]
+        self.assertEqual(len(guide_buttons), 6)
+        guide_details = [
+            label for label in widget.routine_frame.findChildren(QLabel)
+            if "Correct execution:" in label.text()
+        ]
+        self.assertTrue(all(label.isHidden() for label in guide_details))
+        guide_buttons[0].click()
+        app.processEvents()
+        self.assertFalse(guide_details[0].isHidden())
 
         widget.select_training_method("deathmatch_accuracy")
         self.assertEqual(

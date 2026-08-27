@@ -715,6 +715,7 @@ def _adapt_premade_routine(
                 "installed": scenario_name.casefold() in installed,
                 "tags": scenario_info.get("tags", []),
                 "focus": ex.get("focus", ""),
+                "performance_guide": ex.get("performance_guide", {}),
                 "authored_instruction": True,
             }
             for ex, scenario_name, scenario_info, category, subcategory in prepared

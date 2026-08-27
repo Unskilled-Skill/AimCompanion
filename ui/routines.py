@@ -2069,6 +2069,53 @@ class RoutineWidget(QWidget):
                 description_label.setWordWrap(True)
                 self.routine_layout.addWidget(description_label)
 
+            performance_guide = ex.get("performance_guide", {})
+            if performance_guide:
+                guide_toggle = QToolButton()
+                guide_toggle.setObjectName("textButton")
+                guide_toggle.setText("How to perform this scenario")
+                guide_toggle.setToolButtonStyle(
+                    Qt.ToolButtonStyle.ToolButtonTextBesideIcon
+                )
+                guide_toggle.setArrowType(Qt.ArrowType.RightArrow)
+                guide_toggle.setCheckable(True)
+                self.routine_layout.addWidget(
+                    guide_toggle, 0, Qt.AlignmentFlag.AlignLeft
+                )
+
+                guide_lines = [
+                    f"Setup: {performance_guide['setup']}",
+                    *(
+                        f"{index}. {step}"
+                        for index, step in enumerate(
+                            performance_guide.get("steps", []), 1
+                        )
+                    ),
+                    f"Correct execution: {performance_guide['success']}",
+                ]
+                if performance_guide.get("adjust"):
+                    guide_lines.append(
+                        "Adjust: " + performance_guide["adjust"]
+                    )
+                guide_detail = QLabel("\n".join(guide_lines))
+                guide_detail.setObjectName("methodBody")
+                guide_detail.setWordWrap(True)
+                guide_detail.setContentsMargins(18, 0, 12, 6)
+                guide_detail.setVisible(False)
+                self.routine_layout.addWidget(guide_detail)
+
+                def toggle_scenario_guide(
+                    visible, button=guide_toggle, detail=guide_detail
+                ):
+                    button.setArrowType(
+                        Qt.ArrowType.DownArrow
+                        if visible else Qt.ArrowType.RightArrow
+                    )
+                    detail.setVisible(visible)
+                    QTimer.singleShot(0, self._fit_routine_height)
+
+                guide_toggle.toggled.connect(toggle_scenario_guide)
+
             coaching_cue = ex.get("coaching_cue", "")
             skill_key = (ex.get("category"), ex.get("subcategory"))
             if coaching_cue and skill_key not in shown_cues:

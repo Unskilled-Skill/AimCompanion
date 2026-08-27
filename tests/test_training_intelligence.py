@@ -329,6 +329,27 @@ class TrainingIntelligenceTests(unittest.TestCase):
         widget.deleteLater()
         app.processEvents()
 
+    def test_different_pick_does_not_launch_before_confirmation(self):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from unittest.mock import patch
+        from PyQt6.QtWidgets import QApplication, QPushButton
+        from ui.routines import RoutineWidget
+
+        app = QApplication.instance() or QApplication([])
+        widget = RoutineWidget(self.profile, self.db)
+        different_pick = next(
+            button for button in widget.routine_frame.findChildren(QPushButton)
+            if button.text() == "Different pick"
+        )
+
+        with patch("ui.routines.open_kovaaks_scenario") as launch:
+            different_pick.click()
+            app.processEvents()
+
+        launch.assert_not_called()
+        widget.deleteLater()
+        app.processEvents()
+
 
 if __name__ == "__main__":
     unittest.main()

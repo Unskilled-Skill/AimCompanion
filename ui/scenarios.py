@@ -1,18 +1,22 @@
-import json
-import os
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QComboBox, QScrollArea, QFrame, QPushButton, QGridLayout,
-    QTextEdit, QCheckBox
+    QCheckBox, QMessageBox,
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QFont
 
 from models.database import Database
-from core.recommender import get_installed_scenarios, SCENARIOS
+from models.config import TrainingConfig
+from core.kovaaks_launcher import open_kovaaks, open_kovaaks_scenario
+from core.playlist_export import export_playlist
+from core.recommender import get_installed_scenario_names, SCENARIOS
+from core.scenario_files import scenario_key
 
 
 class ScenarioBrowser(QWidget):
+    status_changed = pyqtSignal(str)
+
     def __init__(self, db: Database):
         super().__init__()
         self.db = db
@@ -20,12 +24,28 @@ class ScenarioBrowser(QWidget):
             scenario for scenario in SCENARIOS
             if scenario.get("official_recommended")
         ]
-        self.installed = set(s["name"] for s in get_installed_scenarios())
+        self.installed = set()
+        self.refresh_installed(populate=False)
         self._build_ui()
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+
+        pack_row = QHBoxLayout()
+        pack_copy = QVBoxLayout()
+        pack_title = QLabel("Recommended scenario pack")
+        pack_title.setObjectName("smallTitle")
+        self.pack_status = QLabel()
+        self.pack_status.setObjectName("mutedText")
+        pack_copy.addWidget(pack_title)
+        pack_copy.addWidget(self.pack_status)
+        pack_row.addLayout(pack_copy, 1)
+        self.download_all_btn = QPushButton()
+        self.download_all_btn.setObjectName("primaryButton")
+        self.download_all_btn.clicked.connect(self._download_recommended_pack)
+        pack_row.addWidget(self.download_all_btn)
+        layout.addLayout(pack_row)
 
         search_row = QHBoxLayout()
 
@@ -77,6 +97,77 @@ class ScenarioBrowser(QWidget):
 
         self._filter()
 
+    def refresh_installed(self, populate=True):
+        self.installed = {
+            scenario_key(name) for name in get_installed_scenario_names()
+        }
+        if populate and hasattr(self, "search_input"):
+            self._filter()
+
+    def _missing_scenarios(self):
+        return [
+            scenario for scenario in self.all_scenarios
+            if scenario_key(scenario["name"]) not in self.installed
+        ]
+
+    def _update_pack_status(self):
+        missing = len(self._missing_scenarios())
+        total = len(self.all_scenarios)
+        installed = total - missing
+        self.pack_status.setText(
+            f"{installed} of {total} recommended scenarios available locally"
+        )
+        self.download_all_btn.setText(
+            f"Download all missing ({missing})" if missing else "Pack installed"
+        )
+        self.download_all_btn.setEnabled(missing > 0)
+
+    def _download_recommended_pack(self):
+        missing = self._missing_scenarios()
+        if not missing:
+            return
+        try:
+            path = export_playlist(
+                missing, name="Aim Companion Recommended Scenarios",
+                output_dir=TrainingConfig.load().get_playlists_dir(),
+            )
+        except OSError as error:
+            QMessageBox.critical(
+                self, "Could not create scenario pack", str(error)
+            )
+            return
+
+        launched = open_kovaaks()
+        self.status_changed.emit(
+            f"Created download playlist with {len(missing)} missing scenarios"
+        )
+        message = QMessageBox(self)
+        message.setWindowTitle("Scenario pack ready")
+        message.setIcon(QMessageBox.Icon.Information)
+        message.setText(
+            f"Created a playlist with {len(missing)} missing recommended scenarios."
+        )
+        message.setInformativeText(
+            "Open Local Playlists in Kovaak's and select "
+            "'Aim Companion Recommended Scenarios'. Current Kovaak's versions "
+            "automatically download missing playlist scenarios. The app will "
+            "refresh their installed status when you return."
+            + ("" if launched else " Open Kovaak's manually to continue.")
+        )
+        message.setDetailedText(f"Playlist file: {path}")
+        message.exec()
+
+    def _play_scenario(self, name):
+        if open_kovaaks_scenario(name):
+            self.status_changed.emit(
+                f"Opening {name}; Kovaak's will download it if needed"
+            )
+        else:
+            QMessageBox.warning(
+                self, "Could not open Kovaak's",
+                "Open Kovaak's through Steam and search for the scenario name.",
+            )
+
     def _filter(self):
         text = self.search_input.text().lower()
         cat = self.category_filter.currentText()
@@ -97,13 +188,14 @@ class ScenarioBrowser(QWidget):
                 continue
             if diff != "All" and s.get("difficulty", "") != diff:
                 continue
-            if inst_only and name not in self.installed:
+            if inst_only and scenario_key(name) not in self.installed:
                 continue
             if fav_only and name not in favs:
                 continue
             results.append(s)
 
         self.count_label.setText(f"{len(results)} official scenarios")
+        self._update_pack_status()
         self._populate(results, favs)
 
     def _populate(self, scenarios, favs):
@@ -123,7 +215,7 @@ class ScenarioBrowser(QWidget):
         cat = s.get("category", "")
         subcat = s.get("subcategory", "")
         diff = s.get("difficulty", "")
-        inst = name in self.installed
+        inst = scenario_key(name) in self.installed
         is_fav = name in favs
         has_info = s.get("instructions") or s.get("technique")
         has_routine = s.get("routine")
@@ -172,6 +264,16 @@ class ScenarioBrowser(QWidget):
         if has_routine:
             tags_row.addWidget(self._tag("ROUTINE", "#bb88ff"))
         tags_row.addStretch()
+        play = QPushButton("Play" if inst else "Download & play")
+        play.setObjectName("quietButton")
+        play.setToolTip(
+            "Open this scenario through its official Steam URI. "
+            "Kovaak's downloads it automatically when needed."
+        )
+        play.clicked.connect(
+            lambda checked=False, scenario=name: self._play_scenario(scenario)
+        )
+        tags_row.addWidget(play)
         layout.addLayout(tags_row)
 
         return frame

@@ -93,6 +93,7 @@ class MainWindow(QMainWindow):
         self.routine_view.navigate_requested.connect(self._navigate)
         self.progress_view = ProgressWidget(self.profile, self.db)
         self.scenario_view = ScenarioBrowser(self.db)
+        self.scenario_view.status_changed.connect(self.statusBar().showMessage)
         self.import_view = DragDropImport(self.db, on_import_complete=self._refresh_scores)
         self.export_view = ExportWidget(self.profile, self.db, on_restore=self._rebuild_profile)
         self.aim_hub_view = AimHubWidget(self.profile, self.db)
@@ -121,6 +122,13 @@ class MainWindow(QMainWindow):
 
     def eventFilter(self, obj, event):
         """Stop card styles from leaking onto QLabel, which subclasses QFrame in Qt."""
+        if (
+            obj is self
+            and event.type() == QEvent.Type.WindowActivate
+            and hasattr(self, "pages")
+            and self.pages.currentWidget() is self.scenario_view
+        ):
+            self.scenario_view.refresh_installed()
         if event.type() == QEvent.Type.Polish and isinstance(obj, QLabel):
             if not obj.property("cleanTextSurface"):
                 obj.setProperty("cleanTextSurface", True)
@@ -412,6 +420,8 @@ class MainWindow(QMainWindow):
             self.mode_label, self.mode_combo, self.refresh_btn,
         ):
             widget.setVisible(not is_today)
+        if self.pages.widget(index) is self.scenario_view:
+            self.scenario_view.refresh_installed()
 
     def _launch_kovaaks(self):
         launched = open_kovaaks()

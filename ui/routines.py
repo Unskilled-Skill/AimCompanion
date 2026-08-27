@@ -1457,7 +1457,9 @@ class RoutineWidget(QWidget):
         )
         self.next_quick_btn.setObjectName("quietButton")
         self.next_quick_btn.clicked.connect(
-            lambda: self.show_quick_scenario(recommendation["warmup"])
+            lambda: self.show_quick_scenario(
+                recommendation["warmup"], launch=False
+            )
         )
         actions.addWidget(self.next_quick_btn)
         self.finish_quick_btn = QPushButton("Done for now")

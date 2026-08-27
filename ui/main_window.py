@@ -317,6 +317,7 @@ class MainWindow(QMainWindow):
 
     def _quick_scenario(self, warmup=False):
         self._navigate("routines")
+        self.routine_view._set_training_mode("focused")
         self.routine_view.show_quick_scenario(warmup)
         recommendation = self.routine_view._current_quick
         self.statusBar().showMessage(

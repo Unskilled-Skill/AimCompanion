@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame,
     QScrollArea, QPushButton, QSpinBox, QCheckBox,
     QMessageBox, QComboBox, QApplication, QSizePolicy, QAbstractSpinBox,
-    QProgressBar, QMenu, QToolButton, QLineEdit,
+    QProgressBar, QMenu, QToolButton, QLineEdit, QButtonGroup,
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QAction, QFont
@@ -26,6 +26,7 @@ from core.training_intelligence import (
     build_adaptive_schedule, build_scenario_signals, build_skill_intelligence,
     build_weekly_plan, detect_fatigue,
 )
+from ui.deathmatch import DeathmatchProgressWidget
 
 KOVAAKS_PLAYLIST_DIR = _detect_kovaaks_playlists()
 
@@ -141,12 +142,20 @@ class RoutineWidget(QWidget):
         scroll_content = QWidget()
         self.content_layout = QVBoxLayout(scroll_content)
 
+        self._build_mode_selector()
+        self._build_deathmatch_mode()
+        self._build_settings()
         self._build_routine_display()
         self._build_quick_actions()
         self._build_weekly_plan()
         self._build_game_review()
-        self._build_settings()
         self._build_share_codes()
+
+        configured_mode = getattr(self.config, "training_mode", "focused")
+        if configured_mode not in self.mode_buttons:
+            configured_mode = "focused"
+        self.mode_buttons[configured_mode].setChecked(True)
+        self._set_training_mode(configured_mode, persist=False)
 
         # Select a useful block immediately, but never launch Kovaak's merely
         # because the user opened Today.
@@ -156,8 +165,77 @@ class RoutineWidget(QWidget):
         self.scroll.setWidget(scroll_content)
         layout.addWidget(self.scroll)
 
+    def _build_mode_selector(self):
+        frame = QFrame()
+        frame.setObjectName("trainingModes")
+        layout = QHBoxLayout(frame)
+        layout.setContentsMargins(12, 8, 12, 8)
+        layout.setSpacing(4)
+        label = QLabel("TRAINING MODE")
+        label.setObjectName("fieldLabel")
+        layout.addWidget(label)
+        self.mode_group = QButtonGroup(self)
+        self.mode_group.setExclusive(True)
+        self.mode_buttons = {}
+        for key, text in (
+            ("focused", "Focused block"),
+            ("routine", "Full routine"),
+            ("deathmatch", "Deathmatch"),
+        ):
+            button = QPushButton(text)
+            button.setObjectName("modeButton")
+            button.setCheckable(True)
+            button.clicked.connect(
+                lambda checked=False, value=key: self._set_training_mode(value)
+            )
+            self.mode_group.addButton(button)
+            self.mode_buttons[key] = button
+            layout.addWidget(button)
+        layout.addStretch()
+        self.mode_selector_frame = frame
+        self.content_layout.addWidget(frame)
+
+    def _build_deathmatch_mode(self):
+        frame = QFrame()
+        frame.setObjectName("deathmatchMode")
+        layout = QVBoxLayout(frame)
+        layout.setContentsMargins(18, 14, 18, 16)
+        layout.setSpacing(10)
+        title = QLabel("Valorant deathmatch transfer")
+        title.setObjectName("smallTitle")
+        layout.addWidget(title)
+        self.deathmatch_mode_widget = DeathmatchProgressWidget(self.db)
+        layout.addWidget(self.deathmatch_mode_widget)
+        self.deathmatch_mode_frame = frame
+        self.content_layout.addWidget(frame)
+
+    def _set_training_mode(self, mode, persist=True):
+        if mode not in self.mode_buttons:
+            return
+        self.training_mode = mode
+        self.mode_buttons[mode].setChecked(True)
+        is_focused = mode == "focused"
+        is_routine = mode == "routine"
+        is_deathmatch = mode == "deathmatch"
+        self.deathmatch_mode_frame.setVisible(is_deathmatch)
+        self.routine_frame.setVisible(not is_deathmatch)
+        self.quick_actions_frame.setVisible(is_focused)
+        self.weekly_plan_frame.setVisible(is_focused)
+        self.game_review_frame.setVisible(is_focused)
+        self.settings_frame.setVisible(is_routine)
+        self.playlist_library_frame.setVisible(
+            is_routine and self.library_toggle.isChecked()
+        )
+        if is_deathmatch:
+            self.deathmatch_mode_widget.refresh()
+        if persist:
+            self.config.training_mode = mode
+            self.config.save()
+        self.scroll.verticalScrollBar().setValue(0)
+
     def _build_quick_actions(self):
         frame = QFrame()
+        self.quick_actions_frame = frame
         frame.setObjectName("quickTraining")
         frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         layout = QVBoxLayout(frame)
@@ -234,11 +312,6 @@ class RoutineWidget(QWidget):
         warmup.setObjectName("quietButton")
         warmup.clicked.connect(lambda: self.show_quick_scenario(True))
         action_row.addWidget(warmup)
-        self.full_routine_toggle = QPushButton("Full routine")
-        self.full_routine_toggle.setObjectName("quietButton")
-        self.full_routine_toggle.setCheckable(True)
-        self.full_routine_toggle.toggled.connect(self._toggle_full_routine)
-        action_row.addWidget(self.full_routine_toggle)
         self.training_options_toggle = QPushButton("Training options")
         self.training_options_toggle.setObjectName("textButton")
         self.training_options_toggle.setCheckable(True)
@@ -250,6 +323,7 @@ class RoutineWidget(QWidget):
 
     def _build_weekly_plan(self):
         frame = QFrame()
+        self.weekly_plan_frame = frame
         frame.setObjectName("nextSteps")
         layout = QHBoxLayout(frame)
         layout.setContentsMargins(18, 12, 18, 12)
@@ -336,7 +410,7 @@ class RoutineWidget(QWidget):
         if focus == "benchmark":
             self.navigate_requested.emit("skills")
         elif focus == "game":
-            self.full_routine_toggle.setChecked(True)
+            self._set_training_mode("routine")
             self._generate()
             self.scroll.ensureWidgetVisible(self.settings_frame)
         else:
@@ -344,6 +418,7 @@ class RoutineWidget(QWidget):
 
     def _build_game_review(self):
         frame = QFrame()
+        self.game_review_frame = frame
         frame.setObjectName("nextSteps")
         layout = QVBoxLayout(frame)
         layout.setContentsMargins(18, 14, 18, 14)
@@ -686,10 +761,6 @@ class RoutineWidget(QWidget):
 
         self.content_layout.addWidget(frame)
         frame.setVisible(False)
-
-    def _toggle_full_routine(self, visible):
-        self.settings_frame.setVisible(visible)
-        self.full_routine_toggle.setText("Close routine" if visible else "Full routine")
 
     def _toggle_training_options(self, visible):
         self.warmup_context_label.setVisible(visible)

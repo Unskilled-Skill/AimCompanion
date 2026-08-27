@@ -321,10 +321,41 @@ class TrainingIntelligenceTests(unittest.TestCase):
         app = QApplication.instance() or QApplication([])
         widget = RoutineWidget(self.profile, self.db)
 
-        self.assertIs(widget.content_layout.itemAt(0).widget(), widget.routine_frame)
+        self.assertIs(
+            widget.content_layout.itemAt(0).widget(), widget.mode_selector_frame
+        )
+        self.assertTrue(widget.mode_buttons["focused"].isChecked())
+        self.assertTrue(widget.deathmatch_mode_frame.isHidden())
         self.assertTrue(widget.observation_form.isHidden())
         self.assertTrue(widget.fps_budget_spin.isHidden())
         self.assertTrue(widget.warmup_context_combo.isHidden())
+
+        widget.deleteLater()
+        app.processEvents()
+
+    def test_today_training_modes_show_only_their_workflow(self):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from PyQt6.QtWidgets import QApplication
+        from ui.routines import RoutineWidget
+
+        app = QApplication.instance() or QApplication([])
+        widget = RoutineWidget(self.profile, self.db)
+
+        widget._set_training_mode("deathmatch")
+        self.assertFalse(widget.deathmatch_mode_frame.isHidden())
+        self.assertTrue(widget.routine_frame.isHidden())
+        self.assertTrue(widget.quick_actions_frame.isHidden())
+        self.assertEqual(widget.config.training_mode, "deathmatch")
+
+        widget._set_training_mode("routine")
+        self.assertFalse(widget.routine_frame.isHidden())
+        self.assertFalse(widget.settings_frame.isHidden())
+        self.assertTrue(widget.quick_actions_frame.isHidden())
+
+        widget._set_training_mode("focused")
+        self.assertFalse(widget.routine_frame.isHidden())
+        self.assertFalse(widget.quick_actions_frame.isHidden())
+        self.assertTrue(widget.settings_frame.isHidden())
 
         widget.deleteLater()
         app.processEvents()

@@ -25,8 +25,9 @@ class AimHubTests(unittest.TestCase):
         self.db.close()
 
     def test_deathmatch_progress_is_saved_and_reset(self):
-        crosshair = self.widget.deathmatch_controls["crosshair_placement"]
-        sheriff = self.widget.deathmatch_controls["sheriff_accuracy_1"]
+        deathmatch = self.widget.deathmatch_widget
+        crosshair = deathmatch.controls["crosshair_placement"]
+        sheriff = deathmatch.controls["sheriff_accuracy_1"]
         self.assertIsInstance(crosshair, QSpinBox)
         self.assertIsInstance(sheriff, QCheckBox)
 
@@ -35,10 +36,10 @@ class AimHubTests(unittest.TestCase):
         state = json.loads(self.db.get_settings_value("deathmatch_daily_v1"))
         self.assertEqual(state["counts"]["crosshair_placement"], 2)
         self.assertEqual(state["counts"]["sheriff_accuracy_1"], 1)
-        self.assertIn("3 of 8", self.widget.deathmatch_progress.text())
+        self.assertIn("3 of 8", deathmatch.progress_label.text())
 
-        self.widget._reset_deathmatch_progress()
-        self.assertIn("0 of 8", self.widget.deathmatch_progress.text())
+        deathmatch.reset()
+        self.assertIn("0 of 8", deathmatch.progress_label.text())
 
 
 if __name__ == "__main__":

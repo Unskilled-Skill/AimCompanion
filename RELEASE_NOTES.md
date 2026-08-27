@@ -1,20 +1,20 @@
-# Aim Companion 1.5.0
+# Aim Companion 1.6.0
 
-This release adds the supplied Valorant deathmatch transfer routine.
+This release turns Today into a multi-mode training workspace.
 
 ## What changed
 
-- Added the exact eight-match order from the hnA Valorant Deathmatch Routine:
-  three crosshair-placement matches, one Sheriff accuracy match, two movement
-  and peeking matches, another Sheriff match, and one Operator or weakness match.
-- Added focused guidance for crosshair width, burst discipline, weapon reset,
-  angle isolation, peek selection, spraying decisions, and active Operator use.
-- Added compact daily progress controls that persist across app restarts and
-  reset automatically on the next day.
-- Kept the new material collapsed by default and show detailed coaching for only
-  one selected block at a time.
-- Linked the original source from inside the app.
+- Added a persistent segmented mode selector to Today.
+- Added Focused block mode for the existing adaptive 3-5 minute workflow.
+- Added Full routine mode for session setup, generated routines, and playlists.
+- Added Deathmatch mode as a first-class daily training workflow with the full
+  eight-match Valorant transfer checklist and coaching.
+- Each mode now hides controls belonging to other workflows, reducing page
+  density and preventing unrelated actions from competing for attention.
+- Full routine mode presents session setup before its generated routine.
+- Starting a focused block from Home always selects the matching mode.
+- Reused one deathmatch component between Today and Training Guide so progress
+  stays consistent across both views and app restarts.
 
-The guide content is a structured paraphrase of the linked hnA document.
 Existing scores, settings, training history, routines, and automatic update
 preferences are preserved during installation.

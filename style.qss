@@ -150,6 +150,51 @@ QStackedWidget#pageStack {
     border: none;
 }
 
+QFrame#trainingModes {
+    background-color: #11192b;
+    border: 1px solid #222d45;
+    border-radius: 8px;
+}
+
+QPushButton#modeButton {
+    background-color: transparent;
+    color: #95a2b8;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 12px;
+}
+
+QPushButton#modeButton:hover {
+    background-color: #18233b;
+    color: #e5eaf5;
+}
+
+QPushButton#modeButton:checked {
+    background-color: #293558;
+    color: #c4caff;
+    font-weight: 800;
+}
+
+QFrame#deathmatchMode {
+    background-color: #11192b;
+    border: 1px solid #263149;
+    border-radius: 8px;
+}
+
+QLabel#modeSummary {
+    color: #cdd6f4;
+    font-weight: 700;
+}
+
+QLabel#modeProgress {
+    color: #a6e3a1;
+    font-weight: 800;
+}
+
+QLabel#modeGuidance {
+    color: #94e2d5;
+}
+
 /* Cards and content surfaces */
 QFrame {
     background: transparent;

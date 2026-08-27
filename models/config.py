@@ -142,6 +142,7 @@ class TrainingConfig:
     warmup_routine_version: int = 1
     automatic_updates: bool = True
     daily_fps_minutes: int = 120
+    training_mode: str = "focused"
 
     def save(self):
         directory = os.path.dirname(CONFIG_PATH) or "."

@@ -4,6 +4,7 @@ import sqlite3
 import tempfile
 import unittest
 from datetime import datetime, timedelta
+from unittest.mock import patch
 
 from core.recommender import generate_quick_scenario
 from core.training_intelligence import (
@@ -64,11 +65,14 @@ def add_score(db, benchmark, scenario, value, timestamp, category="Clicking", su
 
 class TrainingIntelligenceTests(unittest.TestCase):
     def setUp(self):
+        self.config_save_patcher = patch("models.config.TrainingConfig.save")
+        self.config_save_patcher.start()
         self.db = Database(":memory:")
         self.profile = make_profile()
 
     def tearDown(self):
         self.db.close()
+        self.config_save_patcher.stop()
 
     def test_unmeasured_skills_are_low_confidence_and_planned_for_checks(self):
         skills = build_skill_intelligence(self.profile, self.db)
@@ -325,7 +329,9 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertIs(
             widget.content_layout.itemAt(0).widget(), widget.mode_selector_frame
         )
-        self.assertTrue(widget.mode_buttons[widget.config.training_mode].isChecked())
+        self.assertTrue(widget.mode_buttons["focused"].isChecked())
+        self.assertEqual(widget.method_combo.currentData(), "adaptive_weakness")
+        self.assertEqual(widget.config.preferred_routine, "")
         self.assertTrue(widget.observation_form.isHidden())
         self.assertTrue(widget.fps_budget_spin.isHidden())
         self.assertTrue(widget.warmup_context_combo.isHidden())

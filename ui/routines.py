@@ -154,9 +154,12 @@ class RoutineWidget(QWidget):
         self._build_game_review()
         self._build_share_codes()
 
-        configured_mode = getattr(self.config, "training_mode", "focused")
-        if configured_mode not in self.mode_buttons:
-            configured_mode = "focused"
+        # Today always opens from a neutral recommendation. Authored routines
+        # such as hnA must be an explicit choice for the current session.
+        configured_mode = "focused"
+        self.config.training_mode = configured_mode
+        self.config.training_method = "adaptive_weakness"
+        self.config.preferred_routine = ""
         self.mode_buttons[configured_mode].setChecked(True)
         self._set_training_mode(configured_mode, persist=False)
 

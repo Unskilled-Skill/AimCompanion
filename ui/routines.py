@@ -14,9 +14,11 @@ from models.score import PlayerProfile
 from models.config import TrainingConfig, FOCUS_OPTIONS, _detect_kovaaks_playlists
 from core.recommender import (
     GUIDANCE, ROUTINES, generate_routine, get_game_options,
+    get_routine_description,
     get_training_guidance, generate_quick_scenario,
 )
 from core.kovaaks_launcher import open_kovaaks, open_kovaaks_scenario
+from core.playlist_export import export_playlist
 from core.scenario_duration import quick_block_plan
 from core.scenario_files import find_scenario_file
 from core.run_tracker import KovaaksRunTracker
@@ -839,6 +841,9 @@ class RoutineWidget(QWidget):
         self.official_routine_meta = QLabel()
         self.official_routine_meta.setStyleSheet("color: #a6adc8;")
         self.official_routine_meta.setWordWrap(True)
+        self.official_routine_description = QLabel()
+        self.official_routine_description.setObjectName("mutedText")
+        self.official_routine_description.setWordWrap(True)
         self.official_share_code = QLabel()
         self.official_share_code.setFont(QFont("Consolas", 9))
         self.official_share_code.setStyleSheet("color: #a6e3a1;")
@@ -849,6 +854,7 @@ class RoutineWidget(QWidget):
         self.official_routine_guidance.setStyleSheet("color: #89b4fa;")
         self.official_routine_guidance.setWordWrap(True)
         details.addWidget(self.official_routine_meta)
+        details.addWidget(self.official_routine_description)
         details.addWidget(self.official_share_code)
         details.addWidget(self.official_routine_guidance)
         details_row.addLayout(details, 1)
@@ -879,6 +885,9 @@ class RoutineWidget(QWidget):
         self.official_routine_meta.setText(
             f"{routine.get('group', '')} · {duration_text} · {ranks} · "
             f"{len(routine.get('exercises', []))} exercise groups"
+        )
+        self.official_routine_description.setText(
+            get_routine_description(routine)
         )
         self.official_share_code.setText(routine.get("share_code", ""))
         kind = routine.get("kind")
@@ -1612,6 +1621,11 @@ class RoutineWidget(QWidget):
             source_lbl.setWordWrap(True)
             self.routine_layout.addWidget(source_lbl)
 
+        description_lbl = QLabel(routine.get("description", ""))
+        description_lbl.setObjectName("mutedText")
+        description_lbl.setWordWrap(True)
+        self.routine_layout.addWidget(description_lbl)
+
         weakness_text = ", ".join(routine["weakness_areas"])
         if weakness_text:
             weakness_text = "Measured weaknesses: " + weakness_text
@@ -1699,6 +1713,12 @@ class RoutineWidget(QWidget):
                 warmup_row.setStyleSheet("color: #a6adc8;")
                 warmup_row.setWordWrap(True)
                 self.routine_layout.addWidget(warmup_row)
+                warmup_description = exercise.get("description", "")
+                if warmup_description:
+                    warmup_detail = QLabel("    Purpose: " + warmup_description)
+                    warmup_detail.setObjectName("mutedText")
+                    warmup_detail.setWordWrap(True)
+                    self.routine_layout.addWidget(warmup_detail)
 
         training_header = QLabel("Main training · {} min".format(routine["training_minutes"]))
         training_header.setStyleSheet("color: #cdd6f4;")
@@ -1737,6 +1757,13 @@ class RoutineWidget(QWidget):
 
             row.addStretch()
             self.routine_layout.addLayout(row)
+
+            description = ex.get("description", "")
+            if description:
+                description_label = QLabel("    Purpose: " + description)
+                description_label.setObjectName("mutedText")
+                description_label.setWordWrap(True)
+                self.routine_layout.addWidget(description_label)
 
             coaching_cue = ex.get("coaching_cue", "")
             skill_key = (ex.get("category"), ex.get("subcategory"))
@@ -1787,29 +1814,20 @@ class RoutineWidget(QWidget):
                 count = 1
             else:
                 count = max(1, round(duration / 3))
-            scenario_list.append({
-                "scenario_name": ex["scenario"],
-                "play_Count": count
-            })
-
-        playlist = {
-            "playlistName": "VT Routine - {}min".format(self._current_routine["training_minutes"]),
-            "scenarioList": scenario_list,
-            "hasOfflineScenarios": False,
-            "isFavorite": False
-        }
-
-        safe = "VT_Routine_{}min".format(self._current_routine["training_minutes"])
-        path = os.path.join(KOVAAKS_PLAYLIST_DIR, "{}.json".format(safe))
+            scenario_list.append({"name": ex["scenario"], "count": count})
 
         try:
-            os.makedirs(KOVAAKS_PLAYLIST_DIR, exist_ok=True)
-            with open(path, "w", encoding="utf-8") as f:
-                json.dump(playlist, f, indent=2)
+            path = export_playlist(
+                scenario_list,
+                name="VT Routine - {}min".format(
+                    self._current_routine["training_minutes"]
+                ),
+                output_dir=KOVAAKS_PLAYLIST_DIR,
+            )
             QMessageBox.information(
                 self, "Exported!",
-                "Playlist saved to Kovaaks:\n{}.json\n\n"
-                "Restart Kovaaks, then find it under\nLocal Playlists.".format(safe)
+                "Playlist saved to Kovaaks:\n{}\n\n"
+                "Restart Kovaaks, then find it under\nLocal Playlists.".format(path)
             )
         except Exception as e:
             QMessageBox.critical(self, "Error", "Failed to export:\n{}".format(e))

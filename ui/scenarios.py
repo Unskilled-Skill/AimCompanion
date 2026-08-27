@@ -10,7 +10,9 @@ from models.database import Database
 from models.config import TrainingConfig
 from core.kovaaks_launcher import open_kovaaks, open_kovaaks_scenario
 from core.playlist_export import export_playlist
-from core.recommender import get_installed_scenario_names, SCENARIOS
+from core.recommender import (
+    get_installed_scenario_names, get_scenario_description, SCENARIOS,
+)
 from core.scenario_files import scenario_key
 
 
@@ -253,6 +255,11 @@ class ScenarioBrowser(QWidget):
         meta = QLabel(f"{cat} / {subcat} / {diff}")
         meta.setStyleSheet("color: #888; font-size: 10px;")
         layout.addWidget(meta)
+
+        description = QLabel(get_scenario_description(s))
+        description.setObjectName("mutedText")
+        description.setWordWrap(True)
+        layout.addWidget(description)
 
         tags_row = QHBoxLayout()
         if inst:

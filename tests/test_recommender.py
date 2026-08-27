@@ -10,7 +10,8 @@ from core.recommender import (
     AIM_GLOSSARY, DEATHMATCH_GUIDE, GAME_WARMUP_TARGETS, GUIDANCE, ROUTINES,
     SCENARIOS, TACFPS_GUIDE,
     generate_routine, get_game_options, get_training_guidance,
-    generate_quick_scenario, get_scenario_info,
+    generate_quick_scenario, get_routine_description, get_scenario_description,
+    get_scenario_info,
 )
 from models.config import (
     TrainingConfig, build_routine, _detect_kovaaks_stats, score_scenario,
@@ -374,6 +375,14 @@ class RecommenderTests(unittest.TestCase):
         self.assertTrue(expected.issubset(actual))
         self.assertFalse(any(not s.get("category") or not s.get("subcategory") for s in SCENARIOS))
 
+    def test_every_recommended_scenario_and_routine_has_visible_description(self):
+        recommended = [
+            scenario for scenario in SCENARIOS
+            if scenario.get("official_recommended")
+        ]
+        self.assertTrue(all(get_scenario_description(item) for item in recommended))
+        self.assertTrue(all(get_routine_description(item) for item in ROUTINES))
+
     def test_balanced_mode_allocates_time_across_categories(self):
         routine = build_routine(make_profile(), make_config())
         totals = {}
@@ -509,7 +518,9 @@ class RecommenderTests(unittest.TestCase):
         routine = build_routine(make_profile(), make_config(focus="weakest"))
         self.assertEqual(routine["training_minutes"], 20)
         self.assertTrue(routine["source_routine"])
+        self.assertTrue(routine["description"])
         self.assertTrue(all(e["category"] and e["subcategory"] for e in routine["exercises"]))
+        self.assertTrue(all(e["description"] for e in routine["exercises"]))
         self.assertTrue(routine["theory_summary"])
         self.assertTrue(routine["session_cues"])
         self.assertTrue(routine["progression_guidance"])

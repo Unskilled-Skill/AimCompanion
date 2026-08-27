@@ -1,4 +1,5 @@
 import os
+import json
 import sqlite3
 import tempfile
 import unittest
@@ -357,6 +358,34 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertFalse(widget.quick_actions_frame.isHidden())
         self.assertTrue(widget.settings_frame.isHidden())
 
+        widget.deleteLater()
+        app.processEvents()
+
+    def test_full_routine_export_uses_kovaaks_playlist_fields(self):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from unittest.mock import patch
+        from PyQt6.QtWidgets import QApplication
+        from ui.routines import RoutineWidget
+
+        app = QApplication.instance() or QApplication([])
+        widget = RoutineWidget(self.profile, self.db)
+        widget._current_routine = {
+            "training_minutes": 6,
+            "warmup_scenarios": [],
+            "exercises": [{"scenario": "1w3ts", "duration_min": 6}],
+        }
+        with tempfile.TemporaryDirectory() as directory, patch(
+            "ui.routines.KOVAAKS_PLAYLIST_DIR", directory
+        ), patch("ui.routines.QMessageBox.information"):
+            widget._export()
+            path = os.path.join(directory, "VT Routine - 6min.json")
+            with open(path, encoding="utf-8") as file:
+                playlist = json.load(file)
+
+        self.assertEqual(
+            playlist["scenarioList"],
+            [{"scenarioName": "1w3ts", "playCount": 2}],
+        )
         widget.deleteLater()
         app.processEvents()
 

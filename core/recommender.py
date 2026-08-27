@@ -200,6 +200,53 @@ def get_exercise_cue(category: str, subcategory: str) -> str:
     return get_training_guidance(category, subcategory)["cue"]
 
 
+def get_scenario_description(scenario: dict | str) -> str:
+    """Return the best visible explanation for a catalog scenario."""
+    info = get_scenario_info(scenario) if isinstance(scenario, str) else scenario
+    info = info or {}
+    authored = (
+        info.get("instructions", "").strip()
+        or info.get("technique", "").strip()
+    )
+    if authored:
+        return authored
+    description = info.get("description", "").strip()
+    if description and description != "Recommended in the Voltaic scenario sheet.":
+        return description
+    guidance = get_training_guidance(
+        info.get("category"), info.get("subcategory")
+    )
+    return guidance["goal"]
+
+
+def get_routine_description(routine: dict) -> str:
+    """Describe a supplied routine even when its source omitted prose."""
+    if routine.get("description", "").strip():
+        return routine["description"].strip()
+    kind = routine.get("kind", "routine")
+    group = routine.get("group", "").strip()
+    targets = []
+    for target in routine.get("targets", []):
+        label = target.replace("_", " ")
+        if label not in targets:
+            targets.append(label)
+    target_text = ", ".join(targets[:4]).lower() or "general mouse control"
+    if kind == "issue":
+        detail = GUIDANCE.get("issues", {}).get(group, "")
+        return detail or f"A corrective routine for {group.lower()}."
+    if kind == "game":
+        return (
+            f"Game-specific mouse-control practice for {group}, emphasizing "
+            f"{target_text}. Apply the trained movement in-game afterward."
+        )
+    if kind == "fundamentals":
+        return (
+            f"Rank-appropriate fundamentals covering {target_text}. Use clean, "
+            "repeatable technique rather than treating the routine as a benchmark."
+        )
+    return f"Structured practice emphasizing {target_text}."
+
+
 def enrich_routine_with_guidance(
     routine: dict, source_routine: dict | None = None,
     game: str = "General / Fundamentals",
@@ -210,6 +257,14 @@ def enrich_routine_with_guidance(
         category = exercise.get("category", "General")
         subcategory = exercise.get("subcategory", "Mixed")
         exercise["coaching_cue"] = get_exercise_cue(category, subcategory)
+        source_info = get_scenario_info(exercise.get("scenario", "")) or {
+            "category": category,
+            "subcategory": subcategory,
+        }
+        exercise["description"] = (
+            exercise.get("focus", "").strip()
+            or get_scenario_description(source_info)
+        )
         key = f"{category}_{subcategory}"
         if key not in represented:
             represented.append(key)
@@ -220,6 +275,9 @@ def enrich_routine_with_guidance(
     )
     for exercise in routine.get("warmup_scenarios", []):
         exercise["coaching_cue"] = warmup_cue
+        exercise["description"] = get_scenario_description(
+            exercise.get("scenario", "")
+        )
 
     principles = GUIDANCE.get("principles", [])
     cues = [
@@ -248,6 +306,11 @@ def enrich_routine_with_guidance(
         theory_summary = GUIDANCE.get("game_transfer", {}).get(game, theory_summary)
 
     routine["theory_summary"] = theory_summary
+    routine["description"] = (
+        get_routine_description(source_routine)
+        if source_routine else
+        "An adaptive routine built from your selected focus, available time, and current measurements."
+    )
     routine["session_cues"] = list(dict.fromkeys(cues))[:5]
     routine["progression_guidance"] = GUIDANCE["difficulty_and_progression"]["summary"]
     routine["practice_mode"] = "Learning Zone"

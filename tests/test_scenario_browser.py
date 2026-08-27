@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PyQt6.QtWidgets import QApplication, QPushButton
+from PyQt6.QtWidgets import QApplication, QLabel, QPushButton
 
 from models.database import Database
 from ui.scenarios import ScenarioBrowser
@@ -41,6 +41,11 @@ class ScenarioBrowserTests(unittest.TestCase):
             button.click()
 
         launch.assert_called_once()
+
+    def test_scenario_cards_show_a_visible_description(self):
+        card = self.browser._card(self.browser.all_scenarios[0], set())
+        labels = [label.text() for label in card.findChildren(QLabel)]
+        self.assertTrue(any("Focus" in text or "Train" in text or "Build" in text for text in labels))
 
     def test_recommended_pack_contains_every_missing_scenario(self):
         with tempfile.TemporaryDirectory() as directory:

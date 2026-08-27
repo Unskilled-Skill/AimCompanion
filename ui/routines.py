@@ -263,6 +263,9 @@ class RoutineWidget(QWidget):
         if method["id"] == recommended_id:
             description = "Recommended today: " + reason + "  " + description
         self.method_description.setText(description)
+        self.choose_hna_button.setVisible(
+            method["id"] in ("speed_stopping", "speed_precision", "smooth_pathing")
+        )
         self.method_duration.setValue(
             method.get("duration", self.config.session_minutes)
         )
@@ -453,7 +456,7 @@ class RoutineWidget(QWidget):
         if is_deathmatch:
             self.deathmatch_mode_widget.refresh()
         self.method_duration.setVisible(is_routine)
-        self.choose_hna_button.setVisible(is_routine)
+        self.choose_hna_button.setVisible(False)
         self.advanced_settings_toggle.setVisible(is_routine)
         self.start_method_button.setText({
             "focused": "Start block",

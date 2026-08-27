@@ -357,6 +357,11 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertFalse(widget.routine_frame.isHidden())
         self.assertTrue(widget.settings_frame.isHidden())
         self.assertTrue(widget.quick_actions_frame.isHidden())
+        self.assertTrue(widget.choose_hna_button.isHidden())
+        widget.select_training_method("speed_stopping")
+        self.assertFalse(widget.choose_hna_button.isHidden())
+        widget.select_training_method("balanced_fundamentals")
+        self.assertTrue(widget.choose_hna_button.isHidden())
         widget.advanced_settings_toggle.setChecked(True)
         self.assertFalse(widget.settings_frame.isHidden())
 

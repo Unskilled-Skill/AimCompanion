@@ -1,19 +1,13 @@
-# Aim Companion 1.9.0
+# Aim Companion 1.9.1
 
-This release adds source-based guidance for choosing an hnA TacFPS routine.
+This release makes the hnA chooser contextual.
 
 ## What changed
 
-- Added a Help me choose hnA menu to Full routine mode.
-- Recommendations use recorded aiming observations such as overflicking,
-  curved paths, shaking, and repeated corrections.
-- The chooser maps slow acquisition or stopping problems to Speed and stopping,
-  inconsistent speed/precision to Speed-to-precision, and inefficient paths to
-  Smooth pathing.
-- With no matching observation, the app follows hnA's default three-session
-  rotation: Speed and stopping, Speed-to-precision, then Smooth pathing.
-- Starting an hnA session advances and remembers the next rotation choice.
-- The selected recommendation explains why it fits today.
+- Help me choose hnA appears only when an hnA TacFPS routine is selected.
+- The control stays hidden for adaptive blocks, fundamentals, other full
+  routines, and deathmatch plans.
+- Added visibility regression coverage across training modes and methods.
 
 Existing scores, settings, training history, routines, and automatic update
 preferences are preserved during installation.

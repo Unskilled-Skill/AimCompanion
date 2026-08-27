@@ -53,6 +53,11 @@ class AimHubTests(unittest.TestCase):
         self.widget.train_button.click()
         self.assertEqual(received, ["deathmatch_crosshair"])
 
+    def test_profile_refresh_contract_is_supported(self):
+        refreshed_profile = object()
+        self.widget.update_profile(refreshed_profile)
+        self.assertIs(self.widget.profile, refreshed_profile)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -263,3 +263,7 @@ class AimHubWidget(QWidget):
         source_url = self._source_url(method)
         if source_url:
             QDesktopServices.openUrl(QUrl(source_url))
+
+    def update_profile(self, profile):
+        """Keep the shared view contract used after score synchronization."""
+        self.profile = profile

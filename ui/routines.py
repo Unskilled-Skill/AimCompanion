@@ -141,11 +141,11 @@ class RoutineWidget(QWidget):
         scroll_content = QWidget()
         self.content_layout = QVBoxLayout(scroll_content)
 
+        self._build_routine_display()
         self._build_quick_actions()
         self._build_weekly_plan()
         self._build_game_review()
         self._build_settings()
-        self._build_routine_display()
         self._build_share_codes()
 
         # Select a useful block immediately, but never launch Kovaak's merely
@@ -161,35 +161,41 @@ class RoutineWidget(QWidget):
         frame.setObjectName("quickTraining")
         frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         layout = QVBoxLayout(frame)
-        layout.setContentsMargins(20, 17, 20, 17)
-        layout.setSpacing(12)
+        layout.setContentsMargins(18, 12, 18, 12)
+        layout.setSpacing(8)
 
         copy = QVBoxLayout()
         title = QLabel("Today's focused training")
         title.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
+        title.setVisible(False)
         description = QLabel(
             "Train for 3–5 focused minutes, then stop. Return later for a fresh skill."
         )
         description.setObjectName("mutedText")
         description.setWordWrap(True)
+        description.setVisible(False)
         copy.addWidget(title)
         copy.addWidget(description)
         self.daily_summary = QLabel()
         self.daily_summary.setStyleSheet("color: #94e2d5; font-weight: bold;")
         self.daily_coverage = QLabel()
         self.daily_coverage.setObjectName("mutedText")
+        self.daily_coverage.setVisible(False)
         copy.addWidget(self.daily_summary)
         copy.addWidget(self.daily_coverage)
         self.today_phase = QLabel()
         self.today_phase.setObjectName("mutedText")
+        self.today_phase.setVisible(False)
         copy.addWidget(self.today_phase)
         self.sync_health = QLabel()
         self.sync_health.setWordWrap(True)
+        self.sync_health.setVisible(False)
         copy.addWidget(self.sync_health)
         warmup_context_row = QHBoxLayout()
-        warmup_context_label = QLabel("Warm up for")
-        warmup_context_label.setObjectName("mutedText")
-        warmup_context_row.addWidget(warmup_context_label)
+        self.warmup_context_label = QLabel("Warm up for")
+        self.warmup_context_label.setObjectName("mutedText")
+        self.warmup_context_label.setVisible(False)
+        warmup_context_row.addWidget(self.warmup_context_label)
         self.warmup_context_combo = QComboBox()
         self.warmup_context_combo.setMaximumWidth(280)
         self.warmup_context_combo.addItem("Aim training")
@@ -206,6 +212,7 @@ class RoutineWidget(QWidget):
         self.warmup_context_combo.currentTextChanged.connect(
             self._set_warmup_context
         )
+        self.warmup_context_combo.setVisible(False)
         warmup_context_row.addWidget(self.warmup_context_combo, 1)
         copy.addLayout(warmup_context_row)
         self.limited_space_check = QCheckBox("Low sensitivity / limited mouse space")
@@ -216,21 +223,27 @@ class RoutineWidget(QWidget):
         self.limited_space_check.stateChanged.connect(
             self._set_limited_space_preference
         )
+        self.limited_space_check.setVisible(False)
         copy.addWidget(self.limited_space_check)
         self._update_daily_progress()
         self._update_sync_health()
         layout.addLayout(copy)
 
         action_row = QHBoxLayout()
-        warmup = QPushButton("Warm up instead")
+        warmup = QPushButton("Warm up")
         warmup.setObjectName("quietButton")
         warmup.clicked.connect(lambda: self.show_quick_scenario(True))
         action_row.addWidget(warmup)
-        self.full_routine_toggle = QPushButton("Build full routine")
-        self.full_routine_toggle.setObjectName("textButton")
+        self.full_routine_toggle = QPushButton("Full routine")
+        self.full_routine_toggle.setObjectName("quietButton")
         self.full_routine_toggle.setCheckable(True)
         self.full_routine_toggle.toggled.connect(self._toggle_full_routine)
         action_row.addWidget(self.full_routine_toggle)
+        self.training_options_toggle = QPushButton("Training options")
+        self.training_options_toggle.setObjectName("textButton")
+        self.training_options_toggle.setCheckable(True)
+        self.training_options_toggle.toggled.connect(self._toggle_training_options)
+        action_row.addWidget(self.training_options_toggle)
         action_row.addStretch()
         layout.addLayout(action_row)
         self.content_layout.addWidget(frame)
@@ -239,12 +252,13 @@ class RoutineWidget(QWidget):
         frame = QFrame()
         frame.setObjectName("nextSteps")
         layout = QHBoxLayout(frame)
-        layout.setContentsMargins(18, 14, 18, 14)
+        layout.setContentsMargins(18, 12, 18, 12)
         layout.setSpacing(16)
 
         copy = QVBoxLayout()
         title = QLabel("Weekly training balance")
         title.setObjectName("smallTitle")
+        title.setVisible(False)
         self.weekly_focus = QLabel()
         self.weekly_focus.setStyleSheet("color: #94e2d5; font-weight: bold;")
         self.weekly_counts = QLabel()
@@ -253,6 +267,7 @@ class RoutineWidget(QWidget):
         self.budget_label = QLabel()
         self.budget_label.setObjectName("mutedText")
         self.budget_label.setWordWrap(True)
+        self.budget_label.setVisible(False)
         copy.addWidget(title)
         copy.addWidget(self.weekly_focus)
         copy.addWidget(self.weekly_counts)
@@ -262,6 +277,7 @@ class RoutineWidget(QWidget):
         budget = QVBoxLayout()
         budget_label = QLabel("DAILY FPS PLAYTIME")
         budget_label.setObjectName("fieldLabel")
+        budget_label.setVisible(False)
         self.fps_budget_spin = QSpinBox()
         self.fps_budget_spin.setRange(30, 600)
         self.fps_budget_spin.setSingleStep(15)
@@ -269,6 +285,7 @@ class RoutineWidget(QWidget):
         self.fps_budget_spin.setValue(self.config.daily_fps_minutes)
         self.fps_budget_spin.setMaximumWidth(140)
         self.fps_budget_spin.valueChanged.connect(self._set_fps_budget)
+        self.fps_budget_spin.setVisible(False)
         budget.addWidget(budget_label)
         budget.addWidget(self.fps_budget_spin)
         budget.addStretch()
@@ -276,7 +293,7 @@ class RoutineWidget(QWidget):
         self.weekly_action = QPushButton()
         self.weekly_action.setObjectName("primaryButton")
         self.weekly_action.clicked.connect(self._run_weekly_action)
-        layout.addWidget(self.weekly_action, 0, Qt.AlignmentFlag.AlignBottom)
+        layout.addWidget(self.weekly_action, 0, Qt.AlignmentFlag.AlignVCenter)
         self.content_layout.addWidget(frame)
         self._refresh_weekly_plan()
 
@@ -291,12 +308,13 @@ class RoutineWidget(QWidget):
         plan = build_weekly_plan(self.db, self.config.daily_fps_minutes)
         self._weekly_plan = plan
         completion = "Complete" if plan["today_complete"] else "Next target"
-        self.weekly_focus.setText(f"{completion}  ·  {plan['focus_label']}")
+        self.weekly_focus.setText(f"This week  ·  {completion}: {plan['focus_label']}")
         self.weekly_counts.setText(
-            "Last 7 days  ·  "
+            "Progress  ·  "
             f"Weakness {plan['weakness_days']}/3  ·  "
-            f"Game/fundamentals {plan['game_days']}/2  ·  "
-            f"Benchmarks {plan['benchmark_days']}/2"
+            f"Transfer {plan['game_days']}/2  ·  "
+            f"Checks {plan['benchmark_days']}/2  ·  "
+            f"{plan['remaining_minutes']} min available today"
         )
         budget_text = (
             f"Aim training today  ·  {plan['used_minutes']} min used  ·  "
@@ -330,11 +348,19 @@ class RoutineWidget(QWidget):
         layout = QVBoxLayout(frame)
         layout.setContentsMargins(18, 14, 18, 14)
         layout.setSpacing(10)
+        header = QHBoxLayout()
         title = QLabel("Post-game observations")
         title.setObjectName("smallTitle")
-        layout.addWidget(title)
+        header.addWidget(title, 1)
+        self.observation_toggle = QPushButton("Log observation")
+        self.observation_toggle.setObjectName("textButton")
+        self.observation_toggle.setCheckable(True)
+        header.addWidget(self.observation_toggle)
+        layout.addLayout(header)
 
-        form = QVBoxLayout()
+        self.observation_form = QWidget()
+        form = QVBoxLayout(self.observation_form)
+        form.setContentsMargins(0, 0, 0, 0)
         selector_row = QHBoxLayout()
         self.observation_game = QComboBox()
         self.observation_game.addItems(get_game_options()[1:])
@@ -370,7 +396,9 @@ class RoutineWidget(QWidget):
         save.clicked.connect(self._save_game_observation)
         context_row.addWidget(save)
         form.addLayout(context_row)
-        layout.addLayout(form)
+        self.observation_form.setVisible(False)
+        self.observation_toggle.toggled.connect(self.observation_form.setVisible)
+        layout.addWidget(self.observation_form)
 
         self.observation_list = QVBoxLayout()
         self.observation_list.setSpacing(4)
@@ -388,6 +416,7 @@ class RoutineWidget(QWidget):
             self.observation_note.text().strip(),
         )
         self.observation_note.clear()
+        self.observation_toggle.setChecked(False)
         self._refresh_game_observations()
         if self.on_scores_updated:
             self.on_scores_updated()
@@ -398,9 +427,6 @@ class RoutineWidget(QWidget):
         self._clear_layout(self.observation_list)
         observations = self.db.get_open_game_observations(3) if self.db else []
         if not observations:
-            empty = QLabel("No open observations")
-            empty.setObjectName("mutedText")
-            self.observation_list.addWidget(empty)
             return
         labels = dict(REVIEW_ISSUES)
         for observation in observations:
@@ -663,7 +689,15 @@ class RoutineWidget(QWidget):
 
     def _toggle_full_routine(self, visible):
         self.settings_frame.setVisible(visible)
-        self.full_routine_toggle.setText("Hide full routine" if visible else "Build full routine")
+        self.full_routine_toggle.setText("Close routine" if visible else "Full routine")
+
+    def _toggle_training_options(self, visible):
+        self.warmup_context_label.setVisible(visible)
+        self.warmup_context_combo.setVisible(visible)
+        self.limited_space_check.setVisible(visible)
+        self.training_options_toggle.setText(
+            "Hide options" if visible else "Training options"
+        )
 
     def _build_routine_display(self):
         self.routine_frame = QFrame()
@@ -1197,12 +1231,10 @@ class RoutineWidget(QWidget):
             category: sum(1 for block in training_blocks if block.get("category") == category)
             for category in ("Clicking", "Tracking", "Switching")
         }
-        block_word = "block" if len(training_blocks) == 1 else "blocks"
-        warmup_word = "warm-up" if warmups == 1 else "warm-ups"
         self.daily_summary.setText(
-            f"Today  ·  {len(training_blocks)} training {block_word} · "
-            f"{runs} total runs · ~{minutes} min"
-            + (f" · {warmups} {warmup_word}" if warmups else "")
+            f"Today  ·  {len(training_blocks)} blocks  ·  "
+            f"{runs} runs  ·  {minutes} min"
+            + (f"  ·  {warmups} warm-up" if warmups else "")
         )
         self.daily_coverage.setText(
             "Coverage  ·  " + "  ".join(
@@ -1210,9 +1242,6 @@ class RoutineWidget(QWidget):
             )
         )
         if hasattr(self, "today_phase"):
-            training_minutes = sum(
-                block.get("minutes", 0) for block in training_blocks
-            )
             if training_blocks:
                 timestamps = [
                     datetime.fromisoformat(block["completed_at"])
@@ -1313,11 +1342,13 @@ class RoutineWidget(QWidget):
         scenario_history.setSizePolicy(
             QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
         )
+        scenario_history.setVisible(False)
         self.routine_layout.addWidget(scenario_history)
 
         reason = QLabel(recommendation["reason"])
         reason.setObjectName("mutedText")
         reason.setWordWrap(True)
+        reason.setVisible(False)
         self.routine_layout.addWidget(reason)
 
         cue = QLabel("Technique  ·  " + recommendation["coaching_cue"])
@@ -1335,13 +1366,18 @@ class RoutineWidget(QWidget):
         )
         status.setWordWrap(True)
         status.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        status.setVisible(False)
         self.routine_layout.addWidget(status)
         challenge_required = QLabel(
             "Challenge mode required for live tracking  ·  Free Play does not create a completed-run result."
         )
         challenge_required.setStyleSheet("color: #f9e2af; font-weight: bold;")
         challenge_required.setWordWrap(True)
+        challenge_required.setVisible(False)
         self.routine_layout.addWidget(challenge_required)
+        self.quick_detail_widgets = (
+            scenario_history, reason, status, challenge_required,
+        )
         self.quick_launch_status = QLabel("")
         self.quick_launch_status.setWordWrap(True)
         self.routine_layout.addWidget(self.quick_launch_status)
@@ -1400,6 +1436,9 @@ class RoutineWidget(QWidget):
             "Start 3–5 min block" if recommendation["installed"] else "Download & start"
         )
         self.open_quick_btn.setObjectName("primaryButton")
+        self.open_quick_btn.setToolTip(
+            "Use Challenge mode so completed runs can be detected automatically."
+        )
         self.open_quick_btn.clicked.connect(
             lambda: self._launch_quick_scenario(recommendation)
         )
@@ -1433,6 +1472,10 @@ class RoutineWidget(QWidget):
         more_btn.setObjectName("quietButton")
         more_btn.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         fallback_menu = QMenu(more_btn)
+        details_action = QAction("Show recommendation details", fallback_menu)
+        details_action.setCheckable(True)
+        details_action.toggled.connect(self._toggle_pick_details)
+        fallback_menu.addAction(details_action)
         copy_action = QAction("Copy scenario name", fallback_menu)
         copy_action.triggered.connect(
             lambda: QApplication.clipboard().setText(recommendation["scenario"])
@@ -1453,8 +1496,12 @@ class RoutineWidget(QWidget):
         more_btn.setMenu(fallback_menu)
         actions.addWidget(more_btn)
         self.routine_layout.addLayout(actions)
-        self.routine_layout.addStretch()
         self.routine_layout.invalidate()
+        QTimer.singleShot(0, self._fit_routine_height)
+
+    def _toggle_pick_details(self, visible):
+        for widget in self.quick_detail_widgets:
+            widget.setVisible(visible)
         QTimer.singleShot(0, self._fit_routine_height)
 
     def _generate(self):
@@ -1644,6 +1691,7 @@ class RoutineWidget(QWidget):
         QTimer.singleShot(0, self._fit_routine_height)
 
     def _fit_routine_height(self):
+        self.routine_frame.setMinimumHeight(0)
         self.routine_layout.activate()
         self.routine_frame.setMinimumHeight(
             max(84, self.routine_layout.sizeHint().height() + 24)

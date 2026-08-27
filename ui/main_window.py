@@ -1,8 +1,6 @@
 import json
-import os
 
 from PyQt6.QtCore import QEvent, Qt, QTimer
-from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QApplication, QButtonGroup, QComboBox, QFrame, QHBoxLayout,
     QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
@@ -206,19 +204,6 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.sidebar_tier)
         self._update_tier_label()
 
-        quick_scenario = QPushButton("Play scenario")
-        quick_scenario.setObjectName("sidebarPrimary")
-        quick_scenario.setCursor(Qt.CursorShape.PointingHandCursor)
-        quick_scenario.setToolTip("Get one recommended short training block")
-        quick_scenario.clicked.connect(lambda: self._quick_scenario(False))
-        layout.addWidget(quick_scenario)
-        quick_warmup = QPushButton("Warm up")
-        quick_warmup.setObjectName("sidebarSecondary")
-        quick_warmup.setCursor(Qt.CursorShape.PointingHandCursor)
-        quick_warmup.setToolTip("Get one suitable short warm-up block")
-        quick_warmup.clicked.connect(lambda: self._quick_scenario(True))
-        layout.addWidget(quick_warmup)
-
         nav_scroll = QScrollArea()
         nav_scroll.setObjectName("navScroll")
         nav_scroll.setWidgetResizable(True)
@@ -271,6 +256,7 @@ class MainWindow(QMainWindow):
         difficulty_block.setSpacing(2)
         difficulty_label = QLabel("BENCHMARK")
         difficulty_label.setObjectName("fieldLabel")
+        self.difficulty_label = difficulty_label
         self.difficulty_combo = QComboBox()
         self.difficulty_combo.addItems(DIFFICULTIES)
         self.difficulty_combo.setToolTip("Choose the Voltaic benchmark difficulty")
@@ -283,6 +269,7 @@ class MainWindow(QMainWindow):
         mode_block.setSpacing(2)
         mode_label = QLabel("SCORE VIEW")
         mode_label.setObjectName("fieldLabel")
+        self.mode_label = mode_label
         self.mode_combo = QComboBox()
         self.mode_combo.addItems(SCORE_MODES.keys())
         self.mode_combo.setToolTip("Lifetime Best shows your rank; recent modes show current form")
@@ -419,7 +406,12 @@ class MainWindow(QMainWindow):
             self.notifier.notify("New personal best!", f"You hit {pb_count} new personal best(s).")
 
     def _on_page_changed(self, index):
-        pass
+        is_today = self.pages.widget(index) is self.routine_view
+        for widget in (
+            self.difficulty_label, self.difficulty_combo,
+            self.mode_label, self.mode_combo, self.refresh_btn,
+        ):
+            widget.setVisible(not is_today)
 
     def _launch_kovaaks(self):
         launched = open_kovaaks()

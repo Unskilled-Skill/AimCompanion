@@ -313,6 +313,22 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertEqual(requested, [True])
         widget.deleteLater()
 
+    def test_today_page_leads_with_recommendation_and_hides_advanced_controls(self):
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from PyQt6.QtWidgets import QApplication
+        from ui.routines import RoutineWidget
+
+        app = QApplication.instance() or QApplication([])
+        widget = RoutineWidget(self.profile, self.db)
+
+        self.assertIs(widget.content_layout.itemAt(0).widget(), widget.routine_frame)
+        self.assertTrue(widget.observation_form.isHidden())
+        self.assertTrue(widget.fps_budget_spin.isHidden())
+        self.assertTrue(widget.warmup_context_combo.isHidden())
+
+        widget.deleteLater()
+        app.processEvents()
+
 
 if __name__ == "__main__":
     unittest.main()

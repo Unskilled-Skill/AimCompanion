@@ -1,4 +1,5 @@
 import hashlib
+import base64
 import json
 import os
 import re
@@ -119,14 +120,54 @@ def download_release(release: dict, interrupted=None) -> str:
     return str(destination)
 
 
+def _powershell_literal(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
+
+
+def _delayed_installer_script(installer: Path, target: Path) -> str:
+    """Wait for the one-file bootloader to release the app before updating."""
+    installer_literal = _powershell_literal(str(installer))
+    target_literal = _powershell_literal(str(target))
+    process_name_literal = _powershell_literal(target.stem)
+    return f"""
+$installerPath = {installer_literal}
+$targetPath = {target_literal}
+$processName = {process_name_literal}
+$deadline = (Get-Date).AddSeconds(60)
+do {{
+    $running = @(
+        Get-Process -Name $processName -ErrorAction SilentlyContinue |
+            Where-Object {{ $_.Path -eq $targetPath }}
+    )
+    if ($running.Count -eq 0) {{ break }}
+    Start-Sleep -Milliseconds 250
+}} while ((Get-Date) -lt $deadline)
+if ($running.Count -ne 0) {{ exit 2 }}
+$setup = Start-Process -FilePath $installerPath -ArgumentList @(
+    '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART'
+) -WindowStyle Hidden -Wait -PassThru
+if ($setup.ExitCode -ne 0) {{ exit $setup.ExitCode }}
+if (Test-Path -LiteralPath $targetPath) {{
+    Start-Process -FilePath $targetPath
+}}
+""".strip()
+
+
 def launch_installer(path: str):
     installer = Path(path).resolve()
     if not installer.is_file() or installer.suffix.casefold() != ".exe":
         raise UpdateError("The verified Windows installer could not be found.")
-    subprocess.Popen([
-        str(installer), "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART",
-        "/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS",
-    ], cwd=str(installer.parent))
+    target = Path(sys.executable).resolve()
+    script = _delayed_installer_script(installer, target)
+    encoded_script = base64.b64encode(script.encode("utf-16le")).decode("ascii")
+    subprocess.Popen(
+        [
+            "powershell.exe", "-NoProfile", "-NonInteractive",
+            "-WindowStyle", "Hidden", "-EncodedCommand", encoded_script,
+        ],
+        cwd=str(installer.parent),
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+    )
 
 
 def automatic_updates_supported() -> bool:
@@ -158,4 +199,3 @@ class UpdateDownloadWorker(QThread):
             self.completed.emit(path)
         except Exception as error:
             self.failed.emit(str(error))
-

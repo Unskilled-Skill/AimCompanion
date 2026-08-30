@@ -466,8 +466,13 @@ class MainWindow(QMainWindow):
             return
         self._update_checker = UpdateCheckWorker(self)
         self._update_checker.completed.connect(self._on_update_checked)
-        self._update_checker.failed.connect(lambda _message: None)
+        self._update_checker.failed.connect(self._on_update_check_failed)
         self._update_checker.start()
+
+    def _on_update_check_failed(self, message):
+        self.statusBar().showMessage(
+            f"Automatic update check failed: {message}", 15000
+        )
 
     def _on_update_checked(self, release):
         if not is_newer_version(release["version"], VERSION):

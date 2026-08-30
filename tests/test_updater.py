@@ -1,6 +1,12 @@
+import base64
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
-from core.updater import UpdateError, is_newer_version, parse_release, version_tuple
+from core.updater import (
+    UpdateError, is_newer_version, launch_installer, parse_release, version_tuple,
+)
 
 
 class UpdaterTests(unittest.TestCase):
@@ -26,6 +32,23 @@ class UpdaterTests(unittest.TestCase):
         })
         self.assertEqual(release["version"], "1.1.0")
         self.assertEqual(release["expected_hash"], digest)
+
+    def test_installer_waits_for_frozen_process_then_restarts_app(self):
+        with tempfile.TemporaryDirectory() as directory:
+            installer = Path(directory) / "AimCompanion-Setup.exe"
+            installer.touch()
+            with patch("core.updater.subprocess.Popen") as launch, patch(
+                "core.updater.sys.executable", str(Path(directory) / "AimCompanion.exe")
+            ):
+                launch_installer(str(installer))
+
+        command = launch.call_args.args[0]
+        encoded_script = command[command.index("-EncodedCommand") + 1]
+        script = base64.b64decode(encoded_script).decode("utf-16le")
+        self.assertIn("Get-Process -Name $processName", script)
+        self.assertIn("$running.Count -eq 0", script)
+        self.assertIn("-Wait -PassThru", script)
+        self.assertIn("Start-Process -FilePath $targetPath", script)
 
     def test_first_launch_completes_without_blocking_dialog(self):
         from ui.main_window import MainWindow

@@ -1,16 +1,16 @@
-# Aim Companion 1.9.3
+# Aim Companion 1.9.4
 
-This release adds complete scenario-level hnA execution guidance.
+This release makes complete routines visible as soon as they are selected.
 
 ## What changed
 
-- All 19 scenarios across the three supplied hnA TacFPS routines now include
-  source-derived setup, execution steps, and correct-execution criteria.
-- Speed-to-precision drills show their exact speed and accuracy run splits and
-  accuracy targets.
-- Reflex drills explain when to change time scale or choose an easier version.
-- Every hnA scenario has an expandable How to perform this scenario guide, so
-  the routine stays scannable until detailed coaching is needed.
+- Selecting Full routine immediately replaces the focused-scenario card with
+  the complete selected routine.
+- Changing the routine dropdown immediately displays the new session without a
+  separate build step.
+- hnA routines show their source-derived overall instructions, sensitivity,
+  prescribed run counts, scenario purposes, and expandable performance guides.
+- The routine action is labelled Refresh routine once the preview is visible.
 
 Existing scores, settings, training history, routines, and automatic update
 preferences are preserved during installation.

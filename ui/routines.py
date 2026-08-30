@@ -288,6 +288,18 @@ class RoutineWidget(QWidget):
         self.config.training_method = method["id"]
         self.config.save()
 
+        # A routine selection is also its preview.  Previously the focused
+        # recommendation remained in the display until the separate "Build
+        # routine" action was pressed, which made the selected routine look as
+        # though it contained only one scenario.  Render the complete routine
+        # (including authored hnA instructions) as soon as it is selected.
+        if (
+            getattr(self, "training_mode", "") == "routine"
+            and hasattr(self, "routine_layout")
+        ):
+            self._generate()
+            self.start_method_button.setText("Refresh routine")
+
     def _start_selected_method(self):
         method = METHOD_MAP.get(self.method_combo.currentData())
         if not method:
@@ -329,6 +341,10 @@ class RoutineWidget(QWidget):
         method = METHOD_MAP.get(method_id)
         if not method:
             return
+        # Let the mode selector populate the requested method directly.  This
+        # avoids briefly generating the first routine in the list before the
+        # requested routine is selected (notably when arriving from Learn).
+        self.config.training_method = method_id
         self._set_training_mode(method["mode"])
         index = self.method_combo.findData(method_id)
         if index >= 0:

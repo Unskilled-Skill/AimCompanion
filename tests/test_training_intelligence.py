@@ -393,7 +393,22 @@ class TrainingIntelligenceTests(unittest.TestCase):
             widget.config.preferred_routine,
             "hnA TacFPS Routine - Smooth Pathing",
         )
-        widget.start_method_button.click()
+        # Selecting the routine must replace the focused-scenario card
+        # immediately; users should not need to discover a second build step
+        # before they can read the routine or its authored instructions.
+        self.assertIsNotNone(widget._current_routine)
+        self.assertEqual(
+            widget._current_routine["source_routine"],
+            "hnA TacFPS Routine - Smooth Pathing",
+        )
+        visible_text = "\n".join(
+            label.text() for label in widget.routine_frame.findChildren(QLabel)
+        )
+        self.assertIn("hnA TACFPS ROUTINE INSTRUCTIONS", visible_text)
+        self.assertIn("1w4ts reload 30% smaller", visible_text)
+        self.assertIn("hnA instruction:", visible_text)
+        self.assertEqual(widget.start_method_button.text(), "Refresh routine")
+
         self.assertEqual(
             widget._current_routine["source_routine"],
             "hnA TacFPS Routine - Smooth Pathing",

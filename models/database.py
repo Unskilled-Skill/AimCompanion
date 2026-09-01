@@ -1,23 +1,60 @@
 import json
 import sqlite3
+from collections.abc import Callable
 from datetime import datetime
+from pathlib import Path
 from models.score import Score
+from models.migrations import apply_migrations
 from core.paths import writable_path
 
 DB_PATH = writable_path("kovaaks.db")
 
 
 class Database:
-    def __init__(self, db_path: str = DB_PATH):
+    def __init__(
+        self,
+        db_path: str = DB_PATH,
+        backup_path_factory: Callable[[int], Path] | None = None,
+    ):
         self.db_path = db_path
+        self._backup_path_factory = backup_path_factory or self._default_backup_path
         self.conn = sqlite3.connect(db_path, timeout=10)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA busy_timeout = 10000")
         if db_path != ":memory:":
             self.conn.execute("PRAGMA journal_mode = WAL")
-        self._create_tables()
+        try:
+            self.schema_version = self._create_tables()
+        except Exception:
+            self.conn.close()
+            raise
 
-    def _create_tables(self):
+    def _default_backup_path(self, current_version: int) -> Path:
+        """Return a new, adjacent path without overwriting an earlier backup."""
+        database_path = Path(self.db_path)
+        target_version = current_version + 1
+        candidate = database_path.with_name(
+            f"{database_path.stem}.pre-v{target_version}.sqlite3"
+        )
+        sequence = 1
+        while candidate.exists():
+            candidate = database_path.with_name(
+                f"{database_path.stem}.pre-v{target_version}-{sequence}.sqlite3"
+            )
+            sequence += 1
+        return candidate
+
+    def _create_tables(self) -> int:
+        return apply_migrations(self.conn, self._backup_path_factory)
+
+    def table_names(self) -> set[str]:
+        return {
+            row["name"] for row in self.conn.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'table'"
+            )
+        }
+
+    def _legacy_create_tables(self):
         self.conn.execute("""
             CREATE TABLE IF NOT EXISTS scores (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -426,6 +463,64 @@ class Database:
             (key, value)
         )
         self.conn.commit()
+
+    def save_definition_metadata(
+        self,
+        version: str,
+        source_url: str,
+        retrieved_at: str,
+        checksum: str,
+        payload: object,
+        active: bool = True,
+    ):
+        """Persist a benchmark definition snapshot and its provenance."""
+        payload_json = (
+            payload if isinstance(payload, str)
+            else json.dumps(payload, sort_keys=True)
+        )
+        with self.conn:
+            if active:
+                self.conn.execute(
+                    "UPDATE benchmark_definition_sets SET active = 0 WHERE active = 1"
+                )
+            self.conn.execute("""
+                INSERT INTO benchmark_definition_sets
+                    (version, source_url, retrieved_at, checksum, active, payload_json)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(version) DO UPDATE SET
+                    source_url = excluded.source_url,
+                    retrieved_at = excluded.retrieved_at,
+                    checksum = excluded.checksum,
+                    active = excluded.active,
+                    payload_json = excluded.payload_json
+            """, (
+                version, source_url, retrieved_at, checksum, 1 if active else 0,
+                payload_json,
+            ))
+
+    def record_import_error(self, path: str, error_text: str):
+        """Record a failed file import while retaining its first failure time."""
+        failed_at = datetime.now().isoformat(timespec="seconds")
+        with self.conn:
+            self.conn.execute("""
+                INSERT INTO import_failures
+                    (path, error_text, first_failed_at, last_failed_at, retry_count)
+                VALUES (?, ?, ?, ?, 1)
+                ON CONFLICT(path) DO UPDATE SET
+                    error_text = excluded.error_text,
+                    last_failed_at = excluded.last_failed_at,
+                    retry_count = import_failures.retry_count + 1
+            """, (path, error_text, failed_at, failed_at))
+
+    def get_import_failure(self, path: str) -> dict | None:
+        row = self.conn.execute(
+            "SELECT * FROM import_failures WHERE path = ?", (path,)
+        ).fetchone()
+        return dict(row) if row else None
+
+    def clear_import_error(self, path: str):
+        with self.conn:
+            self.conn.execute("DELETE FROM import_failures WHERE path = ?", (path,))
 
     def record_scenario_completion(
         self, scenario: str, runs: int = 3, warmup: bool = False,

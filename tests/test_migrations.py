@@ -193,3 +193,46 @@ def test_failed_migration_rolls_back_its_schema_changes(tmp_path, monkeypatch):
         Database(str(path))
 
     assert "half_created" not in sqlite_table_names(path)
+
+
+def test_executescript_migration_cannot_commit_partial_schema(tmp_path, monkeypatch):
+    migrations = importlib.import_module("models.migrations")
+
+    def script_then_fail(connection):
+        connection.executescript("CREATE TABLE half_created (value TEXT);")
+        raise RuntimeError("forced migration failure")
+
+    failing = migrations.Migration(3, "script failure", script_then_fail)
+    monkeypatch.setattr(
+        migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
+    )
+    path = tmp_path / "script-failed.sqlite3"
+
+    with pytest.raises(
+        migrations.UnsafeMigrationOperationError, match="executescript"
+    ):
+        Database(str(path))
+
+    assert "half_created" not in sqlite_table_names(path)
+
+
+def test_migration_cannot_execute_transaction_control_statements(tmp_path, monkeypatch):
+    migrations = importlib.import_module("models.migrations")
+
+    def commit_then_fail(connection):
+        connection.execute("COMMIT")
+        connection.execute("CREATE TABLE half_created (value TEXT)")
+        raise RuntimeError("forced migration failure")
+
+    failing = migrations.Migration(3, "commit failure", commit_then_fail)
+    monkeypatch.setattr(
+        migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
+    )
+    path = tmp_path / "commit-failed.sqlite3"
+
+    with pytest.raises(
+        migrations.UnsafeMigrationOperationError, match="transaction control"
+    ):
+        Database(str(path))
+
+    assert "half_created" not in sqlite_table_names(path)

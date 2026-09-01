@@ -9,11 +9,46 @@ from datetime import datetime
 from pathlib import Path
 
 
+class UnsafeMigrationOperationError(RuntimeError):
+    """Raised when a migration attempts an operation that breaks atomicity."""
+
+
+class MigrationConnection:
+    """The transaction-safe SQLite operations available to migration functions."""
+
+    def __init__(self, connection: sqlite3.Connection):
+        self._connection = connection
+
+    def execute(self, sql: str, parameters: object = ()) -> sqlite3.Cursor:
+        self._ensure_transaction_safe(sql)
+        return self._connection.execute(sql, parameters)
+
+    def executemany(self, sql: str, parameters: object) -> sqlite3.Cursor:
+        self._ensure_transaction_safe(sql)
+        return self._connection.executemany(sql, parameters)
+
+    def executescript(self, script: str) -> None:
+        raise UnsafeMigrationOperationError(
+            "executescript is not permitted in migrations; use execute for each statement"
+        )
+
+    @staticmethod
+    def _ensure_transaction_safe(sql: str) -> None:
+        statement = sql.lstrip().upper()
+        transaction_controls = (
+            "BEGIN", "COMMIT", "END", "ROLLBACK", "SAVEPOINT", "RELEASE",
+        )
+        if statement.startswith(transaction_controls):
+            raise UnsafeMigrationOperationError(
+                "transaction control is not permitted in migrations"
+            )
+
+
 @dataclass(frozen=True)
 class Migration:
     version: int
     name: str
-    apply: Callable[[sqlite3.Connection], None]
+    apply: Callable[[MigrationConnection], None]
 
 
 def _table_names(connection: sqlite3.Connection) -> set[str]:
@@ -26,7 +61,7 @@ def _table_names(connection: sqlite3.Connection) -> set[str]:
 
 
 def _ensure_columns(
-    connection: sqlite3.Connection, table: str, columns: dict[str, str],
+    connection: MigrationConnection, table: str, columns: dict[str, str],
 ) -> None:
     existing = {
         row[1] for row in connection.execute(f"PRAGMA table_info({table})")
@@ -36,7 +71,7 @@ def _ensure_columns(
             connection.execute(f"ALTER TABLE {table} ADD COLUMN {name} {definition}")
 
 
-def _create_schema_migrations_table(connection: sqlite3.Connection) -> None:
+def _create_schema_migrations_table(connection: MigrationConnection) -> None:
     connection.execute("""
         CREATE TABLE IF NOT EXISTS schema_migrations (
             version INTEGER PRIMARY KEY,
@@ -46,7 +81,7 @@ def _create_schema_migrations_table(connection: sqlite3.Connection) -> None:
     """)
 
 
-def baseline_existing_schema(connection: sqlite3.Connection) -> None:
+def baseline_existing_schema(connection: MigrationConnection) -> None:
     """Create the pre-migration schema without rewriting any existing data."""
     _create_schema_migrations_table(connection)
     connection.execute("""
@@ -167,7 +202,7 @@ def baseline_existing_schema(connection: sqlite3.Connection) -> None:
     """)
 
 
-def add_benchmark_metadata_tables(connection: sqlite3.Connection) -> None:
+def add_benchmark_metadata_tables(connection: MigrationConnection) -> None:
     """Add durable definition provenance and import-failure state."""
     _create_schema_migrations_table(connection)
     connection.execute("""
@@ -230,7 +265,7 @@ def _backup_database(
         backup.close()
 
 
-def record_migration(connection: sqlite3.Connection, migration: Migration) -> None:
+def record_migration(connection: MigrationConnection, migration: Migration) -> None:
     connection.execute("""
         INSERT OR IGNORE INTO schema_migrations (version, name, applied_at)
         VALUES (?, ?, ?)
@@ -253,12 +288,16 @@ def apply_migrations(
     for migration in pending:
         savepoint = f"migration_{migration.version}"
         connection.execute(f"SAVEPOINT {savepoint}")
+        migration_connection = MigrationConnection(connection)
         try:
-            migration.apply(connection)
-            record_migration(connection, migration)
+            migration.apply(migration_connection)
+            record_migration(migration_connection, migration)
         except Exception:
-            connection.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
-            connection.execute(f"RELEASE SAVEPOINT {savepoint}")
+            try:
+                connection.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
+                connection.execute(f"RELEASE SAVEPOINT {savepoint}")
+            except sqlite3.Error:
+                pass
             raise
         else:
             connection.execute(f"RELEASE SAVEPOINT {savepoint}")

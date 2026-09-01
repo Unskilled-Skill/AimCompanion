@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import datetime
 
 import pytest
@@ -162,3 +163,33 @@ def test_advanced_energy_uncaps_only_after_overall_threshold(
     assert max(
         item.energy for sub in above.subcategories.values() for item in sub.scenarios
     ) > 1200
+
+
+def test_mixed_numeric_uncap_thresholds_are_rejected_before_calculation(s5):
+    original = next(item for item in s5.benchmarks if item.difficulty == "Advanced")
+    changed = replace(
+        original,
+        uncap_overall_energy=1100,
+    )
+    definitions = replace(
+        s5,
+        benchmarks=tuple(changed if item is original else item for item in s5.benchmarks),
+    )
+
+    with pytest.raises(ValueError, match="consistent uncap_overall_energy"):
+        BenchmarkCalculator(definitions).calculate((), "Advanced")
+
+
+def test_none_and_numeric_uncap_thresholds_are_rejected_before_calculation(s5):
+    original = next(item for item in s5.benchmarks if item.difficulty == "Novice")
+    changed = replace(
+        original,
+        uncap_overall_energy=None,
+    )
+    definitions = replace(
+        s5,
+        benchmarks=tuple(changed if item is original else item for item in s5.benchmarks),
+    )
+
+    with pytest.raises(ValueError, match="consistent uncap_overall_energy"):
+        BenchmarkCalculator(definitions).calculate((), "Novice")

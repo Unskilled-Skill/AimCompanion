@@ -86,6 +86,7 @@ class BenchmarkCalculator:
     def calculate(self, scores: Iterable[Score], difficulty: str) -> BenchmarkResult:
         """Calculate best-per-scenario and best-per-subcategory official energy."""
 
+        uncap_threshold = self._uncap_threshold(difficulty)
         raw_scores = self._best_scores(scores, difficulty)
         capped = self._subcategory_energies(raw_scores, capped=True)
         missing = self._missing_subcategories(capped)
@@ -100,7 +101,7 @@ class BenchmarkCalculator:
             )
 
         capped_overall = harmonic_mean([item.energy for item in capped.values()])
-        if self._should_uncap(capped_overall, raw_scores):
+        if self._should_uncap(capped_overall, uncap_threshold):
             subcategories = self._subcategory_energies(raw_scores, capped=False)
             overall_energy = harmonic_mean([item.energy for item in subcategories.values()])
         else:
@@ -191,16 +192,22 @@ class BenchmarkCalculator:
             if name not in subcategories or subcategories[name].energy <= 0
         )
 
-    @staticmethod
-    def _should_uncap(
-        capped_overall: float, scores: Mapping[BenchmarkDefinition, float]
-    ) -> bool:
+    def _uncap_threshold(self, difficulty: str) -> float | None:
         thresholds = {
             definition.uncap_overall_energy
-            for definition in scores
-            if definition.uncap_overall_energy is not None
+            for definition in self._definitions.benchmarks
+            if definition.difficulty == difficulty
         }
-        return bool(thresholds) and capped_overall >= min(thresholds)
+        if len(thresholds) > 1:
+            raise ValueError(
+                "definition set must use a consistent uncap_overall_energy "
+                f"for difficulty: {difficulty}"
+            )
+        return next(iter(thresholds), None)
+
+    @staticmethod
+    def _should_uncap(capped_overall: float, threshold: float | None) -> bool:
+        return threshold is not None and capped_overall >= threshold
 
     def _tier_for(self, energy: float) -> str:
         tier = self._definitions.ranks[0][0]

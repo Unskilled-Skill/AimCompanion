@@ -22,10 +22,13 @@ def build_profile(
         scores = db.get_best_scores()
 
     definitions = DefinitionRepository.bundled().load_active()
-    result = BenchmarkCalculator(definitions).calculate(scores, difficulty)
+    calculator = BenchmarkCalculator(definitions)
+    result = calculator.calculate(scores, difficulty)
     histories = defaultdict(list)
     for score in db.get_all_scores():
-        histories[score.benchmark_name].append(score)
+        definition = calculator.definition_for_score(score)
+        if definition is not None and definition.difficulty == difficulty:
+            histories[definition.name].append(score)
     return profile_from_benchmark_result(result, definitions, histories)
 
 

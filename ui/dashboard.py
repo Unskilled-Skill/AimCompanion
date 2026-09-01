@@ -57,13 +57,22 @@ class DashboardWidget(QWidget):
         rank = QLabel(self.profile.overall_tier)
         rank.setObjectName("homeRank")
         rank.setStyleSheet(f"color: {self._tier_color(self.profile.overall_tier)};")
-        energy = QLabel(f"{self.profile.overall_energy:.1f} energy")
+        overall_energy = self.profile.overall_energy
+        energy = QLabel(
+            f"{overall_energy:.1f} energy"
+            if overall_energy is not None else "Overall energy unavailable"
+        )
         energy.setObjectName("homeEnergy")
-        next_tier = self._next_tier(self.profile.overall_energy)
+        next_tier = self._next_tier(overall_energy)
         explanation = QLabel(
-            (f"{next_tier['min_energy'] - self.profile.overall_energy:.1f} energy to "
-             f"{next_tier['name']}. " if next_tier else "Highest tracked tier reached. ")
-            + "Energy normalizes performance across official benchmarks."
+            (
+                f"{next_tier['min_energy'] - overall_energy:.1f} energy to "
+                f"{next_tier['name']}. "
+                if next_tier else
+                "Complete all nine benchmark subcategories to receive an official overall energy. "
+                if overall_energy is None else
+                "Highest tracked tier reached. "
+            ) + "Energy normalizes performance across official benchmarks."
         )
         explanation.setObjectName("mutedText")
         explanation.setWordWrap(True)
@@ -234,6 +243,8 @@ class DashboardWidget(QWidget):
 
     @staticmethod
     def _next_tier(energy):
+        if energy is None:
+            return None
         return next((tier for tier in TIERS if tier["min_energy"] > energy), None)
 
     def update_profile(self, profile):

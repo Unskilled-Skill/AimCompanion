@@ -125,6 +125,7 @@ def profile_from_benchmark_result(
         ]
         category.energy = harmonic_mean(measured) if measured else 0.0
         category.tier = _tier_for(category.energy, definitions.ranks)
+        category.calculation_method = "local_compatibility"
         category.combined_score = sum(
             subcategory.combined_score for subcategory in category.subcategories
         )
@@ -136,6 +137,7 @@ def profile_from_benchmark_result(
         overall_energy=result.overall_energy,
         overall_tier=result.overall_tier or "Unranked",
         definition_version=result.definition_version,
+        calculation_method="voltaic_official",
     )
 
 
@@ -149,7 +151,7 @@ class PlayerProfile:
     overall_tier: str = "Unranked"
     last_updated: datetime | None = None
     definition_version: str = ""
-    calculation_method: str = "voltaic_official"
+    calculation_method: str = "legacy_manual"
 
     @classmethod
     def from_result(cls, result: BenchmarkResult) -> PlayerProfile:
@@ -157,6 +159,9 @@ class PlayerProfile:
 
     def recalculate(self):
         """Compatibility path for manually constructed, non-official profiles."""
+
+        if self.calculation_method == "voltaic_official":
+            raise RuntimeError("cannot recalculate an official profile with legacy arithmetic")
 
         for category in self.categories:
             category.recalculate()

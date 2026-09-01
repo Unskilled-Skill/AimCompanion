@@ -132,7 +132,7 @@ class BenchmarkCalculator:
     ) -> dict[BenchmarkDefinition, float]:
         best: dict[BenchmarkDefinition, float] = {}
         for imported in scores:
-            definition = self._definition_for_score(imported)
+            definition = self.definition_for_score(imported)
             if definition is None or definition.difficulty != difficulty:
                 continue
             value = float(imported.score)
@@ -143,7 +143,9 @@ class BenchmarkCalculator:
                 best[definition] = value
         return best
 
-    def _definition_for_score(self, imported: Score) -> BenchmarkDefinition | None:
+    def definition_for_score(self, imported: Score) -> BenchmarkDefinition | None:
+        """Resolve an imported score through the calculator's canonical alias index."""
+
         for candidate in (imported.benchmark_name, imported.scenario):
             if isinstance(candidate, str):
                 definition = self._definitions_by_alias.get(normalize_alias(candidate))

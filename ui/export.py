@@ -142,16 +142,31 @@ class ExportWidget(QWidget):
         lines.append("")
 
         lines.append(f"OVERALL TIER: {self.profile.overall_tier}")
-        lines.append(f"OVERALL ENERGY: {self.profile.overall_energy:.1f}")
+        if self.profile.overall_energy is None:
+            lines.append("OVERALL ENERGY: UNAVAILABLE (complete all nine subcategories)")
+        else:
+            lines.append(f"OVERALL ENERGY: {self.profile.overall_energy:.1f}")
         lines.append("")
 
         lines.append("CATEGORY BREAKDOWN:")
         lines.append("-" * 40)
         for cat in self.profile.categories:
-            lines.append(f"  {cat.name}: {cat.combined_score:.0f} ({cat.tier}, {cat.energy:.1f} energy)")
+            lines.append(
+                f"  {cat.name}: {cat.combined_score:.0f} combined score "
+                "(local compatibility view)"
+            )
             if hasattr(cat, 'subcategories') and cat.subcategories:
                 for sub in cat.subcategories:
-                    lines.append(f"    {sub.name}: {sub.combined_score:.0f} ({sub.tier})")
+                    if sub.energy > 0:
+                        lines.append(
+                            f"    {sub.name}: {sub.energy:.1f} official energy "
+                            f"({sub.tier}); {sub.combined_score:.0f} combined score"
+                        )
+                    else:
+                        lines.append(
+                            f"    {sub.name}: Unmeasured; "
+                            f"{sub.combined_score:.0f} combined score"
+                        )
         lines.append("")
 
         lines.append("WEAKNESSES (sorted by priority):")

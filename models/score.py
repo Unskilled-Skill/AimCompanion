@@ -79,6 +79,7 @@ class CategoryScore:
     combined_score: float = 0.0
     energy: float = 0.0
     tier: str = "Iron"
+    calculation_method: str = "legacy_manual"
 
     def recalculate(self):
         for sc in self.subcategories:

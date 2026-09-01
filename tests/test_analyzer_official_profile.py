@@ -143,3 +143,54 @@ def test_profile_from_result_exposes_selected_scenario_as_one_attempt(
     assert benchmark.attempts == 1
     assert benchmark.best_score == 820
     assert benchmark.latest_score == 820
+
+
+def test_official_profiles_reject_legacy_recalculation(db_with_s5_scores):
+    result = BenchmarkCalculator(DefinitionRepository.bundled().load_active()).calculate(
+        db_with_s5_scores.get_best_scores(), "Novice"
+    )
+    official_profile = PlayerProfile.from_result(result)
+    manual_profile = PlayerProfile()
+
+    assert manual_profile.calculation_method == "legacy_manual"
+    with pytest.raises(RuntimeError, match="official profile"):
+        official_profile.recalculate()
+
+
+def test_build_profile_normalizes_alias_history_to_the_selected_benchmark(
+    db_with_s5_scores,
+):
+    db_with_s5_scores.conn.execute(
+        "DELETE FROM scores WHERE benchmark_name = ?",
+        ("VT 1w4ts Novice S5",),
+    )
+    db_with_s5_scores.conn.commit()
+    for name, score, timestamp, csv_path in (
+        ("vt-1w4ts novice s5", 820, datetime(2026, 8, 30), "alias-best.csv"),
+        ("VT 1W4TS   NOVICE S5", 410, datetime(2026, 9, 1), "alias-latest.csv"),
+    ):
+        db_with_s5_scores.insert_score(
+            Score(
+                benchmark_name=name,
+                scenario=name,
+                category="Clicking",
+                subcategory="Static",
+                difficulty="Novice",
+                score=score,
+                timestamp=timestamp,
+            ),
+            csv_path=csv_path,
+        )
+
+    profile = build_profile(db_with_s5_scores, difficulty="Novice")
+    benchmark = next(
+        benchmark
+        for category in profile.categories
+        for subcategory in category.subcategories
+        for benchmark in subcategory.benchmarks
+        if benchmark.name == "VT 1w4ts Novice S5"
+    )
+
+    assert benchmark.attempts == 2
+    assert benchmark.best_score == 820
+    assert benchmark.latest_score == 410

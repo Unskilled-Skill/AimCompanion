@@ -59,17 +59,19 @@ subcategories for the official overall result. If the capped overall energy
 reaches the definition's configured uncap threshold, it recalculates from raw
 scenario energies; otherwise the cap remains in force.
 
-The main rank display is built from the Best score view. Latest, recent, and
-average selections are alternate local views over different score inputs; an
+The header tier/energy and Skill Matrix use the Best score view for the official
+rank. The Dashboard and status bar use the currently selected score-input view,
+so Latest, recent, and average selections may show different local values; an
 arithmetic average of attempts is not an official Voltaic overall energy.
 
 ## Automatic and manual importing
 
 Once the main window has finished its initial setup, a `ScoreDirectoryWatcher`
-observes the configured Kovaak's stats directory. It schedules an immediate
-recovery scan and debounces bursts of directory events for 750 ms. Each batch
-runs in a `QThread`, leaving the Qt UI responsive; a second worker is not
-started while one is already running. A completion rebuilds the profile once.
+observes the configured Kovaak's stats directory. It immediately schedules a
+750-ms-debounced recovery scan, and debounces bursts of directory events for
+the same 750 ms. Each batch runs in a `QThread`, leaving the Qt UI
+responsive; a second worker is not started while one is already running. A
+completion rebuilds the profile once.
 
 Manual fallback is always available from the Import scores view:
 

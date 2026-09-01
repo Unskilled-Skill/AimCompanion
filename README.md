@@ -61,6 +61,8 @@ valid score. The definition snapshot records the public benchmark source,
 version, retrieval time, and checksum; its bundled copy keeps this calculation
 available offline. The checksum verifies the local snapshot payload. It does
 not authenticate or prove the freshness of the remote Voltaic publication.
+The header and Skill Matrix use Best scores for the official rank; Dashboard and
+status text may reflect the selected score-input view.
 See [benchmark data provenance](docs/benchmark-data-provenance.md) for the
 exact version, checksum, cap behavior, and known daily update lag.
 

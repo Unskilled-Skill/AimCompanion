@@ -66,3 +66,66 @@ warning: in the working copy of 'RELEASE_NOTES.md', LF will be replaced by CRLF 
   profile. The documentation calls out that freshness boundary.
 - `git diff --check` is clean; only the two LF-to-CRLF conversion warnings were
   emitted by Git.
+
+## Fix Round 1 review evidence
+
+Review fixes applied:
+
+- Corrected startup wording to “immediately schedules a 750-ms-debounced
+  recovery scan,” which distinguishes scheduling from execution after the
+  debounce interval.
+- Clarified that the header tier/energy and Skill Matrix use the Best-score
+  official rank, while Dashboard and status text may reflect the selected
+  score-input view. This matches `MainWindow._update_tier_label()` and
+  `_rebuild_profile()`.
+
+Documentation claim search:
+
+```powershell
+rg -n -i "immediate|immediately|recovery scan|750.?ms|Best score|header|Skill Matrix|Dashboard|status bar|arithmetic|authenticat|remote.*sync|sync.*remote|freshness|daily" README.md RELEASE_NOTES.md docs/benchmark-data-provenance.md task-7-report.md
+```
+
+The search found the corrected `immediately schedules a` / `750-ms-debounced
+recovery scan` wording, the explicit Best/header/Skill Matrix versus
+Dashboard/status distinction, and only warning language for arithmetic
+averages, remote authenticity/freshness, and the known daily lag.
+
+Focused implementation tests:
+
+```powershell
+$env:QT_QPA_PLATFORM='offscreen'; python -m pytest tests/test_score_watcher.py tests/test_score_importer.py tests/test_analyzer_official_profile.py -q
+```
+
+Exact output:
+
+```text
+....................                                                     [100%]
+20 passed in 6.66s
+```
+
+Full suite:
+
+```powershell
+$env:QT_QPA_PLATFORM='offscreen'; python -m pytest -q
+```
+
+Exact output:
+
+```text
+........................................................................ [ 44%]
+......................................... [ 69%]
+.................................................                        [100%]
+162 passed, 31 subtests passed in 11.66s
+```
+
+Whitespace check:
+
+```powershell
+git diff --check
+```
+
+Exact result: exit code `0`; no whitespace errors. Git emitted only its
+LF-to-CRLF conversion warnings for `README.md` and
+`docs/benchmark-data-provenance.md`.
+
+Fix Round 1 concerns: none. The fix remains documentation-only.

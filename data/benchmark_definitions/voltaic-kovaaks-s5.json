@@ -1,0 +1,1586 @@
+{
+  "version": "kovaaks_s5",
+  "source_url": "https://app.voltaic.gg/benchmarks",
+  "retrieved_at": "2026-08-30T00:00:00+02:00",
+  "active": true,
+  "required_subcategories": [
+    "Clicking / Static",
+    "Clicking / Dynamic",
+    "Clicking / Linear",
+    "Tracking / Precise",
+    "Tracking / Reactive",
+    "Tracking / Control",
+    "Switching / Speed",
+    "Switching / Evasive",
+    "Switching / Stability"
+  ],
+  "ranks": [
+    [
+      "Iron",
+      100
+    ],
+    [
+      "Bronze",
+      200
+    ],
+    [
+      "Silver",
+      300
+    ],
+    [
+      "Gold",
+      400
+    ],
+    [
+      "Platinum",
+      500
+    ],
+    [
+      "Diamond",
+      600
+    ],
+    [
+      "Jade",
+      700
+    ],
+    [
+      "Master",
+      800
+    ],
+    [
+      "Grandmaster",
+      900
+    ],
+    [
+      "Nova",
+      1000
+    ],
+    [
+      "Astra",
+      1100
+    ],
+    [
+      "Celestial",
+      1200
+    ],
+    [
+      "Radiant",
+      1300
+    ]
+  ],
+  "definitions": [
+    {
+      "name": "VT Pasu Novice S5",
+      "scenario": "VT Pasu Novice S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Dynamic",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          555,
+          100
+        ],
+        [
+          660,
+          200
+        ],
+        [
+          745,
+          300
+        ],
+        [
+          800,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Popcorn Novice S5",
+      "scenario": "VT Popcorn Novice S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Dynamic",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          390,
+          100
+        ],
+        [
+          500,
+          200
+        ],
+        [
+          600,
+          300
+        ],
+        [
+          720,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT 1w4ts Novice S5",
+      "scenario": "VT 1w4ts Novice S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Static",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          820,
+          100
+        ],
+        [
+          915,
+          200
+        ],
+        [
+          1010,
+          300
+        ],
+        [
+          1110,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT ww5t Novice S5",
+      "scenario": "VT ww5t Novice S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Static",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          990,
+          100
+        ],
+        [
+          1090,
+          200
+        ],
+        [
+          1190,
+          300
+        ],
+        [
+          1290,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Frogtagon Novice S5",
+      "scenario": "VT Frogtagon Novice S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Linear",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          620,
+          100
+        ],
+        [
+          740,
+          200
+        ],
+        [
+          850,
+          300
+        ],
+        [
+          980,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Floating Heads Novice S5",
+      "scenario": "VT Floating Heads Novice S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Linear",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          375,
+          100
+        ],
+        [
+          460,
+          200
+        ],
+        [
+          540,
+          300
+        ],
+        [
+          640,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT PGT Novice S5",
+      "scenario": "VT PGT Novice S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Precise",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          1900,
+          100
+        ],
+        [
+          2325,
+          200
+        ],
+        [
+          2775,
+          300
+        ],
+        [
+          3050,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Snake Track Novice S5",
+      "scenario": "VT Snake Track Novice S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Precise",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          2400,
+          100
+        ],
+        [
+          2750,
+          200
+        ],
+        [
+          3125,
+          300
+        ],
+        [
+          3425,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Aether Novice S5",
+      "scenario": "VT Aether Novice S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Reactive",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          1525,
+          100
+        ],
+        [
+          1900,
+          200
+        ],
+        [
+          2250,
+          300
+        ],
+        [
+          2650,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Ground Novice S5",
+      "scenario": "VT Ground Novice S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Reactive",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          2100,
+          100
+        ],
+        [
+          2500,
+          200
+        ],
+        [
+          2825,
+          300
+        ],
+        [
+          3100,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Raw Control Novice S5",
+      "scenario": "VT Raw Control Novice S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Control",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          2125,
+          100
+        ],
+        [
+          2550,
+          200
+        ],
+        [
+          2975,
+          300
+        ],
+        [
+          3450,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Controlsphere Novice S5",
+      "scenario": "VT Controlsphere Novice S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Control",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          1575,
+          100
+        ],
+        [
+          1950,
+          200
+        ],
+        [
+          2400,
+          300
+        ],
+        [
+          2900,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT DotTS Novice S5",
+      "scenario": "VT DotTS Novice S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Speed",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          845,
+          100
+        ],
+        [
+          940,
+          200
+        ],
+        [
+          1030,
+          300
+        ],
+        [
+          1090,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT EddieTS Novice S5",
+      "scenario": "VT EddieTS Novice S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Speed",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          640,
+          100
+        ],
+        [
+          730,
+          200
+        ],
+        [
+          810,
+          300
+        ],
+        [
+          890,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT DriftTS Novice S5",
+      "scenario": "VT DriftTS Novice S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Evasive",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          315,
+          100
+        ],
+        [
+          355,
+          200
+        ],
+        [
+          390,
+          300
+        ],
+        [
+          430,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT FlyTS Novice S5",
+      "scenario": "VT FlyTS Novice S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Evasive",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          420,
+          100
+        ],
+        [
+          460,
+          200
+        ],
+        [
+          500,
+          300
+        ],
+        [
+          535,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT ControlTS Novice S5",
+      "scenario": "VT ControlTS Novice S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Stability",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          340,
+          100
+        ],
+        [
+          380,
+          200
+        ],
+        [
+          420,
+          300
+        ],
+        [
+          450,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Penta Bounce Novice S5",
+      "scenario": "VT Penta Bounce Novice S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Stability",
+      "difficulty": "Novice",
+      "targets": [
+        [
+          290,
+          100
+        ],
+        [
+          340,
+          200
+        ],
+        [
+          390,
+          300
+        ],
+        [
+          445,
+          400
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Pasu Intermediate S5",
+      "scenario": "VT Pasu Intermediate S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Dynamic",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          600,
+          500
+        ],
+        [
+          750,
+          600
+        ],
+        [
+          880,
+          700
+        ],
+        [
+          1000,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Popcorn Intermediate S5",
+      "scenario": "VT Popcorn Intermediate S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Dynamic",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          550,
+          500
+        ],
+        [
+          700,
+          600
+        ],
+        [
+          830,
+          700
+        ],
+        [
+          950,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT 1w3ts Intermediate S5",
+      "scenario": "VT 1w3ts Intermediate S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Static",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          90,
+          500
+        ],
+        [
+          105,
+          600
+        ],
+        [
+          120,
+          700
+        ],
+        [
+          135,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT ww5t Intermediate S5",
+      "scenario": "VT ww5t Intermediate S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Static",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          110,
+          500
+        ],
+        [
+          125,
+          600
+        ],
+        [
+          140,
+          700
+        ],
+        [
+          155,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Frogtagon Intermediate S5",
+      "scenario": "VT Frogtagon Intermediate S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Linear",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          650,
+          500
+        ],
+        [
+          800,
+          600
+        ],
+        [
+          920,
+          700
+        ],
+        [
+          1050,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Floating Heads Intermediate S5",
+      "scenario": "VT Floating Heads Intermediate S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Linear",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          600,
+          500
+        ],
+        [
+          750,
+          600
+        ],
+        [
+          870,
+          700
+        ],
+        [
+          1000,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT PGT Intermediate S5",
+      "scenario": "VT PGT Intermediate S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Precise",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          2500,
+          500
+        ],
+        [
+          3000,
+          600
+        ],
+        [
+          3500,
+          700
+        ],
+        [
+          4000,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Snake Track Intermediate S5",
+      "scenario": "VT Snake Track Intermediate S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Precise",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          3000,
+          500
+        ],
+        [
+          3600,
+          600
+        ],
+        [
+          4100,
+          700
+        ],
+        [
+          4600,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Aether Intermediate S5",
+      "scenario": "VT Aether Intermediate S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Reactive",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          2700,
+          500
+        ],
+        [
+          3300,
+          600
+        ],
+        [
+          3800,
+          700
+        ],
+        [
+          4300,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Ground Intermediate S5",
+      "scenario": "VT Ground Intermediate S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Reactive",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          3100,
+          500
+        ],
+        [
+          3700,
+          600
+        ],
+        [
+          4200,
+          700
+        ],
+        [
+          4700,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Raw Control Intermediate S5",
+      "scenario": "VT Raw Control Intermediate S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Control",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          2800,
+          500
+        ],
+        [
+          3400,
+          600
+        ],
+        [
+          3900,
+          700
+        ],
+        [
+          4400,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Controlsphere Intermediate S5",
+      "scenario": "VT Controlsphere Intermediate S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Control",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          2900,
+          500
+        ],
+        [
+          3500,
+          600
+        ],
+        [
+          4000,
+          700
+        ],
+        [
+          4500,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT DotTS Intermediate S5",
+      "scenario": "VT DotTS Intermediate S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Speed",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          1700,
+          500
+        ],
+        [
+          2000,
+          600
+        ],
+        [
+          2300,
+          700
+        ],
+        [
+          2600,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT EddieTS Intermediate S5",
+      "scenario": "VT EddieTS Intermediate S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Speed",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          1600,
+          500
+        ],
+        [
+          1900,
+          600
+        ],
+        [
+          2200,
+          700
+        ],
+        [
+          2500,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT DriftTS Intermediate S5",
+      "scenario": "VT DriftTS Intermediate S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Evasive",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          1500,
+          500
+        ],
+        [
+          1800,
+          600
+        ],
+        [
+          2100,
+          700
+        ],
+        [
+          2400,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT FlyTS Intermediate S5",
+      "scenario": "VT FlyTS Intermediate S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Evasive",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          1550,
+          500
+        ],
+        [
+          1850,
+          600
+        ],
+        [
+          2150,
+          700
+        ],
+        [
+          2450,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT ControlTS Intermediate S5",
+      "scenario": "VT ControlTS Intermediate S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Stability",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          1650,
+          500
+        ],
+        [
+          1950,
+          600
+        ],
+        [
+          2250,
+          700
+        ],
+        [
+          2550,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Penta Bounce Intermediate S5",
+      "scenario": "VT Penta Bounce Intermediate S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Stability",
+      "difficulty": "Intermediate",
+      "targets": [
+        [
+          1600,
+          500
+        ],
+        [
+          1900,
+          600
+        ],
+        [
+          2200,
+          700
+        ],
+        [
+          2500,
+          800
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Pasu Advanced S5",
+      "scenario": "VT Pasu Advanced S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Dynamic",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          800,
+          900
+        ],
+        [
+          950,
+          1000
+        ],
+        [
+          1100,
+          1100
+        ],
+        [
+          1250,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Popcorn Advanced S5",
+      "scenario": "VT Popcorn Advanced S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Dynamic",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          750,
+          900
+        ],
+        [
+          900,
+          1000
+        ],
+        [
+          1050,
+          1100
+        ],
+        [
+          1200,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT 1w2ts Advanced S5",
+      "scenario": "VT 1w2ts Advanced S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Static",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          95,
+          900
+        ],
+        [
+          110,
+          1000
+        ],
+        [
+          125,
+          1100
+        ],
+        [
+          140,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT ww5t Advanced S5",
+      "scenario": "VT ww5t Advanced S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Static",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          115,
+          900
+        ],
+        [
+          130,
+          1000
+        ],
+        [
+          145,
+          1100
+        ],
+        [
+          160,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Frogtagon Advanced S5",
+      "scenario": "VT Frogtagon Advanced S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Linear",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          850,
+          900
+        ],
+        [
+          1000,
+          1000
+        ],
+        [
+          1150,
+          1100
+        ],
+        [
+          1300,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Floating Heads Advanced S5",
+      "scenario": "VT Floating Heads Advanced S5",
+      "aliases": [],
+      "category": "Clicking",
+      "subcategory": "Linear",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          800,
+          900
+        ],
+        [
+          950,
+          1000
+        ],
+        [
+          1100,
+          1100
+        ],
+        [
+          1250,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT PGT Advanced S5",
+      "scenario": "VT PGT Advanced S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Precise",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          3500,
+          900
+        ],
+        [
+          4100,
+          1000
+        ],
+        [
+          4700,
+          1100
+        ],
+        [
+          5300,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Snake Track Advanced S5",
+      "scenario": "VT Snake Track Advanced S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Precise",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          4000,
+          900
+        ],
+        [
+          4700,
+          1000
+        ],
+        [
+          5300,
+          1100
+        ],
+        [
+          6000,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Aether Advanced S5",
+      "scenario": "VT Aether Advanced S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Reactive",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          3700,
+          900
+        ],
+        [
+          4300,
+          1000
+        ],
+        [
+          4900,
+          1100
+        ],
+        [
+          5500,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Ground Advanced S5",
+      "scenario": "VT Ground Advanced S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Reactive",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          4200,
+          900
+        ],
+        [
+          4900,
+          1000
+        ],
+        [
+          5600,
+          1100
+        ],
+        [
+          6300,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Raw Control Advanced S5",
+      "scenario": "VT Raw Control Advanced S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Control",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          3800,
+          900
+        ],
+        [
+          4400,
+          1000
+        ],
+        [
+          5000,
+          1100
+        ],
+        [
+          5600,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Controlsphere Advanced S5",
+      "scenario": "VT Controlsphere Advanced S5",
+      "aliases": [],
+      "category": "Tracking",
+      "subcategory": "Control",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          3900,
+          900
+        ],
+        [
+          4500,
+          1000
+        ],
+        [
+          5100,
+          1100
+        ],
+        [
+          5700,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT DotTS Advanced S5",
+      "scenario": "VT DotTS Advanced S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Speed",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          2200,
+          900
+        ],
+        [
+          2500,
+          1000
+        ],
+        [
+          2800,
+          1100
+        ],
+        [
+          3100,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT EddieTS Advanced S5",
+      "scenario": "VT EddieTS Advanced S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Speed",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          2100,
+          900
+        ],
+        [
+          2400,
+          1000
+        ],
+        [
+          2700,
+          1100
+        ],
+        [
+          3000,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT DriftTS Advanced S5",
+      "scenario": "VT DriftTS Advanced S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Evasive",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          2000,
+          900
+        ],
+        [
+          2300,
+          1000
+        ],
+        [
+          2600,
+          1100
+        ],
+        [
+          2900,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT FlyTS Advanced S5",
+      "scenario": "VT FlyTS Advanced S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Evasive",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          2050,
+          900
+        ],
+        [
+          2350,
+          1000
+        ],
+        [
+          2650,
+          1100
+        ],
+        [
+          2950,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT ControlTS Advanced S5",
+      "scenario": "VT ControlTS Advanced S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Stability",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          2150,
+          900
+        ],
+        [
+          2450,
+          1000
+        ],
+        [
+          2750,
+          1100
+        ],
+        [
+          3050,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    },
+    {
+      "name": "VT Penta Bounce Advanced S5",
+      "scenario": "VT Penta Bounce Advanced S5",
+      "aliases": [],
+      "category": "Switching",
+      "subcategory": "Stability",
+      "difficulty": "Advanced",
+      "targets": [
+        [
+          2100,
+          900
+        ],
+        [
+          2400,
+          1000
+        ],
+        [
+          2700,
+          1100
+        ],
+        [
+          3000,
+          1200
+        ]
+      ],
+      "energy_cap": 1200,
+      "uncap_overall_energy": 1200
+    }
+  ],
+  "sha256": "072a6178ec71340be7bb26b1bbdf77952ef23c3f537e2ec4e1dc64e72e109b0b"
+}

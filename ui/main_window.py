@@ -67,6 +67,8 @@ class MainWindow(QMainWindow):
         self.notifier = NotificationManager()
         self._update_checker = None
         self._update_downloader = None
+        self._shutdown_requested = False
+        self._shutdown_complete = False
 
         self._create_views()
         self._build_shell()
@@ -82,6 +84,7 @@ class MainWindow(QMainWindow):
         )
         self.score_watcher.batch_completed.connect(self._on_sync_complete)
         self.score_watcher.batch_failed.connect(self._on_sync_failed)
+        self.score_watcher.shutdown_finished.connect(self._finish_deferred_close)
         self.score_watcher.start()
         QTimer.singleShot(5000, self._check_for_updates)
 
@@ -535,15 +538,26 @@ class MainWindow(QMainWindow):
         )
 
     def closeEvent(self, event):
-        if getattr(self, "_is_closing", False):
+        if self._shutdown_complete:
             event.accept()
             return
-        self._is_closing = True
+        self._shutdown_requested = True
+        if not self.score_watcher.stop():
+            self.statusBar().showMessage("Finishing score import before closing…")
+            event.ignore()
+            return
+        self._finish_close(event)
+
+    def _finish_deferred_close(self):
+        if self._shutdown_requested and not self._shutdown_complete:
+            self.close()
+
+    def _finish_close(self, event):
         self._save_window_geometry()
-        self.score_watcher.stop()
         for worker in (self._update_checker, self._update_downloader):
             if worker and worker.isRunning():
                 worker.requestInterruption()
                 worker.wait(22000)
         self.db.close()
+        self._shutdown_complete = True
         super().closeEvent(event)

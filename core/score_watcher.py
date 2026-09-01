@@ -14,6 +14,7 @@ class ScoreDirectoryWatcher(QObject):
 
     batch_completed = pyqtSignal(object)
     batch_failed = pyqtSignal(str)
+    shutdown_finished = pyqtSignal()
 
     def __init__(self, db_path: str, stats_dir: str, parent=None):
         super().__init__(parent)
@@ -27,6 +28,8 @@ class ScoreDirectoryWatcher(QObject):
         self._worker = None
         self._rescan_pending = False
         self._started = False
+        self._stopping = False
+        self._shutdown_wait_ms = 3000
 
     @property
     def is_started(self) -> bool:
@@ -34,18 +37,20 @@ class ScoreDirectoryWatcher(QObject):
 
     def start(self):
         """Begin observing the configured directory and schedule recovery."""
-        if self._started:
+        if self._started or self._worker is not None:
             return
         self._started = True
+        self._stopping = False
         self._watch_parent_directory()
         if self._watch_stats_directory():
             self._schedule_scan()
 
-    def stop(self):
-        """Stop future scans and finish only the worker already in progress."""
+    def stop(self) -> bool:
+        """Stop scans, returning whether no worker remains alive."""
         if not self._started and self._worker is None:
-            return
+            return True
         self._started = False
+        self._stopping = True
         self._rescan_pending = False
         self._timer.stop()
         watched_paths = self._file_watcher.directories()
@@ -55,9 +60,12 @@ class ScoreDirectoryWatcher(QObject):
         worker = self._worker
         if worker is not None and worker.isRunning():
             worker.requestInterruption()
-            worker.wait(3000)
+            if not worker.wait(self._shutdown_wait_ms):
+                return False
         if worker is not None and not worker.isRunning():
             self._worker = None
+        self._stopping = False
+        return True
 
     def notify_directory_changed(self):
         """Request a debounced scan; exposed for explicit refresh actions."""
@@ -136,6 +144,10 @@ class ScoreDirectoryWatcher(QObject):
         if self.sender() is not self._worker:
             return
         self._worker = None
+        if self._stopping:
+            self._stopping = False
+            self.shutdown_finished.emit()
+            return
         if not self._started:
             return
         self._schedule_pending_scan()

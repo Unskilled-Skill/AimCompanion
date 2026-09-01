@@ -138,3 +138,37 @@ def test_stop_prevents_pending_and_follow_up_workers(qtbot, watcher, monkeypatch
     qtbot.wait(1000)
 
     assert _DelayedWorker.starts == 1
+
+
+def test_stop_defers_shutdown_until_a_worker_exceeds_the_bounded_wait(
+    qtbot, watcher, monkeypatch,
+):
+    _DelayedWorker.reset()
+    _DelayedWorker.delay_ms = 150
+    monkeypatch.setattr("core.score_watcher.ScoreSyncWorker", _DelayedWorker)
+    watcher._shutdown_wait_ms = 10
+    watcher.start()
+    watcher._timer.stop()
+    watcher._scan()
+    qtbot.waitUntil(lambda: _DelayedWorker.starts == 1, timeout=1000)
+
+    with qtbot.waitSignal(watcher.shutdown_finished, timeout=1000):
+        assert watcher.stop() is False
+        assert watcher._worker is not None
+        assert watcher._worker.isRunning()
+
+    assert watcher._worker is None
+
+
+def test_repeated_start_and_stop_are_idempotent(qtbot, watcher):
+    watcher.start()
+    watcher.start()
+    watcher._timer.stop()
+
+    assert watcher.stop() is True
+    assert watcher.stop() is True
+
+    watcher.start()
+    watcher._timer.stop()
+    assert watcher.is_started
+    assert watcher.stop() is True

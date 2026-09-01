@@ -1,7 +1,10 @@
 import os
+import sqlite3
 import unittest
 from datetime import datetime
 from pathlib import Path
+
+import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
@@ -67,6 +70,61 @@ def test_main_window_starts_and_stops_score_watcher(qtbot, monkeypatch, tmp_path
         qtbot.waitUntil(lambda: len(window.db.get_all_scores()) == 1, timeout=2500)
         assert window.score_watcher is not None
         assert window.score_watcher.is_started
+    finally:
+        window.close()
+
+
+def test_main_window_defers_database_close_until_active_watcher_finishes(
+    qtbot, monkeypatch, tmp_path,
+):
+    from core.score_importer import ImportBatchResult
+    from PyQt6.QtCore import QThread, pyqtSignal
+    from models import config
+    from ui import main_window
+
+    stats_dir = tmp_path / "stats"
+    stats_dir.mkdir()
+    db_path = tmp_path / "window.sqlite3"
+
+    class _SlowWorker(QThread):
+        completed = pyqtSignal(object)
+        failed = pyqtSignal(str)
+
+        def __init__(self, db_path: str, stats_dir: str, parent=None):
+            super().__init__(parent)
+
+        def run(self):
+            self.msleep(150)
+            self.completed.emit(ImportBatchResult(0, 0, 0, ()))
+
+    monkeypatch.setattr(main_window, "Database", lambda: Database(str(db_path)))
+    monkeypatch.setattr(config, "CONFIG_PATH", str(tmp_path / "config.json"))
+    monkeypatch.setattr(
+        main_window.TrainingConfig, "get_stats_dir", lambda self: str(stats_dir),
+    )
+    monkeypatch.setattr(main_window, "automatic_updates_supported", lambda: False)
+    monkeypatch.setattr("core.score_watcher.ScoreSyncWorker", _SlowWorker)
+
+    window = main_window.MainWindow()
+    qtbot.addWidget(window)
+    try:
+        window.score_watcher._timer.stop()
+        window.score_watcher._shutdown_wait_ms = 10
+        window.score_watcher._scan()
+        qtbot.waitUntil(
+            lambda: window.score_watcher._worker is not None
+            and window.score_watcher._worker.isRunning(),
+            timeout=1000,
+        )
+
+        window.close()
+
+        assert window._shutdown_requested
+        assert window.score_watcher._worker is not None
+        assert window.db.get_total_attempts() == 0
+        qtbot.waitUntil(lambda: window._shutdown_complete, timeout=1000)
+        with pytest.raises(sqlite3.ProgrammingError):
+            window.db.get_total_attempts()
     finally:
         window.close()
 

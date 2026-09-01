@@ -43,6 +43,34 @@ Writable data is stored in `%LOCALAPPDATA%\AimCompanion`; bundled JSON under
 files are copied forward automatically the first time the new storage location
 is used.
 
+## Benchmark calculation and score importing
+
+Aim Companion's official Voltaic S5 rank view uses the active, bundled
+`kovaaks_s5` definition set. For the Best view, the calculator keeps the best
+eligible imported score for each benchmark, then selects the highest scenario
+energy in each required subcategory. Overall energy is the harmonic mean of all
+nine required subcategories:
+
+```text
+subcategory energy = max(eligible scenario energies in that subcategory)
+overall energy = 9 / sum(1 / subcategory energy for all nine subcategories)
+```
+
+No official overall energy or rank is shown until all nine subcategories have a
+valid score. The definition snapshot records the public benchmark source,
+version, retrieval time, and checksum; its bundled copy keeps this calculation
+available offline. The checksum verifies the local snapshot payload. It does
+not authenticate or prove the freshness of the remote Voltaic publication.
+See [benchmark data provenance](docs/benchmark-data-provenance.md) for the
+exact version, checksum, cap behavior, and known daily update lag.
+
+After startup, the app watches the configured Kovaak's stats directory and
+imports changes in a debounced background batch, so score discovery does not
+block the UI. Drag-and-drop, file selection, and **Import from Kovaak's** are
+manual fallback paths through the same importer. Malformed or unreadable files
+are recorded for retry while valid files in the same batch continue importing;
+the recorded failure is cleared after a successful retry.
+
 ## Development
 
 ```powershell

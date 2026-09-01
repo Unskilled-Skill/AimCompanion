@@ -6,7 +6,8 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QDragEnterEvent, QDropEvent
 
 from models.database import Database
-from core.parser import parse_csv_file, import_all_scores
+from core.parser import _get_stats_dir, iter_score_csv_paths
+from core.score_importer import ScoreImporter
 
 
 class DragDropImport(QWidget):
@@ -132,10 +133,14 @@ class DragDropImport(QWidget):
             self._import_files(files)
 
     def _auto_import(self):
-        imported = import_all_scores(self.db)
-        self.log.append(f"Auto-imported {imported} new scores from Kovaak's folder")
+        result = ScoreImporter(self.db).import_paths(
+            iter_score_csv_paths(_get_stats_dir())
+        )
+        self.log.append(
+            f"Auto-imported {result.imported} new scores from Kovaak's folder"
+        )
         if self.on_import_complete:
-            self.on_import_complete()
+            self.on_import_complete(result)
 
     def _import_files(self, files):
         self.progress.show()
@@ -143,26 +148,17 @@ class DragDropImport(QWidget):
         self.progress.setValue(0)
         self.log.clear()
 
-        imported = 0
-        for i, path in enumerate(files):
+        result = ScoreImporter(self.db).import_paths(files)
+        for i, path in enumerate(result.paths):
             self.log.append(f"Importing: {path.split('/')[-1].split(chr(92))[-1]}")
-            try:
-                score = parse_csv_file(path)
-                if score:
-                    if not self.db.score_exists(path) and not self.db.score_record_exists(score):
-                        self.db.insert_score(score, path)
-                        imported += 1
-                        self.log.append(f"  -> {score.scenario}: {score.score:.0f}")
-                    else:
-                        self.db.mark_score_path_imported(path)
-                        self.log.append("  -> Already imported")
-                else:
-                    self.log.append("  -> Failed to parse")
-            except Exception as e:
-                self.log.append(f"  -> Error: {str(e)}")
-
             self.progress.setValue(i + 1)
 
-        self.log.append(f"\nDone! Imported {imported}/{len(files)} new scores")
+        self.log.append(
+            f"\nDone! Imported {result.imported}/{len(result.paths)} new scores"
+        )
+        if result.duplicates:
+            self.log.append(f"Skipped {result.duplicates} duplicate score(s)")
+        if result.failed:
+            self.log.append(f"Failed to import {result.failed} file(s)")
         if self.on_import_complete:
-            self.on_import_complete()
+            self.on_import_complete(result)

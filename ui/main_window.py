@@ -10,13 +10,14 @@ from PyQt6.QtWidgets import (
 from core.analyzer import build_profile
 from core.notifications import NotificationManager
 from core.kovaaks_launcher import open_kovaaks
-from core.sync_worker import ScoreSyncWorker
+from core.score_watcher import ScoreDirectoryWatcher
 from core.updater import (
     UpdateCheckWorker, UpdateDownloadWorker, automatic_updates_supported,
     is_newer_version, launch_installer,
 )
 from core.version import VERSION
 from models.database import Database
+from models.config import TrainingConfig
 from ui.aim_hub import AimHubWidget
 from ui.dashboard import DashboardWidget
 from ui.export import ExportWidget
@@ -76,8 +77,12 @@ class MainWindow(QMainWindow):
             f"{self.db.get_total_attempts()} total attempts{streak_text}"
         )
         self._check_new_pbs()
-        self._sync_worker = None
-        QTimer.singleShot(0, self._refresh_scores)
+        self.score_watcher = ScoreDirectoryWatcher(
+            self.db.db_path, TrainingConfig.load().get_stats_dir(), parent=self,
+        )
+        self.score_watcher.batch_completed.connect(self._on_sync_complete)
+        self.score_watcher.batch_failed.connect(self._on_sync_failed)
+        self.score_watcher.start()
         QTimer.singleShot(5000, self._check_for_updates)
 
     def _create_views(self):
@@ -94,7 +99,9 @@ class MainWindow(QMainWindow):
         self.progress_view = ProgressWidget(self.profile, self.db)
         self.scenario_view = ScenarioBrowser(self.db)
         self.scenario_view.status_changed.connect(self.statusBar().showMessage)
-        self.import_view = DragDropImport(self.db, on_import_complete=self._refresh_scores)
+        self.import_view = DragDropImport(
+            self.db, on_import_complete=self._on_sync_complete,
+        )
         self.export_view = ExportWidget(self.profile, self.db, on_restore=self._rebuild_profile)
         self.aim_hub_view = AimHubWidget(self.profile, self.db)
         self.aim_hub_view.train_requested.connect(self._start_training_method)
@@ -386,26 +393,18 @@ class MainWindow(QMainWindow):
         )
 
     def _refresh_scores(self):
-        if self._sync_worker and self._sync_worker.isRunning():
-            return
         self.refresh_btn.setEnabled(False)
         self.refresh_btn.setText("Syncing…")
         self.statusBar().showMessage("Checking for new Kovaak's scores…")
-        from models.config import TrainingConfig
-        self._sync_worker = ScoreSyncWorker(
-            self.db.db_path, TrainingConfig.load().get_stats_dir(), parent=self
-        )
-        self._sync_worker.completed.connect(self._on_sync_complete)
-        self._sync_worker.failed.connect(self._on_sync_failed)
-        self._sync_worker.start()
+        self.score_watcher.notify_directory_changed()
 
-    def _on_sync_complete(self, imported):
+    def _on_sync_complete(self, result):
         self.refresh_btn.setEnabled(True)
         self.refresh_btn.setText("Sync scores")
         self._rebuild_profile()
         self._check_new_pbs()
         self.statusBar().showMessage(
-            f"Refresh complete  •  {imported} new scores  •  {self.profile.overall_tier} "
+            f"Refresh complete  •  {result.imported} new scores  •  {self.profile.overall_tier} "
             f"at {self._overall_energy_text(self.profile)}"
         )
 
@@ -536,9 +535,12 @@ class MainWindow(QMainWindow):
         )
 
     def closeEvent(self, event):
+        if getattr(self, "_is_closing", False):
+            event.accept()
+            return
+        self._is_closing = True
         self._save_window_geometry()
-        if self._sync_worker and self._sync_worker.isRunning():
-            self._sync_worker.wait(3000)
+        self.score_watcher.stop()
         for worker in (self._update_checker, self._update_downloader):
             if worker and worker.isRunning():
                 worker.requestInterruption()

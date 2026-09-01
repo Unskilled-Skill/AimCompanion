@@ -6,7 +6,7 @@ from models.database import Database
 
 
 class ScoreSyncWorker(QThread):
-    completed = pyqtSignal(int)
+    completed = pyqtSignal(object)
     failed = pyqtSignal(str)
 
     def __init__(self, db_path: str, stats_dir: str = None, parent=None):
@@ -20,7 +20,7 @@ class ScoreSyncWorker(QThread):
             db = Database(self.db_path)
             stats_dir = self.stats_dir or _get_stats_dir()
             result = ScoreImporter(db).import_paths(iter_score_csv_paths(stats_dir))
-            self.completed.emit(result.imported)
+            self.completed.emit(result)
         except Exception as error:
             self.failed.emit(str(error))
         finally:

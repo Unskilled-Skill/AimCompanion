@@ -126,6 +126,7 @@ class DefinitionRepository:
 
         benchmarks = tuple(cls._parse_definition(item) for item in definitions)
         cls._validate_aliases(benchmarks)
+        cls._validate_subcategory_coverage(benchmarks, required)
 
         return DefinitionSet(
             version=cls._string(payload["version"], "version"),
@@ -189,15 +190,28 @@ class DefinitionRepository:
         for benchmark in benchmarks:
             # Name and scenario are implicit aliases. They may be identical,
             # as they are in the bundled S5 source data.
-            for alias in (benchmark.name, benchmark.scenario):
-                cls._claim_alias(owners, alias, benchmark.name, allow_same_owner=True)
+            cls._claim_alias(owners, benchmark.name, benchmark.name, allow_same_owner=False)
+            cls._claim_alias(owners, benchmark.scenario, benchmark.name, allow_same_owner=True)
             seen_explicit: set[str] = set()
             for alias in benchmark.aliases:
                 normalized = normalize_alias(alias)
                 if normalized in seen_explicit:
                     raise ValueError(f"duplicate normalized alias: {alias}")
                 seen_explicit.add(normalized)
-                cls._claim_alias(owners, alias, benchmark.name, allow_same_owner=False)
+                cls._claim_alias(owners, alias, benchmark.name, allow_same_owner=True)
+
+    @staticmethod
+    def _validate_subcategory_coverage(
+        benchmarks: Sequence[BenchmarkDefinition], required: Sequence[str]
+    ) -> None:
+        required_set = set(required)
+        covered = {f"{item.category} / {item.subcategory}" for item in benchmarks}
+        missing = sorted(required_set - covered)
+        if missing:
+            raise ValueError(f"required subcategories lack benchmark coverage: {missing}")
+        unexpected = sorted(covered - required_set)
+        if unexpected:
+            raise ValueError(f"benchmark subcategory not in required subcategories: {unexpected}")
 
     @staticmethod
     def _claim_alias(

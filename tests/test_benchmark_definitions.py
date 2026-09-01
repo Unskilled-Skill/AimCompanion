@@ -125,6 +125,89 @@ def test_definition_rejects_duplicate_normalized_aliases_within_one_definition(t
         DefinitionRepository(path.parent).load("test")
 
 
+def test_definition_rejects_duplicate_canonical_names(tmp_path):
+    definitions = [
+        {
+            "name": "Same Name",
+            "scenario": "First Scenario",
+            "aliases": [],
+            "category": "Clicking",
+            "subcategory": "Static",
+            "difficulty": "Novice",
+            "targets": [[100, 100], [200, 200]],
+            "energy_cap": 1200,
+            "uncap_overall_energy": 1200,
+        },
+        {
+            "name": "Same Name",
+            "scenario": "Second Scenario",
+            "aliases": [],
+            "category": "Clicking",
+            "subcategory": "Dynamic",
+            "difficulty": "Novice",
+            "targets": [[100, 100], [200, 200]],
+            "energy_cap": 1200,
+            "uncap_overall_energy": 1200,
+        },
+    ]
+    path = write_definition(tmp_path, definitions=definitions)
+
+    with pytest.raises(ValueError, match="duplicate normalized alias"):
+        DefinitionRepository(path.parent).load("test")
+
+
+def test_definition_rejects_missing_required_subcategory_coverage(tmp_path):
+    path = write_definition(tmp_path)
+
+    with pytest.raises(ValueError, match="required subcategor"):
+        DefinitionRepository(path.parent).load("test")
+
+
+def test_definition_rejects_benchmark_outside_required_subcategories(tmp_path):
+    required = [
+        "Clicking / Static",
+        "Clicking / Dynamic",
+        "Clicking / Linear",
+        "Tracking / Precise",
+        "Tracking / Reactive",
+        "Tracking / Control",
+        "Switching / Speed",
+        "Switching / Evasive",
+        "Switching / Stability",
+    ]
+    definitions = [
+        {
+            "name": f"{subcategory} Example",
+            "scenario": f"{subcategory} Example Scenario",
+            "aliases": [],
+            "category": subcategory.split(" / ")[0],
+            "subcategory": subcategory.split(" / ")[1],
+            "difficulty": "Novice",
+            "targets": [[100, 100], [200, 200]],
+            "energy_cap": 1200,
+            "uncap_overall_energy": 1200,
+        }
+        for subcategory in required
+    ]
+    definitions.append(
+        {
+            "name": "Unlisted Example",
+            "scenario": "Unlisted Example Scenario",
+            "aliases": [],
+            "category": "Clicking",
+            "subcategory": "Unlisted",
+            "difficulty": "Novice",
+            "targets": [[100, 100], [200, 200]],
+            "energy_cap": 1200,
+            "uncap_overall_energy": 1200,
+        }
+    )
+    path = write_definition(tmp_path, definitions=definitions)
+
+    with pytest.raises(ValueError, match="not in required subcategor"):
+        DefinitionRepository(path.parent).load("test")
+
+
 def test_definition_rejects_non_increasing_target_points(tmp_path):
     definitions = [
         {

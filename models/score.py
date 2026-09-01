@@ -92,43 +92,4 @@ class CategoryScore:
         self.tier = energy_to_tier(self.energy)
 
 
-@dataclass
-class PlayerProfile:
-    username: str = ""
-    difficulty: str = "Novice"
-    categories: list[CategoryScore] = field(default_factory=list)
-    overall_score: float = 0.0
-    overall_energy: float = 0.0
-    overall_tier: str = "Iron"
-    last_updated: datetime = None
-
-    def recalculate(self):
-        for cat in self.categories:
-            cat.recalculate()
-        if self.categories:
-            self.overall_energy = sum(cat.energy for cat in self.categories) / len(self.categories)
-        else:
-            self.overall_energy = 0.0
-        self.overall_score = sum(c.combined_score for c in self.categories)
-        from models.benchmark import energy_to_tier
-        self.overall_tier = energy_to_tier(self.overall_energy)
-
-    def get_weakest_subcategories(
-        self, n: int = 5, measured_only: bool = True
-    ) -> list[SubcategoryScore]:
-        all_subs = []
-        for cat in self.categories:
-            for sub in cat.subcategories:
-                if measured_only and not any(b.best_score > 0 for b in sub.benchmarks):
-                    continue
-                all_subs.append(sub)
-        all_subs.sort(key=lambda s: s.energy)
-        return all_subs[:n]
-
-    def get_strongest_subcategories(self, n: int = 3) -> list[SubcategoryScore]:
-        all_subs = []
-        for cat in self.categories:
-            for sub in cat.subcategories:
-                all_subs.append(sub)
-        all_subs.sort(key=lambda s: s.energy, reverse=True)
-        return all_subs[:n]
+from models.profile import PlayerProfile

@@ -247,7 +247,10 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertAlmostEqual(fatigue["drop_pct"], -20.0)
 
     def test_confident_trend_advances_and_exposes_next_rank_targets(self):
-        benchmark = "Test Clicking Static"
+        benchmark = "VT 1w4ts Novice S5"
+        static_benchmark = self.profile.categories[0].subcategories[0].benchmarks[0]
+        static_benchmark.name = benchmark
+        static_benchmark.scenario = benchmark
         start = datetime.now() - timedelta(days=5)
         for index, value in enumerate((5000, 5100, 5200, 6000, 6200, 6400)):
             add_score(

@@ -59,7 +59,7 @@ class DatabaseActivityTests(unittest.TestCase):
 
         scores = self.db.get_all_scores()
 
-        self.assertEqual([score.score for score in scores], [105, 110, 100])
+        self.assertEqual([score.score for score in scores], [100, 110, 105])
 
     def test_unlimited_session_query_returns_full_history(self):
         for index in range(4):

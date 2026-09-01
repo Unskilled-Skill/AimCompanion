@@ -31,7 +31,10 @@ class ScoreImportTests(unittest.TestCase):
 
         self.assertEqual(import_all_scores(self.db, self.directory.name), 1)
         self.assertEqual(
-            self.db.get_imported_score_paths(), {first, duplicate}
+            self.db.get_imported_score_paths(), {
+                os.path.normcase(os.path.abspath(first)),
+                os.path.normcase(os.path.abspath(duplicate)),
+            }
         )
         self.assertEqual(import_all_scores(self.db, self.directory.name), 0)
 

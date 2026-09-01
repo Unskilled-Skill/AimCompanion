@@ -1,4 +1,5 @@
 import json
+import os
 import sqlite3
 from collections.abc import Callable
 from datetime import datetime
@@ -207,14 +208,15 @@ class Database:
         ).fetchall()
         return {row["csv_path"] for row in rows}
 
-    def mark_score_path_imported(self, csv_path: str):
+    def mark_score_path_imported(self, csv_path: str, *, commit: bool = True):
         if not csv_path:
             return
         self.conn.execute("""
             INSERT OR IGNORE INTO imported_files (csv_path, imported_at)
             VALUES (?, ?)
         """, (csv_path, datetime.now().isoformat(timespec="seconds")))
-        self.conn.commit()
+        if commit:
+            self.conn.commit()
 
     def score_record_exists(self, score: Score) -> bool:
         row = self.conn.execute("""
@@ -224,7 +226,9 @@ class Database:
         """, (score.scenario, score.timestamp.isoformat(), score.score)).fetchone()
         return row is not None
 
-    def insert_score(self, score: Score, csv_path: str = ""):
+    def insert_score(
+        self, score: Score, csv_path: str = "", *, commit: bool = True,
+    ):
         self.conn.execute("""
             INSERT OR REPLACE INTO scores
             (benchmark_name, scenario, category, subcategory, difficulty,
@@ -243,11 +247,12 @@ class Database:
                 INSERT OR IGNORE INTO imported_files (csv_path, imported_at)
                 VALUES (?, ?)
             """, (csv_path, datetime.now().isoformat(timespec="seconds")))
-        self.conn.commit()
+        if commit:
+            self.conn.commit()
 
     def get_all_scores(self) -> list[Score]:
         rows = self.conn.execute(
-            "SELECT * FROM scores ORDER BY timestamp DESC"
+            "SELECT * FROM scores ORDER BY timestamp ASC"
         ).fetchall()
         return [self._row_to_score(row) for row in rows]
 
@@ -498,29 +503,43 @@ class Database:
                 payload_json,
             ))
 
-    def record_import_error(self, path: str, error_text: str):
+    def record_import_error(
+        self, path: str, error_text: str, *, commit: bool = True,
+    ):
         """Record a failed file import while retaining its first failure time."""
         failed_at = datetime.now().isoformat(timespec="seconds")
-        with self.conn:
-            self.conn.execute("""
-                INSERT INTO import_failures
-                    (path, error_text, first_failed_at, last_failed_at, retry_count)
-                VALUES (?, ?, ?, ?, 1)
-                ON CONFLICT(path) DO UPDATE SET
-                    error_text = excluded.error_text,
-                    last_failed_at = excluded.last_failed_at,
-                    retry_count = import_failures.retry_count + 1
-            """, (path, error_text, failed_at, failed_at))
+        self.conn.execute("""
+            INSERT INTO import_failures
+                (path, error_text, first_failed_at, last_failed_at, retry_count)
+            VALUES (?, ?, ?, ?, 1)
+            ON CONFLICT(path) DO UPDATE SET
+                error_text = excluded.error_text,
+                last_failed_at = excluded.last_failed_at,
+                retry_count = import_failures.retry_count + 1
+        """, (path, error_text, failed_at, failed_at))
+        if commit:
+            self.conn.commit()
 
     def get_import_failure(self, path: str) -> dict | None:
         row = self.conn.execute(
             "SELECT * FROM import_failures WHERE path = ?", (path,)
         ).fetchone()
+        if not row:
+            normalized = self._normalized_score_path(path)
+            if normalized != path:
+                row = self.conn.execute(
+                    "SELECT * FROM import_failures WHERE path = ?", (normalized,)
+                ).fetchone()
         return dict(row) if row else None
 
-    def clear_import_error(self, path: str):
-        with self.conn:
-            self.conn.execute("DELETE FROM import_failures WHERE path = ?", (path,))
+    def clear_import_error(self, path: str, *, commit: bool = True):
+        self.conn.execute("DELETE FROM import_failures WHERE path = ?", (path,))
+        if commit:
+            self.conn.commit()
+
+    @staticmethod
+    def _normalized_score_path(path: str) -> str:
+        return os.path.normcase(os.path.normpath(os.path.abspath(path)))
 
     def record_scenario_completion(
         self, scenario: str, runs: int = 3, warmup: bool = False,

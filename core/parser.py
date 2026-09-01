@@ -163,24 +163,19 @@ def scan_stats_folder(stats_dir: str = None) -> list[tuple[Score, str]]:
     return results
 
 
+def iter_score_csv_paths(stats_dir: str):
+    """Yield result files in deterministic discovery order."""
+    if not os.path.isdir(stats_dir):
+        return
+    for filename in sorted(os.listdir(stats_dir)):
+        if filename.lower().endswith(".csv"):
+            yield os.path.join(stats_dir, filename)
+
+
 def import_all_scores(db, stats_dir: str = None) -> int:
+    """Compatibility wrapper for callers that only need the inserted count."""
     if stats_dir is None:
         stats_dir = _get_stats_dir()
-    if not os.path.isdir(stats_dir):
-        return 0
-    imported_paths = db.get_imported_score_paths()
-    imported = 0
-    for filename in os.listdir(stats_dir):
-        if not filename.lower().endswith(".csv"):
-            continue
-        filepath = os.path.join(stats_dir, filename)
-        if filepath in imported_paths:
-            continue
-        score = parse_csv_file(filepath)
-        if score:
-            if db.score_record_exists(score):
-                db.mark_score_path_imported(filepath)
-            else:
-                db.insert_score(score, filepath)
-                imported += 1
-    return imported
+    from core.score_importer import ScoreImporter
+
+    return ScoreImporter(db).import_paths(iter_score_csv_paths(stats_dir)).imported

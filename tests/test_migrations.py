@@ -236,3 +236,76 @@ def test_migration_cannot_execute_transaction_control_statements(tmp_path, monke
         Database(str(path))
 
     assert "half_created" not in sqlite_table_names(path)
+
+
+@pytest.mark.parametrize("statement", [
+    "/* leading comment */ COMMIT",
+    "/* first */ -- second\n /* third */ RELEASE SAVEPOINT migration_3",
+    "-- leading comment\n\tCOMMIT",
+])
+def test_migration_rejects_comment_prefixed_transaction_control(
+    tmp_path, monkeypatch, statement,
+):
+    migrations = importlib.import_module("models.migrations")
+
+    def control_then_fail(connection):
+        connection.execute(statement)
+        connection.execute("CREATE TABLE half_created (value TEXT)")
+        raise RuntimeError("forced migration failure")
+
+    failing = migrations.Migration(3, "commented control", control_then_fail)
+    monkeypatch.setattr(
+        migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
+    )
+    path = tmp_path / "commented-control.sqlite3"
+
+    with pytest.raises(
+        migrations.UnsafeMigrationOperationError, match="transaction control"
+    ):
+        Database(str(path))
+
+    assert "half_created" not in sqlite_table_names(path)
+
+
+def test_executemany_rejects_comment_prefixed_transaction_control(tmp_path, monkeypatch):
+    migrations = importlib.import_module("models.migrations")
+
+    def commit_then_fail(connection):
+        connection.executemany("/* comment */ COMMIT", [()])
+        raise RuntimeError("forced migration failure")
+
+    failing = migrations.Migration(3, "commented batch control", commit_then_fail)
+    monkeypatch.setattr(
+        migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
+    )
+    path = tmp_path / "commented-batch-control.sqlite3"
+
+    with pytest.raises(
+        migrations.UnsafeMigrationOperationError, match="transaction control"
+    ):
+        Database(str(path))
+
+
+def test_migration_allows_transaction_words_outside_the_leading_token(
+    tmp_path, monkeypatch,
+):
+    migrations = importlib.import_module("models.migrations")
+
+    def create_then_fail(connection):
+        connection.execute("""
+            CREATE TABLE messages (
+                note TEXT DEFAULT 'COMMIT' -- RELEASE is only a trailing comment
+            )
+        """)
+        raise RuntimeError("forced migration failure")
+
+    failing = migrations.Migration(3, "ordinary SQL", create_then_fail)
+    monkeypatch.setattr(
+        migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
+    )
+    path = tmp_path / "ordinary-sql.sqlite3"
+
+    with pytest.raises(RuntimeError, match="forced migration failure"):
+        Database(str(path))
+
+    assert "messages" not in sqlite_table_names(path)

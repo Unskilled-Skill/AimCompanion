@@ -34,14 +34,39 @@ class MigrationConnection:
 
     @staticmethod
     def _ensure_transaction_safe(sql: str) -> None:
-        statement = sql.lstrip().upper()
         transaction_controls = (
             "BEGIN", "COMMIT", "END", "ROLLBACK", "SAVEPOINT", "RELEASE",
         )
-        if statement.startswith(transaction_controls):
+        if MigrationConnection._leading_token(sql) in transaction_controls:
             raise UnsafeMigrationOperationError(
                 "transaction control is not permitted in migrations"
             )
+
+    @staticmethod
+    def _leading_token(sql: str) -> str:
+        """Read one SQLite token after whitespace and leading comments only."""
+        position = 0
+        while True:
+            while position < len(sql) and sql[position].isspace():
+                position += 1
+            if sql.startswith("--", position):
+                newline = sql.find("\n", position + 2)
+                if newline == -1:
+                    return ""
+                position = newline + 1
+                continue
+            if sql.startswith("/*", position):
+                comment_end = sql.find("*/", position + 2)
+                if comment_end == -1:
+                    return ""
+                position = comment_end + 2
+                continue
+            break
+
+        token_end = position
+        while token_end < len(sql) and sql[token_end].isalpha():
+            token_end += 1
+        return sql[position:token_end].upper()
 
 
 @dataclass(frozen=True)

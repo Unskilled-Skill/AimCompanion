@@ -197,7 +197,7 @@ def test_changed_path_malformed_then_recovers_without_losing_prior_score(
     malformed = importer.import_paths([path])
 
     assert malformed.failed == 1
-    assert malformed.failed_paths == (os.path.normcase(str(path.resolve())),)
+    assert malformed.failed_paths == (str(path.resolve()),)
     assert [item.score for item in importer.db.get_all_scores()] == [123]
 
     path.write_text("Scenario:,Test Scenario\nScore:,456\n", encoding="utf-8")

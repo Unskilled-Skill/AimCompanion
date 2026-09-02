@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import os
 import hashlib
+import os
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -49,7 +49,7 @@ class ScoreImporter:
             self._path_key(path): content_sha256
             for path, content_sha256 in self.db.get_imported_score_files().items()
         }
-        parsed: list[tuple[str, str, str, Score]] = []
+        parsed: list[tuple[str, str, Score]] = []
         failed = 0
         failed_paths = []
 
@@ -63,23 +63,23 @@ class ScoreImporter:
             except Exception as error:
                 self.db.record_import_error(path_key, self._format_error(error))
                 failed += 1
-                failed_paths.append(path_key)
+                failed_paths.append(path)
                 continue
             if score is None:
                 self.db.record_import_error(
                     path_key, "Malformed or unsupported CSV result",
                 )
                 failed += 1
-                failed_paths.append(path_key)
+                failed_paths.append(path)
                 continue
-            parsed.append((path, path_key, content_sha256, score))
+            parsed.append((path_key, content_sha256, score))
 
         imported = 0
         updated = 0
         duplicates = 0
         if parsed:
             with self.db.conn:
-                for path, path_key, content_sha256, score in parsed:
+                for path_key, content_sha256, score in parsed:
                     owns_score = self.db.score_exists(path_key)
                     if self.db.score_record_exists(
                         score, exclude_csv_path=path_key,

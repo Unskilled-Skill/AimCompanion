@@ -95,6 +95,52 @@ def add_immediately_prior_v1_tables(path: Path) -> None:
     connection.close()
 
 
+def create_complete_v1_database(tmp_path: Path) -> Path:
+    """Create an unversioned database containing every released v1 object."""
+    migrations = importlib.import_module("models.migrations")
+    path = create_legacy_database(tmp_path, score_count=1)
+    connection = sqlite3.connect(path)
+    migrations.baseline_existing_schema(migrations.MigrationConnection(connection))
+    connection.execute(
+        "INSERT INTO sessions (timestamp, focus, notes) VALUES (?, ?, ?)",
+        ("2026-08-30T12:00:00", "Clicking", "preserve session"),
+    )
+    connection.execute(
+        "INSERT INTO favorites (item_type, item_name) VALUES (?, ?)",
+        ("scenario", "Preserved favorite"),
+    )
+    connection.execute("""
+        INSERT INTO scenario_completions (
+            scenario, completed_blocks, completed_runs, warmup_blocks,
+            last_completed_at
+        ) VALUES (?, ?, ?, ?, ?)
+    """, ("Preserved scenario", 2, 8, 1, "2026-08-30T12:01:00"))
+    connection.execute("""
+        INSERT INTO block_feedback (
+            timestamp, scenario, rating, notes, category, subcategory
+        ) VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        "2026-08-30T12:02:00", "Preserved scenario", "good",
+        "preserve feedback", "Clicking", "Static",
+    ))
+    connection.execute("""
+        INSERT INTO game_observations (
+            timestamp, game, category, subcategory, issue, notes
+        ) VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        "2026-08-30T12:03:00", "Test game", "Tracking", "Reactive",
+        "preserved issue", "preserve observation",
+    ))
+    connection.execute(
+        "INSERT INTO imported_files (csv_path, imported_at) VALUES (?, ?)",
+        ("complete-v1.csv", "2026-08-30T12:04:00"),
+    )
+    connection.execute("DROP TABLE schema_migrations")
+    connection.commit()
+    connection.close()
+    return path
+
+
 def test_fresh_database_reaches_current_schema_without_pre_migration_backup(tmp_path):
     path = tmp_path / "fresh.sqlite3"
 
@@ -146,6 +192,27 @@ def test_partial_inferred_v1_repairs_missing_baseline_objects_before_v2(tmp_path
             "game_observations",
             "imported_files",
         } <= db.table_names()
+    finally:
+        db.close()
+
+
+def test_complete_v1_upgrades_without_losing_representative_user_rows(tmp_path):
+    path = create_complete_v1_database(tmp_path)
+
+    db = Database(str(path))
+    try:
+        assert db.schema_version == 3
+        assert len(db.get_all_scores()) == 1
+        assert db.get_settings_value("legacy_preference") == "preserve this exactly"
+        assert db.get_sessions()[0]["notes"] == "preserve session"
+        assert db.is_favorite("scenario", "Preserved favorite")
+        assert db.get_scenario_completion("Preserved scenario")["completed_runs"] == 8
+        assert (
+            db.get_scenario_feedback_summary()["preserved scenario"]["ratings"]["good"]
+            == 1
+        )
+        assert db.get_open_game_observations()[0]["issue"] == "preserved issue"
+        assert db.get_imported_score_paths() == {"legacy-0.csv", "complete-v1.csv"}
     finally:
         db.close()
 

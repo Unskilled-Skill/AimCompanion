@@ -20,7 +20,7 @@ class BenchmarkDefinition:
     subcategory: str
     difficulty: str
     targets: tuple[tuple[float, float], ...]
-    energy_cap: float
+    energy_cap: float | None
     uncap_overall_energy: float | None
 
 

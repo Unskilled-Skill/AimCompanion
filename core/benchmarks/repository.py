@@ -69,11 +69,7 @@ class DefinitionRepository:
         return hashlib.sha256(canonical).hexdigest()
 
     def load_active(self) -> DefinitionSet:
-        active = [
-            definition
-            for path in self._definition_paths()
-            if (definition := self._load_path(path)).active
-        ]
+        active = [definition for definition in self._load_all() if definition.active]
         if len(active) != 1:
             raise ValueError("exactly one active definition set is required")
         return active[0]
@@ -81,11 +77,19 @@ class DefinitionRepository:
     def load(self, version: str) -> DefinitionSet:
         if not isinstance(version, str) or not version.strip():
             raise ValueError("definition version must be a non-empty string")
-        for path in self._definition_paths():
-            definition = self._load_path(path)
+        for definition in self._load_all():
             if definition.version == version:
                 return definition
         raise KeyError(f"unknown benchmark definition version: {version}")
+
+    def _load_all(self) -> tuple[DefinitionSet, ...]:
+        definitions = tuple(self._load_path(path) for path in self._definition_paths())
+        versions: set[str] = set()
+        for definition in definitions:
+            if definition.version in versions:
+                raise ValueError(f"duplicate definition version: {definition.version}")
+            versions.add(definition.version)
+        return definitions
 
     def _definition_paths(self) -> tuple[Path, ...]:
         if not self._directory.is_dir():
@@ -147,6 +151,14 @@ class DefinitionRepository:
             cls._string(alias, "definition alias")
             for alias in cls._sequence(definition["aliases"], "definition aliases")
         )
+        energy_cap = cls._optional_positive_number(
+            definition["energy_cap"], "energy_cap"
+        )
+        uncap_overall_energy = cls._optional_positive_number(
+            definition["uncap_overall_energy"], "uncap_overall_energy"
+        )
+        if energy_cap is None and uncap_overall_energy is not None:
+            raise ValueError("uncap_overall_energy requires energy_cap")
         return BenchmarkDefinition(
             name=cls._string(definition["name"], "definition name"),
             scenario=cls._string(definition["scenario"], "definition scenario"),
@@ -155,10 +167,8 @@ class DefinitionRepository:
             subcategory=cls._string(definition["subcategory"], "definition subcategory"),
             difficulty=cls._string(definition["difficulty"], "definition difficulty"),
             targets=cls._parse_targets(definition["targets"]),
-            energy_cap=cls._positive_number(definition["energy_cap"], "energy_cap"),
-            uncap_overall_energy=cls._optional_positive_number(
-                definition["uncap_overall_energy"], "uncap_overall_energy"
-            ),
+            energy_cap=energy_cap,
+            uncap_overall_energy=uncap_overall_energy,
         )
 
     @classmethod
@@ -212,6 +222,17 @@ class DefinitionRepository:
         unexpected = sorted(covered - required_set)
         if unexpected:
             raise ValueError(f"benchmark subcategory not in required subcategories: {unexpected}")
+        for difficulty in sorted({item.difficulty for item in benchmarks}):
+            difficulty_coverage = {
+                f"{item.category} / {item.subcategory}"
+                for item in benchmarks
+                if item.difficulty == difficulty
+            }
+            missing = sorted(required_set - difficulty_coverage)
+            if missing:
+                raise ValueError(
+                    f"{difficulty} definitions lack required subcategory coverage: {missing}"
+                )
 
     @staticmethod
     def _claim_alias(

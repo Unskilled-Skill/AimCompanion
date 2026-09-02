@@ -5,6 +5,7 @@ import pytest
 from core.analyzer import build_profile
 from core.benchmarks import DefinitionRepository
 from core.benchmarks.calculator import BenchmarkCalculator
+from models.benchmark import energy_to_tier
 from models.database import Database
 from models.score import PlayerProfile, Score
 
@@ -194,3 +195,37 @@ def test_build_profile_normalizes_alias_history_to_the_selected_benchmark(
     assert benchmark.attempts == 2
     assert benchmark.best_score == 820
     assert benchmark.latest_score == 410
+
+
+def test_profile_and_legacy_tier_helpers_are_unranked_below_first_threshold():
+    definitions = DefinitionRepository.bundled().load_active()
+    selected = {}
+    scores = []
+    for definition in definitions.benchmarks:
+        if definition.difficulty != "Novice":
+            continue
+        name = f"{definition.category} / {definition.subcategory}"
+        if name in selected:
+            continue
+        selected[name] = definition
+        first_score, first_energy = definition.targets[0]
+        scores.append(
+            _score_for(
+                definition,
+                first_score * 99 / first_energy,
+                datetime(2026, 8, 30),
+            )
+        )
+
+    result = BenchmarkCalculator(definitions).calculate(scores, "Novice")
+    profile = PlayerProfile.from_result(result)
+
+    assert profile.overall_energy == pytest.approx(99)
+    assert profile.overall_tier == "Unranked"
+    assert {
+        subcategory.tier
+        for category in profile.categories
+        for subcategory in category.subcategories
+    } == {"Unranked"}
+    assert energy_to_tier(99) == "Unranked"
+    assert energy_to_tier(100) == "Iron"

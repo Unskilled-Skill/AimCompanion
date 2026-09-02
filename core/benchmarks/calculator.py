@@ -86,7 +86,7 @@ class BenchmarkCalculator:
     def calculate(self, scores: Iterable[Score], difficulty: str) -> BenchmarkResult:
         """Calculate best-per-scenario and best-per-subcategory official energy."""
 
-        uncap_threshold = self._uncap_threshold(difficulty)
+        _, uncap_threshold = self._cap_policy(difficulty)
         raw_scores = self._best_scores(scores, difficulty)
         capped = self._subcategory_energies(raw_scores, capped=True)
         missing = self._missing_subcategories(capped)
@@ -166,7 +166,11 @@ class BenchmarkCalculator:
                 if score is None:
                     continue
                 raw_energy = score_to_energy(definition, score)
-                energy = min(raw_energy, definition.energy_cap) if capped else raw_energy
+                energy = (
+                    min(raw_energy, definition.energy_cap)
+                    if capped and definition.energy_cap is not None
+                    else raw_energy
+                )
                 scenarios.append(
                     ScenarioEnergy(
                         benchmark_name=definition.name,
@@ -194,25 +198,31 @@ class BenchmarkCalculator:
             if name not in subcategories or subcategories[name].energy <= 0
         )
 
-    def _uncap_threshold(self, difficulty: str) -> float | None:
-        thresholds = {
-            definition.uncap_overall_energy
+    def _cap_policy(self, difficulty: str) -> tuple[float | None, float | None]:
+        policies = {
+            (definition.energy_cap, definition.uncap_overall_energy)
             for definition in self._definitions.benchmarks
             if definition.difficulty == difficulty
         }
-        if len(thresholds) > 1:
+        if len(policies) > 1:
             raise ValueError(
-                "definition set must use a consistent uncap_overall_energy "
+                "definition set must use a consistent uncap_overall_energy cap policy "
                 f"for difficulty: {difficulty}"
             )
-        return next(iter(thresholds), None)
+        policy = next(iter(policies), (None, None))
+        if policy[0] is None and policy[1] is not None:
+            raise ValueError(
+                "uncap_overall_energy requires an energy_cap "
+                f"for difficulty: {difficulty}"
+            )
+        return policy
 
     @staticmethod
     def _should_uncap(capped_overall: float, threshold: float | None) -> bool:
         return threshold is not None and capped_overall >= threshold
 
-    def _tier_for(self, energy: float) -> str:
-        tier = self._definitions.ranks[0][0]
+    def _tier_for(self, energy: float) -> str | None:
+        tier = None
         for name, threshold in self._definitions.ranks:
             if energy >= threshold:
                 tier = name

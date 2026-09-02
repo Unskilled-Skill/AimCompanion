@@ -10,6 +10,7 @@ from core.benchmarks.calculator import (
     score_to_energy,
 )
 from models.score import Score
+from models.benchmark import energy_to_score
 
 
 @pytest.fixture
@@ -77,6 +78,36 @@ def raise_all_subcategories(scores: list[Score]) -> list[Score]:
     return raised
 
 
+def scores_at_energy(definitions, difficulty: str, desired_energy: float) -> list[Score]:
+    selected = {}
+    for definition in definitions.benchmarks:
+        if definition.difficulty == difficulty:
+            selected.setdefault(f"{definition.category} / {definition.subcategory}", definition)
+    scores = []
+    for definition in selected.values():
+        first_score, first_energy = definition.targets[0]
+        if desired_energy <= first_energy:
+            target_score = first_score * desired_energy / first_energy
+        else:
+            lower_score, lower_energy = definition.targets[-2]
+            upper_score, upper_energy = definition.targets[-1]
+            for lower, upper in zip(definition.targets, definition.targets[1:]):
+                lower_score, lower_energy = lower
+                upper_score, upper_energy = upper
+                if desired_energy <= upper_energy:
+                    break
+            slope = (upper_score - lower_score) / (upper_energy - lower_energy)
+            target_score = lower_score + (desired_energy - lower_energy) * slope
+        scores.append(
+            score(
+                definition.name,
+                target_score,
+                difficulty,
+            )
+        )
+    return scores
+
+
 def test_subcategory_uses_highest_scenario_energy(s5, scores_for_all_nine):
     scores_for_all_nine += [
         score("VT PGT Novice S5", 3050),
@@ -89,11 +120,27 @@ def test_subcategory_uses_highest_scenario_energy(s5, scores_for_all_nine):
     assert precise.energy == max(item.energy for item in precise.scenarios)
 
 
-def test_overall_is_harmonic_mean(s5, one_score_per_subcategory):
-    result = BenchmarkCalculator(s5).calculate(one_score_per_subcategory, "Novice")
+def test_overall_is_harmonic_mean(s5):
+    desired = (100, 200, 300, 400, 100, 200, 300, 400, 100)
+    selected = {}
+    for definition in s5.benchmarks:
+        if definition.difficulty == "Novice":
+            selected.setdefault(f"{definition.category} / {definition.subcategory}", definition)
+    inputs = []
+    for subcategory, energy in zip(s5.required_subcategories, desired):
+        definition = selected[subcategory]
+        first_score, first_energy = definition.targets[0]
+        if energy == first_energy:
+            value = first_score
+        else:
+            target_index = int(energy // 100) - 1
+            value = definition.targets[target_index][0]
+        inputs.append(score(definition.name, value))
 
-    energies = [item.energy for item in result.subcategories.values()]
-    assert result.overall_energy == pytest.approx(len(energies) / sum(1 / value for value in energies))
+    result = BenchmarkCalculator(s5).calculate(inputs, "Novice")
+
+    assert tuple(item.energy for item in result.subcategories.values()) == pytest.approx(desired)
+    assert result.overall_energy == pytest.approx(5400 / 31)
 
 
 def test_overall_is_unmeasured_until_all_nine_exist(s5, one_score_per_subcategory):
@@ -149,6 +196,18 @@ def test_overall_tier_uses_highest_reached_definition_rank(s5, one_score_per_sub
     assert result.overall_tier == "Iron"
 
 
+@pytest.mark.parametrize(("energy", "expected_tier"), [(99, None), (100, "Iron")])
+def test_complete_overall_energy_respects_the_first_rank_boundary(
+    s5, energy, expected_tier
+):
+    result = BenchmarkCalculator(s5).calculate(
+        scores_at_energy(s5, "Novice", energy), "Novice"
+    )
+
+    assert result.overall_energy == pytest.approx(energy)
+    assert result.overall_tier == expected_tier
+
+
 def test_advanced_energy_uncaps_only_after_overall_threshold(
     advanced_s5, advanced_scores
 ):
@@ -163,6 +222,71 @@ def test_advanced_energy_uncaps_only_after_overall_threshold(
     assert max(
         item.energy for sub in above.subcategories.values() for item in sub.scenarios
     ) > 1200
+
+
+@pytest.mark.parametrize(
+    ("difficulty", "baseline_energy"),
+    [("Novice", 100), ("Intermediate", 500)],
+)
+def test_lower_difficulties_are_never_energy_capped(s5, difficulty, baseline_energy):
+    scores = scores_at_energy(s5, difficulty, baseline_energy)
+    scores[0] = scores_at_energy(s5, difficulty, 1300)[0]
+
+    result = BenchmarkCalculator(s5).calculate(scores, difficulty)
+
+    assert result.subcategories["Clicking / Dynamic"].energy == pytest.approx(1300)
+    assert result.overall_energy < 1200
+
+
+def test_advanced_high_raw_scenario_stays_capped_below_overall_threshold(s5):
+    scores = scores_at_energy(s5, "Advanced", 900)
+    scores[0] = scores_at_energy(s5, "Advanced", 1300)[0]
+
+    result = BenchmarkCalculator(s5).calculate(scores, "Advanced")
+
+    assert result.subcategories["Clicking / Dynamic"].energy == pytest.approx(1200)
+    assert result.overall_energy < 1200
+
+
+def test_capped_difficulty_without_uncap_threshold_stays_permanently_capped(s5):
+    definitions = replace(
+        s5,
+        benchmarks=tuple(
+            replace(item, uncap_overall_energy=None)
+            if item.difficulty == "Advanced"
+            else item
+            for item in s5.benchmarks
+        ),
+    )
+
+    result = BenchmarkCalculator(definitions).calculate(
+        scores_at_energy(definitions, "Advanced", 1300), "Advanced"
+    )
+
+    assert result.overall_energy == pytest.approx(1200)
+
+
+@pytest.mark.parametrize(
+    ("benchmark_name", "energy"),
+    [
+        ("VT Floating Heads Novice S5", 50),
+        ("VT Floating Heads Novice S5", 350),
+        ("VT Pasu Advanced S5", 1250),
+    ],
+)
+def test_energy_to_score_round_trips_representative_curve_segments(
+    benchmark_name, energy
+):
+    converted_score = energy_to_score(benchmark_name, energy)
+
+    assert score_to_energy(
+        next(
+            item
+            for item in DefinitionRepository.bundled().load_active().benchmarks
+            if item.name == benchmark_name
+        ),
+        converted_score,
+    ) == pytest.approx(energy)
 
 
 def test_mixed_numeric_uncap_thresholds_are_rejected_before_calculation(s5):
@@ -181,7 +305,7 @@ def test_mixed_numeric_uncap_thresholds_are_rejected_before_calculation(s5):
 
 
 def test_none_and_numeric_uncap_thresholds_are_rejected_before_calculation(s5):
-    original = next(item for item in s5.benchmarks if item.difficulty == "Novice")
+    original = next(item for item in s5.benchmarks if item.difficulty == "Advanced")
     changed = replace(
         original,
         uncap_overall_energy=None,
@@ -192,4 +316,4 @@ def test_none_and_numeric_uncap_thresholds_are_rejected_before_calculation(s5):
     )
 
     with pytest.raises(ValueError, match="consistent uncap_overall_energy"):
-        BenchmarkCalculator(definitions).calculate((), "Novice")
+        BenchmarkCalculator(definitions).calculate((), "Advanced")

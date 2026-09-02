@@ -143,7 +143,7 @@ def energy_to_score(benchmark_name: str | None, energy: float) -> float:
 
 def energy_to_tier(energy: float | None) -> str:
     value = energy or 0.0
-    tier = TIERS[0]["name"]
+    tier = "Unranked"
     for item in TIERS:
         if value >= item["min_energy"]:
             tier = item["name"]

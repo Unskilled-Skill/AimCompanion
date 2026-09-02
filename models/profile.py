@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 def _tier_for(energy: float, ranks: tuple[tuple[str, float], ...]) -> str:
-    tier = ranks[0][0]
+    tier = "Unranked"
     for name, threshold in ranks:
         if energy >= threshold:
             tier = name

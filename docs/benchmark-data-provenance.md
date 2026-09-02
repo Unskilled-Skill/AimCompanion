@@ -14,11 +14,11 @@ that source with these values:
 | Field | Value |
 | --- | --- |
 | Version | `kovaaks_s5` |
-| Retrieved at | `2026-08-30T00:00:00+02:00` |
+| Retrieved at | `2026-09-02T00:00:00+02:00` |
 | Bundled file | `data/benchmark_definitions/voltaic-kovaaks-s5.json` |
 | Definitions | 54 benchmark definitions |
 | Required subcategories | 9 |
-| SHA-256 | `072a6178ec71340be7bb26b1bbdf77952ef23c3f537e2ec4e1dc64e72e109b0b` |
+| SHA-256 | `f6ca3108a0325c7c334df20cf08e7dd455c7eadc9cbc01bd89a5d796f9253e56` |
 
 The repository canonicalizes the JSON `definitions` array (sorted keys and
 compact JSON encoding) and compares its SHA-256 digest with the stored value
@@ -54,15 +54,17 @@ overall energy = 9 / sum(1 / subcategory energy for all nine subcategories)
 ```
 
 If any required subcategory has no valid score, overall official energy and rank
-are unavailable (`Unranked`). The calculator does not average scenarios or
-subcategories for the official overall result. If the capped overall energy
-reaches the definition's configured uncap threshold, it recalculates from raw
-scenario energies; otherwise the cap remains in force.
+are unavailable (`Unranked`). Complete energy below the first rank threshold is
+also `Unranked`. The calculator does not average scenarios or subcategories for
+the official overall result. Novice and Intermediate scenarios are uncapped.
+Advanced scenario energy is capped at 1200 until capped overall energy reaches
+1200, then recalculated from raw scenario energy. This policy is sourced from
+Voltaic's official [leaderboard metrics page](https://app.voltaic.gg/leaderboards/about).
 
-The header tier/energy and Skill Matrix use the Best score view for the official
-rank. The Dashboard and status bar use the currently selected score-input view,
-so Latest, recent, and average selections may show different local values; an
-arithmetic average of attempts is not an official Voltaic overall energy.
+The header tier/energy and Skill Matrix use the Lifetime Best score view for the
+official rank. The Dashboard, exports, and status bar explicitly label Latest,
+7-day, 30-day, and Recent 5 average selections as local current-form analytics;
+an arithmetic average of attempts is not an official Voltaic overall energy.
 
 ## Automatic and manual importing
 
@@ -80,17 +82,21 @@ Manual fallback is always available from the Import scores view:
 - Click **Import from Kovaak's** to scan the configured stats folder.
 
 All three routes call the same UI-free `ScoreImporter` used by the watcher.
-Paths are normalized and ordered deterministically. Existing imported paths are
-skipped, and a score with the same scenario, timestamp, and score is counted as
-a duplicate rather than inserted as another history row. Database reads return
+Paths are normalized and ordered deterministically. A SHA-256 content identity
+lets unchanged paths skip parsing and changed paths re-import. A successfully
+parsed partial write is therefore updated when the file finishes writing. The
+path-owned score is replaced transactionally, without deleting unrelated local
+history. A score with the same scenario, timestamp, and score is counted as a
+duplicate rather than inserted as another history row. Database reads return
 score history in timestamp order.
 
 ## Failure, retry, and offline behavior
 
 Each file is parsed independently. A malformed, unsupported, or unreadable CSV
 increments the batch failure count and persists its path, error text, first and
-last failure times, and retry count in the local `import_failures` table. Other
-valid files in that batch still commit when the database write succeeds. A
+last failure times, and retry count in the local `import_failures` table. The UI
+shows the failed count, affected file names, and retry action. Other valid files
+in that batch still commit when the database write succeeds. A
 database write failure rolls back the valid part of that transaction. Failed
 paths are not marked as imported, so a later watcher scan or manual import
 retries them. A successful retry clears the stored failure; it does not discard

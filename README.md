@@ -62,7 +62,8 @@ version, retrieval time, and checksum; its bundled copy keeps this calculation
 available offline. The checksum verifies the local snapshot payload. It does
 not authenticate or prove the freshness of the remote Voltaic publication.
 The header and Skill Matrix use Best scores for the official rank; Dashboard and
-status text may reflect the selected score-input view.
+status text label Latest, 7-day, 30-day, and Recent 5 average selections as
+local current-form analytics rather than official ranks.
 See [benchmark data provenance](docs/benchmark-data-provenance.md) for the
 exact version, checksum, cap behavior, and known daily update lag.
 
@@ -71,7 +72,10 @@ imports changes in a debounced background batch, so score discovery does not
 block the UI. Drag-and-drop, file selection, and **Import from Kovaak's** are
 manual fallback paths through the same importer. Malformed or unreadable files
 are recorded for retry while valid files in the same batch continue importing;
-the recorded failure is cleared after a successful retry.
+the affected file names and retry action remain visible. Imported paths retain a
+content checksum, so unchanged files skip parsing while a changed or completed
+file is re-imported transactionally without deleting unrelated history. The
+recorded failure is cleared after a successful retry.
 
 ## Development
 
@@ -79,6 +83,7 @@ the recorded failure is cleared after a successful retry.
 pip install -r requirements-dev.txt
 python -m unittest discover -s tests -v
 python -m compileall -q core models ui tests
+.\scripts\check_plan1_coverage.ps1
 ```
 
 ## Build a Windows release

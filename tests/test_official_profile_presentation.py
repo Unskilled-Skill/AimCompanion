@@ -5,7 +5,7 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PyQt6.QtWidgets import QApplication, QFileDialog
+from PyQt6.QtWidgets import QApplication, QFileDialog, QLabel
 
 from models.database import Database
 from models.score import BenchmarkInfo, CategoryScore, PlayerProfile, SubcategoryScore
@@ -65,6 +65,13 @@ def _official_profile_for_export():
     )
 
 
+def _local_profile_for_export():
+    profile = _official_profile_for_export()
+    profile.calculation_method = "local_current_form"
+    profile.score_input_mode = "latest"
+    return profile
+
+
 def test_incomplete_dashboard_and_main_rank_label_render_without_energy(app):
     profile = _incomplete_profile()
     dashboard = DashboardWidget(profile)
@@ -99,4 +106,30 @@ def test_official_export_marks_category_aggregates_as_non_official(app, tmp_path
     assert "Static: 100.0 official energy (Iron)" in report
     assert "Clicking: 820 (Iron, 100.0 energy)" not in report
     widget.deleteLater()
+    database.close()
+
+
+def test_local_current_form_dashboard_export_and_status_do_not_claim_official_rank(
+    app, tmp_path, monkeypatch,
+):
+    profile = _local_profile_for_export()
+    dashboard = DashboardWidget(profile)
+    labels = {label.text() for label in dashboard.findChildren(QLabel)}
+    database = Database(":memory:")
+    widget = ExportWidget(profile, database)
+    destination = tmp_path / "local-report.txt"
+    monkeypatch.setattr(
+        QFileDialog, "getSaveFileName", lambda *args, **kwargs: (str(destination), "")
+    )
+
+    widget._export_progress_report()
+
+    report = destination.read_text(encoding="utf-8")
+    assert "LOCAL CURRENT FORM" in labels
+    assert "OVERALL LOCAL TIER: Iron" in report
+    assert "100.0 local current-form energy" in report
+    assert "official energy" not in report
+    assert "local current form" in MainWindow._profile_summary(profile).lower()
+    widget.deleteLater()
+    dashboard.deleteLater()
     database.close()

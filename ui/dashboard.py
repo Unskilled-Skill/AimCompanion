@@ -52,14 +52,15 @@ class DashboardWidget(QWidget):
 
         rank_block = QVBoxLayout()
         rank_block.setSpacing(5)
-        eyebrow = QLabel("YOUR CURRENT LEVEL")
+        is_official = self.profile.is_official_rank
+        eyebrow = QLabel("YOUR OFFICIAL RANK" if is_official else "LOCAL CURRENT FORM")
         eyebrow.setObjectName("eyebrow")
         rank = QLabel(self.profile.overall_tier)
         rank.setObjectName("homeRank")
         rank.setStyleSheet(f"color: {self._tier_color(self.profile.overall_tier)};")
         overall_energy = self.profile.overall_energy
         energy = QLabel(
-            f"{overall_energy:.1f} energy"
+            f"{overall_energy:.1f} {'official' if is_official else 'local'} energy"
             if overall_energy is not None else "Overall energy unavailable"
         )
         energy.setObjectName("homeEnergy")
@@ -72,7 +73,11 @@ class DashboardWidget(QWidget):
                 "Complete all nine benchmark subcategories to receive an official overall energy. "
                 if overall_energy is None else
                 "Highest tracked tier reached. "
-            ) + "Energy normalizes performance across official benchmarks."
+            ) + (
+                "Energy determines your official Lifetime Best rank."
+                if is_official
+                else "This current-form analytic is not an official Voltaic rank."
+            )
         )
         explanation.setObjectName("mutedText")
         explanation.setWordWrap(True)
@@ -129,7 +134,11 @@ class DashboardWidget(QWidget):
         title_block = QVBoxLayout()
         title = QLabel("Skill balance")
         title.setObjectName("sectionTitle")
-        subtitle = QLabel("See where your clicking, tracking, and switching currently stand.")
+        subtitle = QLabel(
+            "Official Lifetime Best skill energy."
+            if self.profile.is_official_rank
+            else f"Local current form from {self.profile.score_input_label}; not an official rank."
+        )
         subtitle.setObjectName("mutedText")
         subtitle.setWordWrap(True)
         subtitle.setMaximumWidth(680)
@@ -162,7 +171,11 @@ class DashboardWidget(QWidget):
         header = QHBoxLayout()
         name = QLabel(category.name)
         name.setObjectName("skillName")
-        tier = QLabel(category.tier)
+        tier = QLabel(
+            category.tier
+            if self.profile.is_official_rank
+            else f"{category.tier} (local)"
+        )
         tier.setObjectName("tierPill")
         tier.setStyleSheet(f"color: {self._tier_color(category.tier)};")
         header.addWidget(name)
@@ -181,7 +194,8 @@ class DashboardWidget(QWidget):
                 f" • {next_tier['min_energy'] - sub.energy:.0f} to {next_tier['name']}"
                 if next_tier else " • top tier"
             )
-            sub_name.setText(f"{sub.name} • {sub.tier}")
+            tier_text = sub.tier if self.profile.is_official_rank else f"{sub.tier} (local)"
+            sub_name.setText(f"{sub.name} • {tier_text}")
             value = QLabel(f"{sub.energy:.0f}{gap}")
             value.setObjectName("skillValue")
             labels.addWidget(sub_name)

@@ -44,6 +44,8 @@ def test_manual_import_uses_batch_coordinator_and_refreshes_once(qtbot, tmp_path
         assert database.get_import_failure(str(malformed.resolve())) is not None
         assert len(refreshed) == 1
         assert refreshed[0].imported == 1
+        assert "Broken" in widget.log.toPlainText()
+        assert "retry" in widget.log.toPlainText().lower()
     finally:
         database.close()
 
@@ -70,6 +72,47 @@ def test_main_window_starts_and_stops_score_watcher(qtbot, monkeypatch, tmp_path
         qtbot.waitUntil(lambda: len(window.db.get_all_scores()) == 1, timeout=2500)
         assert window.score_watcher is not None
         assert window.score_watcher.is_started
+    finally:
+        window.close()
+
+
+def test_automatic_partial_batch_surfaces_failed_path_and_retry_action(
+    qtbot, monkeypatch, tmp_path,
+):
+    from models import config
+    from ui import main_window
+
+    stats_dir = tmp_path / "stats"
+    stats_dir.mkdir()
+    _write_score(stats_dir, "Valid automatic import")
+    malformed = stats_dir / "Broken automatic - Challenge - 2026.01.01-12.00.00 Stats.csv"
+    malformed.write_text("Scenario:,Broken automatic\n", encoding="utf-8")
+    db_path = tmp_path / "window.sqlite3"
+
+    monkeypatch.setattr(main_window, "Database", lambda: Database(str(db_path)))
+    monkeypatch.setattr(config, "CONFIG_PATH", str(tmp_path / "config.json"))
+    monkeypatch.setattr(
+        main_window.TrainingConfig, "get_stats_dir", lambda self: str(stats_dir),
+    )
+    monkeypatch.setattr(main_window, "automatic_updates_supported", lambda: False)
+
+    window = main_window.MainWindow()
+    qtbot.addWidget(window)
+    try:
+        qtbot.waitUntil(
+            lambda: window.db.get_import_failure(str(malformed.resolve())) is not None,
+            timeout=2500,
+        )
+        qtbot.waitUntil(
+            lambda: "file failed" in window.statusBar().currentMessage(),
+            timeout=2500,
+        )
+        message = window.statusBar().currentMessage()
+        assert "1 file failed" in message
+        assert "broken automatic" in message.lower()
+        assert "retry" in message.lower()
+        assert "Refresh complete" not in message
+        assert len(window.db.get_all_scores()) == 1
     finally:
         window.close()
 

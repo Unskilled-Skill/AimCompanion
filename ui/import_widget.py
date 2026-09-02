@@ -137,8 +137,11 @@ class DragDropImport(QWidget):
             iter_score_csv_paths(_get_stats_dir())
         )
         self.log.append(
-            f"Auto-imported {result.imported} new scores from Kovaak's folder"
+            f"Auto-imported {result.imported} new and updated {result.updated} scores "
+            "from Kovaak's folder"
         )
+        if result.failed:
+            self.log.append(result.failure_summary())
         if self.on_import_complete:
             self.on_import_complete(result)
 
@@ -159,6 +162,6 @@ class DragDropImport(QWidget):
         if result.duplicates:
             self.log.append(f"Skipped {result.duplicates} duplicate score(s)")
         if result.failed:
-            self.log.append(f"Failed to import {result.failed} file(s)")
+            self.log.append(result.failure_summary())
         if self.on_import_complete:
             self.on_import_complete(result)

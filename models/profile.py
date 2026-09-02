@@ -70,6 +70,9 @@ def profile_from_benchmark_result(
     result: BenchmarkResult,
     definitions: DefinitionSet | None = None,
     histories: Mapping[str, Iterable[Score]] | None = None,
+    *,
+    calculation_method: str = "voltaic_official",
+    score_input_mode: str = "best",
 ) -> PlayerProfile:
     """Adapt one official result to the profile shape consumed by widgets.
 
@@ -137,7 +140,8 @@ def profile_from_benchmark_result(
         overall_energy=result.overall_energy,
         overall_tier=result.overall_tier or "Unranked",
         definition_version=result.definition_version,
-        calculation_method="voltaic_official",
+        calculation_method=calculation_method,
+        score_input_mode=score_input_mode,
     )
 
 
@@ -152,6 +156,24 @@ class PlayerProfile:
     last_updated: datetime | None = None
     definition_version: str = ""
     calculation_method: str = "legacy_manual"
+    score_input_mode: str = "best"
+
+    @property
+    def is_official_rank(self) -> bool:
+        return (
+            self.calculation_method == "voltaic_official"
+            and self.score_input_mode == "best"
+        )
+
+    @property
+    def score_input_label(self) -> str:
+        return {
+            "best": "Lifetime Best",
+            "latest": "Latest",
+            "recent_7": "Last 7 days",
+            "recent_30": "Last 30 days",
+            "average": "Recent 5 average",
+        }.get(self.score_input_mode, self.score_input_mode)
 
     @classmethod
     def from_result(cls, result: BenchmarkResult) -> PlayerProfile:

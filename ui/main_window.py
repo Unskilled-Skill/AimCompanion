@@ -35,7 +35,7 @@ SCORE_MODES = {
     "Latest": "latest",
     "Last 7 days": "recent_7",
     "Last 30 days": "recent_30",
-    "All-time average": "average",
+    "Recent 5 average": "average",
 }
 
 DIFFICULTIES = ["Novice", "Intermediate", "Advanced"]
@@ -360,6 +360,18 @@ class MainWindow(QMainWindow):
             if profile.overall_energy is not None else "Overall energy unavailable"
         )
 
+    @staticmethod
+    def _profile_summary(profile):
+        provenance = (
+            "official Lifetime Best"
+            if profile.is_official_rank
+            else f"local current form ({profile.score_input_label})"
+        )
+        return (
+            f"{profile.overall_tier} {provenance}  •  "
+            f"{MainWindow._overall_energy_text(profile)}"
+        )
+
     def _on_mode_changed(self, display_name):
         self.score_mode = SCORE_MODES.get(display_name, "best")
         self._rebuild_profile()
@@ -391,7 +403,7 @@ class MainWindow(QMainWindow):
         streak = self.db.get_streak()
         streak_text = f"  •  {streak} day streak" if streak > 0 else ""
         self.statusBar().showMessage(
-            f"{self.profile.overall_tier}  •  {self._overall_energy_text(self.profile)}  •  "
+            f"{self._profile_summary(self.profile)}  •  "
             f"{self.difficulty_combo.currentText()}  •  {self.mode_combo.currentText()}{streak_text}"
         )
 
@@ -406,10 +418,16 @@ class MainWindow(QMainWindow):
         self.refresh_btn.setText("Sync scores")
         self._rebuild_profile()
         self._check_new_pbs()
-        self.statusBar().showMessage(
-            f"Refresh complete  •  {result.imported} new scores  •  {self.profile.overall_tier} "
-            f"at {self._overall_energy_text(self.profile)}"
-        )
+        if result.failed:
+            self.statusBar().showMessage(
+                f"Score sync needs attention  •  {result.failure_summary()}  •  "
+                f"{result.imported} new  •  {result.updated} updated"
+            )
+        else:
+            self.statusBar().showMessage(
+                f"Refresh complete  •  {result.imported} new scores  •  "
+                f"{result.updated} updated scores  •  {self._profile_summary(self.profile)}"
+            )
 
     def _on_sync_failed(self, message):
         self.refresh_btn.setEnabled(True)

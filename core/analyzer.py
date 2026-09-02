@@ -1,4 +1,6 @@
 from collections import defaultdict
+from dataclasses import replace
+from datetime import datetime, timedelta
 
 from core.benchmarks import DefinitionRepository
 from core.benchmarks.calculator import BenchmarkCalculator
@@ -10,26 +12,70 @@ from models.profile import PlayerProfile, profile_from_benchmark_result
 def build_profile(
     db: Database, difficulty: str = "Novice", score_mode: str = "best"
 ) -> PlayerProfile:
-    if score_mode == "latest":
-        scores = db.get_most_recent_per_benchmark()
-    elif score_mode == "recent_30":
-        scores = db.get_recent_scores_per_benchmark(days=30)
-    elif score_mode == "recent_7":
-        scores = db.get_recent_scores_per_benchmark(days=7)
-    elif score_mode == "average":
-        scores = db.get_average_recent_scores()
-    else:
-        scores = db.get_best_scores()
-
     definitions = DefinitionRepository.bundled().load_active()
     calculator = BenchmarkCalculator(definitions)
+    score_mode = score_mode if score_mode in {
+        "best", "latest", "recent_7", "recent_30", "average"
+    } else "best"
+    all_scores = db.get_all_scores()
+    scores = _select_scores(all_scores, calculator, difficulty, score_mode)
     result = calculator.calculate(scores, difficulty)
     histories = defaultdict(list)
-    for score in db.get_all_scores():
+    for score in all_scores:
         definition = calculator.definition_for_score(score)
         if definition is not None and definition.difficulty == difficulty:
             histories[definition.name].append(score)
-    return profile_from_benchmark_result(result, definitions, histories)
+    return profile_from_benchmark_result(
+        result,
+        definitions,
+        histories,
+        calculation_method=(
+            "voltaic_official" if score_mode == "best" else "local_current_form"
+        ),
+        score_input_mode=score_mode,
+    )
+
+
+def _select_scores(scores, calculator, difficulty: str, score_mode: str):
+    """Canonicalize scenario aliases before applying score-mode reductions."""
+    grouped = defaultdict(list)
+    for score in scores:
+        definition = calculator.definition_for_score(score)
+        if definition is not None and definition.difficulty == difficulty:
+            grouped[definition].append(score)
+
+    selected = []
+    cutoff = None
+    if score_mode == "recent_7":
+        cutoff = datetime.now() - timedelta(days=7)
+    elif score_mode == "recent_30":
+        cutoff = datetime.now() - timedelta(days=30)
+
+    for definition in sorted(grouped, key=lambda item: item.name):
+        attempts = grouped.get(definition, [])
+        if cutoff is not None:
+            attempts = [item for item in attempts if item.timestamp >= cutoff]
+        if not attempts:
+            continue
+        if score_mode == "best":
+            selected.append(max(attempts, key=lambda item: (item.score, item.timestamp)))
+        elif score_mode in {"latest", "recent_7", "recent_30"}:
+            selected.append(max(attempts, key=lambda item: item.timestamp))
+        else:
+            recent = sorted(attempts, key=lambda item: item.timestamp, reverse=True)[:5]
+            latest = recent[0]
+            selected.append(
+                replace(
+                    latest,
+                    benchmark_name=definition.name,
+                    scenario=definition.scenario,
+                    category=definition.category,
+                    subcategory=definition.subcategory,
+                    difficulty=definition.difficulty,
+                    score=sum(item.score for item in recent) / len(recent),
+                )
+            )
+    return selected
 
 
 def identify_weaknesses(profile: PlayerProfile) -> list[dict]:

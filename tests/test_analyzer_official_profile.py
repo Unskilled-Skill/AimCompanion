@@ -25,6 +25,16 @@ def _score_for(definition, score, timestamp):
     )
 
 
+def _profile_benchmark(profile, name):
+    return next(
+        benchmark
+        for category in profile.categories
+        for subcategory in category.subcategories
+        for benchmark in subcategory.benchmarks
+        if benchmark.name == name
+    )
+
+
 @pytest.fixture
 def db_with_s5_scores(tmp_path):
     definitions = DefinitionRepository.bundled().load_active()
@@ -184,17 +194,84 @@ def test_build_profile_normalizes_alias_history_to_the_selected_benchmark(
         )
 
     profile = build_profile(db_with_s5_scores, difficulty="Novice")
-    benchmark = next(
-        benchmark
-        for category in profile.categories
-        for subcategory in category.subcategories
-        for benchmark in subcategory.benchmarks
-        if benchmark.name == "VT 1w4ts Novice S5"
-    )
+    benchmark = _profile_benchmark(profile, "VT 1w4ts Novice S5")
 
     assert benchmark.attempts == 2
     assert benchmark.best_score == 820
     assert benchmark.latest_score == 410
+
+
+@pytest.mark.parametrize("score_mode", ["latest", "recent_7", "recent_30"])
+def test_current_form_latest_modes_reduce_aliases_after_canonicalization(
+    db_with_s5_scores, score_mode,
+):
+    db_with_s5_scores.insert_score(
+        Score(
+            benchmark_name="vt-1w4ts novice s5",
+            scenario="vt-1w4ts novice s5",
+            category="Clicking",
+            subcategory="Static",
+            difficulty="Novice",
+            score=410,
+            timestamp=datetime.now() + timedelta(minutes=1),
+        ),
+        csv_path=f"newer-alias-{score_mode}.csv",
+    )
+
+    profile = build_profile(
+        db_with_s5_scores, difficulty="Novice", score_mode=score_mode
+    )
+    benchmark = _profile_benchmark(profile, "VT 1w4ts Novice S5")
+
+    assert benchmark.energy == pytest.approx(50)
+    assert profile.calculation_method == "local_current_form"
+    assert profile.score_input_mode == score_mode
+
+
+def test_average_combines_the_five_latest_canonicalized_alias_attempts(tmp_path):
+    definitions = DefinitionRepository.bundled().load_active()
+    definition = next(
+        item for item in definitions.benchmarks if item.name == "VT 1w4ts Novice S5"
+    )
+    database = Database(str(tmp_path / "average.sqlite3"))
+    try:
+        for index, value in enumerate((700, 700, 700, 100, 100, 100)):
+            name = definition.name if index < 3 else "vt-1w4ts novice s5"
+            database.insert_score(
+                Score(
+                    benchmark_name=name,
+                    scenario=name,
+                    category=definition.category,
+                    subcategory=definition.subcategory,
+                    difficulty=definition.difficulty,
+                    score=value,
+                    timestamp=datetime(2026, 9, 1) + timedelta(minutes=index),
+                ),
+                csv_path=f"average-{index}.csv",
+            )
+
+        profile = build_profile(database, difficulty="Novice", score_mode="average")
+        benchmark = _profile_benchmark(profile, definition.name)
+
+        assert benchmark.energy == pytest.approx(340 * 100 / 820)
+        assert profile.calculation_method == "local_current_form"
+        assert profile.score_input_mode == "average"
+    finally:
+        database.close()
+
+
+def test_lifetime_best_is_the_only_official_score_input(db_with_s5_scores):
+    best = build_profile(db_with_s5_scores, difficulty="Novice", score_mode="best")
+    latest = build_profile(db_with_s5_scores, difficulty="Novice", score_mode="latest")
+
+    assert (best.calculation_method, best.score_input_mode) == (
+        "voltaic_official",
+        "best",
+    )
+    assert (latest.calculation_method, latest.score_input_mode) == (
+        "local_current_form",
+        "latest",
+    )
 
 
 def test_profile_and_legacy_tier_helpers_are_unranked_below_first_threshold():

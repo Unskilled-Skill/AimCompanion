@@ -141,11 +141,20 @@ class ExportWidget(QWidget):
         lines.append("=" * 50)
         lines.append("")
 
-        lines.append(f"OVERALL TIER: {self.profile.overall_tier}")
-        if self.profile.overall_energy is None:
-            lines.append("OVERALL ENERGY: UNAVAILABLE (complete all nine subcategories)")
+        official = self.profile.is_official_rank
+        if official:
+            lines.append(f"OVERALL TIER: {self.profile.overall_tier}")
         else:
-            lines.append(f"OVERALL ENERGY: {self.profile.overall_energy:.1f}")
+            lines.append(
+                f"SCORE INPUT: {self.profile.score_input_label} (LOCAL CURRENT FORM)"
+            )
+            lines.append(f"OVERALL LOCAL TIER: {self.profile.overall_tier}")
+        if self.profile.overall_energy is None:
+            label = "OVERALL ENERGY" if official else "OVERALL LOCAL ENERGY"
+            lines.append(f"{label}: UNAVAILABLE (complete all nine subcategories)")
+        else:
+            label = "OVERALL ENERGY" if official else "OVERALL LOCAL ENERGY"
+            lines.append(f"{label}: {self.profile.overall_energy:.1f}")
         lines.append("")
 
         lines.append("CATEGORY BREAKDOWN:")
@@ -158,8 +167,11 @@ class ExportWidget(QWidget):
             if hasattr(cat, 'subcategories') and cat.subcategories:
                 for sub in cat.subcategories:
                     if sub.energy > 0:
+                        energy_kind = (
+                            "official energy" if official else "local current-form energy"
+                        )
                         lines.append(
-                            f"    {sub.name}: {sub.energy:.1f} official energy "
+                            f"    {sub.name}: {sub.energy:.1f} {energy_kind} "
                             f"({sub.tier}); {sub.combined_score:.0f} combined score"
                         )
                     else:

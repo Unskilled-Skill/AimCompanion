@@ -21,6 +21,19 @@ class ImportBatchResult:
     updated: int = 0
     failed_paths: tuple[str, ...] = ()
 
+    def failure_summary(self) -> str:
+        if not self.failed:
+            return ""
+        affected = ", ".join(os.path.basename(path) for path in self.failed_paths[:3])
+        if len(self.failed_paths) > 3:
+            affected += f", and {len(self.failed_paths) - 3} more"
+        noun = "file" if self.failed == 1 else "files"
+        detail = f": {affected}" if affected else ""
+        return (
+            f"{self.failed} {noun} failed{detail}. Fix the file or wait for it to "
+            "finish writing; the next scan will retry it, or use Import scores."
+        )
+
 
 class ScoreImporter:
     """Import explicit CSV paths while retaining durable import bookkeeping."""

@@ -47,7 +47,9 @@ class MigrationConnection:
         """Read one SQLite token after whitespace and leading comments only."""
         position = 0
         while True:
-            while position < len(sql) and sql[position].isspace():
+            while position < len(sql) and (
+                sql[position].isspace() or sql[position] in {"\ufeff", ";"}
+            ):
                 position += 1
             if sql.startswith("--", position):
                 newline = sql.find("\n", position + 2)
@@ -310,6 +312,23 @@ def apply_migrations(
     pending = [migration for migration in MIGRATIONS if migration.version > current]
     if pending and current > 0:
         _backup_database(connection, backup_path_factory(current))
+    if pending and current >= 1:
+        savepoint = "repair_baseline"
+        connection.execute(f"SAVEPOINT {savepoint}")
+        migration_connection = MigrationConnection(connection)
+        try:
+            baseline_existing_schema(migration_connection)
+            baseline = next(item for item in MIGRATIONS if item.version == 1)
+            record_migration(migration_connection, baseline)
+        except Exception:
+            try:
+                connection.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
+                connection.execute(f"RELEASE SAVEPOINT {savepoint}")
+            except sqlite3.Error:
+                pass
+            raise
+        else:
+            connection.execute(f"RELEASE SAVEPOINT {savepoint}")
     for migration in pending:
         savepoint = f"migration_{migration.version}"
         connection.execute(f"SAVEPOINT {savepoint}")

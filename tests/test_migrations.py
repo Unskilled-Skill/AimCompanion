@@ -65,6 +65,36 @@ def sqlite_table_names(path: Path) -> set[str]:
         connection.close()
 
 
+def add_immediately_prior_v1_tables(path: Path) -> None:
+    connection = sqlite3.connect(path)
+    connection.execute("""
+        CREATE TABLE sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            duration_minutes INTEGER DEFAULT 0,
+            focus TEXT DEFAULT '',
+            notes TEXT DEFAULT '',
+            routine_json TEXT DEFAULT '[]'
+        )
+    """)
+    connection.execute("""
+        CREATE TABLE imported_files (
+            csv_path TEXT PRIMARY KEY,
+            imported_at TEXT NOT NULL
+        )
+    """)
+    connection.execute(
+        "INSERT INTO sessions (timestamp, focus) VALUES (?, ?)",
+        ("2026-08-30T12:00:00", "preserve prior session"),
+    )
+    connection.execute(
+        "INSERT INTO imported_files (csv_path, imported_at) VALUES (?, ?)",
+        ("prior.csv", "2026-08-30T12:01:00"),
+    )
+    connection.commit()
+    connection.close()
+
+
 def test_fresh_database_reaches_current_schema_without_pre_migration_backup(tmp_path):
     path = tmp_path / "fresh.sqlite3"
 
@@ -98,6 +128,50 @@ def test_v1_database_is_backed_up_and_migrated_without_score_or_setting_loss(tmp
         assert "schema_migrations" not in sqlite_table_names(backups[0])
     finally:
         backup.close()
+
+
+def test_partial_inferred_v1_repairs_missing_baseline_objects_before_v2(tmp_path):
+    path = create_legacy_database(tmp_path, score_count=1)
+
+    db = Database(str(path))
+    try:
+        assert len(db.get_all_scores()) == 1
+        assert db.get_sessions() == []
+        assert db.get_imported_score_paths() == {"legacy-0.csv"}
+        assert {
+            "sessions",
+            "favorites",
+            "scenario_completions",
+            "block_feedback",
+            "game_observations",
+            "imported_files",
+        } <= db.table_names()
+    finally:
+        db.close()
+
+
+def test_immediately_prior_v1_repairs_columns_without_losing_rows(tmp_path):
+    path = create_legacy_database(tmp_path, score_count=1)
+    add_immediately_prior_v1_tables(path)
+
+    db = Database(str(path))
+    try:
+        session_columns = {
+            row["name"] for row in db.conn.execute("PRAGMA table_info(sessions)")
+        }
+        assert {
+            "source",
+            "scenario",
+            "runs",
+            "warmup",
+            "baseline_score",
+            "outcome_score",
+            "score_delta_pct",
+        } <= session_columns
+        assert db.get_sessions()[0]["focus"] == "preserve prior session"
+        assert db.get_imported_score_paths() == {"prior.csv", "legacy-0.csv"}
+    finally:
+        db.close()
 
 
 def test_migration_adds_definition_and_import_status_tables(tmp_path):
@@ -242,6 +316,8 @@ def test_migration_cannot_execute_transaction_control_statements(tmp_path, monke
     "/* leading comment */ COMMIT",
     "/* first */ -- second\n /* third */ RELEASE SAVEPOINT migration_3",
     "-- leading comment\n\tCOMMIT",
+    "\ufeffCOMMIT",
+    "; ; -- empty statements\n /* comment */ RELEASE SAVEPOINT migration_3",
 ])
 def test_migration_rejects_comment_prefixed_transaction_control(
     tmp_path, monkeypatch, statement,

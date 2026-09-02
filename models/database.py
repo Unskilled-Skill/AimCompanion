@@ -62,35 +62,69 @@ class Database:
         return cur.fetchone() is not None
 
     def get_imported_score_paths(self) -> set[str]:
-        rows = self.conn.execute(
-            """
-            SELECT csv_path FROM scores WHERE csv_path IS NOT NULL AND csv_path != ''
-            UNION
-            SELECT csv_path FROM imported_files
-            """
-        ).fetchall()
-        return {row["csv_path"] for row in rows}
+        return set(self.get_imported_score_files())
 
-    def mark_score_path_imported(self, csv_path: str, *, commit: bool = True):
+    def get_imported_score_files(self) -> dict[str, str | None]:
+        rows = self.conn.execute(
+            "SELECT csv_path, content_sha256 FROM imported_files"
+        ).fetchall()
+        files = {row["csv_path"]: row["content_sha256"] for row in rows}
+        score_rows = self.conn.execute("""
+            SELECT csv_path FROM scores
+            WHERE csv_path IS NOT NULL AND csv_path != ''
+        """).fetchall()
+        for row in score_rows:
+            files.setdefault(row["csv_path"], None)
+        return files
+
+    def mark_score_path_imported(
+        self,
+        csv_path: str,
+        content_sha256: str | None = None,
+        *,
+        commit: bool = True,
+    ):
         if not csv_path:
             return
         self.conn.execute("""
-            INSERT OR IGNORE INTO imported_files (csv_path, imported_at)
-            VALUES (?, ?)
-        """, (csv_path, datetime.now().isoformat(timespec="seconds")))
+            INSERT INTO imported_files (csv_path, imported_at, content_sha256)
+            VALUES (?, ?, ?)
+            ON CONFLICT(csv_path) DO UPDATE SET
+                imported_at = excluded.imported_at,
+                content_sha256 = excluded.content_sha256
+        """, (
+            csv_path,
+            datetime.now().isoformat(timespec="seconds"),
+            content_sha256,
+        ))
         if commit:
             self.conn.commit()
 
-    def score_record_exists(self, score: Score) -> bool:
-        row = self.conn.execute("""
+    def score_record_exists(
+        self, score: Score, *, exclude_csv_path: str | None = None,
+    ) -> bool:
+        query = """
             SELECT 1 FROM scores
             WHERE scenario = ? COLLATE NOCASE AND timestamp = ? AND score = ?
-            LIMIT 1
-        """, (score.scenario, score.timestamp.isoformat(), score.score)).fetchone()
+        """
+        parameters: list[object] = [
+            score.scenario,
+            score.timestamp.isoformat(),
+            score.score,
+        ]
+        if exclude_csv_path is not None:
+            query += " AND (csv_path IS NULL OR csv_path != ?)"
+            parameters.append(exclude_csv_path)
+        row = self.conn.execute(query + " LIMIT 1", parameters).fetchone()
         return row is not None
 
     def insert_score(
-        self, score: Score, csv_path: str = "", *, commit: bool = True,
+        self,
+        score: Score,
+        csv_path: str = "",
+        *,
+        content_sha256: str | None = None,
+        commit: bool = True,
     ):
         self.conn.execute("""
             INSERT OR REPLACE INTO scores
@@ -106,10 +140,14 @@ class Database:
             score.accuracy, score.avg_fps, score.resolution, csv_path
         ))
         if csv_path:
-            self.conn.execute("""
-                INSERT OR IGNORE INTO imported_files (csv_path, imported_at)
-                VALUES (?, ?)
-            """, (csv_path, datetime.now().isoformat(timespec="seconds")))
+            self.mark_score_path_imported(
+                csv_path, content_sha256, commit=False
+            )
+        if commit:
+            self.conn.commit()
+
+    def delete_score_for_path(self, csv_path: str, *, commit: bool = True) -> None:
+        self.conn.execute("DELETE FROM scores WHERE csv_path = ?", (csv_path,))
         if commit:
             self.conn.commit()
 

@@ -147,3 +147,106 @@ def test_valid_batch_rolls_back_all_path_marks_when_a_later_insert_fails(
 
     assert importer.db.get_all_scores() == []
     assert importer.db.get_imported_score_paths() == set()
+
+
+def test_unchanged_imported_file_skips_parsing(
+    importer: ScoreImporter, tmp_path: Path, monkeypatch,
+):
+    path = write_score(tmp_path / "unchanged.csv", datetime(2026, 1, 1, 12, 0, 0))
+    importer.import_paths([path])
+
+    def unexpected_parse(_path):
+        raise AssertionError("unchanged files must not be parsed again")
+
+    monkeypatch.setattr("core.score_importer.parse_csv_file", unexpected_parse)
+
+    result = importer.import_paths([path])
+
+    assert (result.imported, result.updated, result.duplicates, result.failed) == (0, 0, 0, 0)
+
+
+def test_changed_path_replaces_only_its_owned_score(importer: ScoreImporter, tmp_path: Path):
+    timestamp = datetime(2026, 1, 1, 12, 0, 0)
+    changed = write_score(tmp_path / "changed.csv", timestamp, score=123)
+    unrelated = write_score(
+        tmp_path / "unrelated.csv",
+        datetime(2026, 1, 2, 12, 0, 0),
+        score=777,
+        scenario="Unrelated",
+    )
+    importer.import_paths([changed, unrelated])
+    changed.write_text("Scenario:,Test Scenario\nScore:,456\n", encoding="utf-8")
+
+    result = importer.import_paths([changed])
+
+    assert (result.imported, result.updated, result.failed) == (0, 1, 0)
+    assert [(item.scenario, item.score) for item in importer.db.get_all_scores()] == [
+        ("Test Scenario", 456),
+        ("Unrelated", 777),
+    ]
+
+
+def test_changed_path_malformed_then_recovers_without_losing_prior_score(
+    importer: ScoreImporter, tmp_path: Path,
+):
+    timestamp = datetime(2026, 1, 1, 12, 0, 0)
+    path = write_score(tmp_path / "changing.csv", timestamp, score=123)
+    importer.import_paths([path])
+    path.write_text("Scenario:,Test Scenario\n", encoding="utf-8")
+
+    malformed = importer.import_paths([path])
+
+    assert malformed.failed == 1
+    assert malformed.failed_paths == (os.path.normcase(str(path.resolve())),)
+    assert [item.score for item in importer.db.get_all_scores()] == [123]
+
+    path.write_text("Scenario:,Test Scenario\nScore:,456\n", encoding="utf-8")
+    recovered = importer.import_paths([path])
+
+    assert (recovered.updated, recovered.failed) == (1, 0)
+    assert [item.score for item in importer.db.get_all_scores()] == [456]
+    assert importer.db.get_import_failure(str(path.resolve())) is None
+
+
+def test_changed_duplicate_copy_does_not_delete_unrelated_history(
+    importer: ScoreImporter, tmp_path: Path,
+):
+    timestamp = datetime(2026, 1, 1, 12, 0, 0)
+    owner = write_score(tmp_path / "owner.csv", timestamp, score=123)
+    copy = write_score(tmp_path / "copy.csv", timestamp, score=123, scenario="Test Scenario  ")
+    importer.import_paths([owner, copy])
+    owning_path, duplicate_path = (
+        (owner, copy)
+        if importer.db.score_exists(os.path.normcase(str(owner.resolve())))
+        else (copy, owner)
+    )
+
+    duplicate_path.write_text("Scenario:,Test Scenario\nScore:,456\n", encoding="utf-8")
+    changed_copy = importer.import_paths([duplicate_path])
+    owning_path.write_text("Scenario:,Test Scenario\nScore:,456\n", encoding="utf-8")
+    changed_owner = importer.import_paths([owning_path])
+
+    assert changed_copy.imported == 1
+    assert changed_owner.duplicates == 1
+    assert [item.score for item in importer.db.get_all_scores()] == [456]
+    assert importer.db.get_imported_score_paths() == {
+        os.path.normcase(str(owner.resolve())),
+        os.path.normcase(str(copy.resolve())),
+    }
+
+
+def test_successfully_parsed_partial_write_is_updated_when_content_completes(
+    importer: ScoreImporter, tmp_path: Path,
+):
+    path = write_score(tmp_path / "partial.csv", datetime(2026, 1, 1, 12, 0, 0))
+    importer.import_paths([path])
+    path.write_text(
+        "Scenario:,Test Scenario\nScore:,123\nHit Count:,8\nMiss Count:,2\n",
+        encoding="utf-8",
+    )
+
+    result = importer.import_paths([path])
+
+    assert result.updated == 1
+    stored = importer.db.get_all_scores()[0]
+    assert (stored.hits, stored.misses, stored.accuracy) == (8, 2, pytest.approx(0.8))

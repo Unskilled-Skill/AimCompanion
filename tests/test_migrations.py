@@ -100,7 +100,7 @@ def test_fresh_database_reaches_current_schema_without_pre_migration_backup(tmp_
 
     db = Database(str(path))
     try:
-        assert db.schema_version == 2
+        assert db.schema_version == 3
         assert not list(tmp_path.glob("*.pre-v*.sqlite3"))
     finally:
         db.close()
@@ -111,7 +111,7 @@ def test_v1_database_is_backed_up_and_migrated_without_score_or_setting_loss(tmp
 
     db = Database(str(path))
     try:
-        assert db.schema_version == 2
+        assert db.schema_version == 3
         assert len(db.get_all_scores()) == 3
         assert db.get_settings_value("legacy_preference") == "preserve this exactly"
     finally:
@@ -184,6 +184,42 @@ def test_migration_adds_definition_and_import_status_tables(tmp_path):
         db.close()
 
 
+def test_migration_adds_content_identity_to_imported_files(tmp_path):
+    db = Database(str(tmp_path / "content-identity.sqlite3"))
+    try:
+        columns = {
+            row["name"] for row in db.conn.execute("PRAGMA table_info(imported_files)")
+        }
+        assert "content_sha256" in columns
+    finally:
+        db.close()
+
+
+def test_v2_database_upgrades_import_identity_without_losing_path_rows(tmp_path):
+    migrations = importlib.import_module("models.migrations")
+    path = tmp_path / "v2.sqlite3"
+    connection = sqlite3.connect(path)
+    migration_connection = migrations.MigrationConnection(connection)
+    migrations.baseline_existing_schema(migration_connection)
+    migrations.add_benchmark_metadata_tables(migration_connection)
+    migrations.record_migration(migration_connection, migrations.MIGRATIONS[1])
+    connection.execute(
+        "INSERT INTO imported_files (csv_path, imported_at) VALUES (?, ?)",
+        ("preserved.csv", "2026-08-30T12:00:00"),
+    )
+    connection.commit()
+    connection.close()
+
+    db = Database(str(path))
+    try:
+        assert db.schema_version == 3
+        assert db.get_imported_score_files() == {"preserved.csv": None}
+    finally:
+        db.close()
+
+    assert len(list(tmp_path.glob("v2.pre-v3.sqlite3"))) == 1
+
+
 def test_apply_migrations_accepts_a_plain_sqlite_connection(tmp_path):
     migrations = importlib.import_module("models.migrations")
     path = tmp_path / "plain.sqlite3"
@@ -191,7 +227,7 @@ def test_apply_migrations_accepts_a_plain_sqlite_connection(tmp_path):
     try:
         assert migrations.apply_migrations(
             connection, lambda version: tmp_path / f"plain.pre-v{version + 1}.sqlite3",
-        ) == 2
+        ) == 3
         assert "schema_migrations" in sqlite_table_names(path)
     finally:
         connection.close()
@@ -205,13 +241,13 @@ def test_reopening_migrated_legacy_database_does_not_make_another_backup(tmp_pat
 
     second = Database(str(path))
     try:
-        assert second.schema_version == 2
+        assert second.schema_version == 3
         assert len(second.get_all_scores()) == 3
         assert list(tmp_path.glob("*.pre-v2.sqlite3")) == backups_after_first_open
         versions = second.conn.execute(
             "SELECT version FROM schema_migrations ORDER BY version"
         ).fetchall()
-        assert [row["version"] for row in versions] == [1, 2]
+        assert [row["version"] for row in versions] == [1, 2, 3]
     finally:
         second.close()
 
@@ -257,7 +293,7 @@ def test_failed_migration_rolls_back_its_schema_changes(tmp_path, monkeypatch):
         connection.execute("CREATE TABLE half_created (value TEXT)")
         raise RuntimeError("forced migration failure")
 
-    failing = migrations.Migration(3, "forced failure", half_create_then_fail)
+    failing = migrations.Migration(4, "forced failure", half_create_then_fail)
     monkeypatch.setattr(
         migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
     )
@@ -276,7 +312,7 @@ def test_executescript_migration_cannot_commit_partial_schema(tmp_path, monkeypa
         connection.executescript("CREATE TABLE half_created (value TEXT);")
         raise RuntimeError("forced migration failure")
 
-    failing = migrations.Migration(3, "script failure", script_then_fail)
+    failing = migrations.Migration(4, "script failure", script_then_fail)
     monkeypatch.setattr(
         migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
     )
@@ -298,7 +334,7 @@ def test_migration_cannot_execute_transaction_control_statements(tmp_path, monke
         connection.execute("CREATE TABLE half_created (value TEXT)")
         raise RuntimeError("forced migration failure")
 
-    failing = migrations.Migration(3, "commit failure", commit_then_fail)
+    failing = migrations.Migration(4, "commit failure", commit_then_fail)
     monkeypatch.setattr(
         migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
     )
@@ -314,10 +350,10 @@ def test_migration_cannot_execute_transaction_control_statements(tmp_path, monke
 
 @pytest.mark.parametrize("statement", [
     "/* leading comment */ COMMIT",
-    "/* first */ -- second\n /* third */ RELEASE SAVEPOINT migration_3",
+    "/* first */ -- second\n /* third */ RELEASE SAVEPOINT migration_4",
     "-- leading comment\n\tCOMMIT",
     "\ufeffCOMMIT",
-    "; ; -- empty statements\n /* comment */ RELEASE SAVEPOINT migration_3",
+    "; ; -- empty statements\n /* comment */ RELEASE SAVEPOINT migration_4",
 ])
 def test_migration_rejects_comment_prefixed_transaction_control(
     tmp_path, monkeypatch, statement,
@@ -329,7 +365,7 @@ def test_migration_rejects_comment_prefixed_transaction_control(
         connection.execute("CREATE TABLE half_created (value TEXT)")
         raise RuntimeError("forced migration failure")
 
-    failing = migrations.Migration(3, "commented control", control_then_fail)
+    failing = migrations.Migration(4, "commented control", control_then_fail)
     monkeypatch.setattr(
         migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
     )
@@ -350,7 +386,7 @@ def test_executemany_rejects_comment_prefixed_transaction_control(tmp_path, monk
         connection.executemany("/* comment */ COMMIT", [()])
         raise RuntimeError("forced migration failure")
 
-    failing = migrations.Migration(3, "commented batch control", commit_then_fail)
+    failing = migrations.Migration(4, "commented batch control", commit_then_fail)
     monkeypatch.setattr(
         migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
     )
@@ -375,7 +411,7 @@ def test_migration_allows_transaction_words_outside_the_leading_token(
         """)
         raise RuntimeError("forced migration failure")
 
-    failing = migrations.Migration(3, "ordinary SQL", create_then_fail)
+    failing = migrations.Migration(4, "ordinary SQL", create_then_fail)
     monkeypatch.setattr(
         migrations, "MIGRATIONS", migrations.MIGRATIONS + (failing,),
     )

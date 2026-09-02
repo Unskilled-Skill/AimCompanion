@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import hashlib
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -17,6 +18,8 @@ class ImportBatchResult:
     duplicates: int
     failed: int
     paths: tuple[str, ...]
+    updated: int = 0
+    failed_paths: tuple[str, ...] = ()
 
 
 class ScoreImporter:
@@ -29,42 +32,62 @@ class ScoreImporter:
         self, paths: Iterable[str | os.PathLike[str]],
     ) -> ImportBatchResult:
         candidates = self._ordered_paths(paths)
-        imported_paths = {
-            self._path_key(path)
-            for path in self.db.get_imported_score_paths()
+        imported_files = {
+            self._path_key(path): content_sha256
+            for path, content_sha256 in self.db.get_imported_score_files().items()
         }
-        parsed: list[tuple[str, str, Score]] = []
+        parsed: list[tuple[str, str, str, Score]] = []
         failed = 0
+        failed_paths = []
 
         for path in candidates:
             path_key = self._path_key(path)
-            if path_key in imported_paths:
-                continue
             try:
+                content_sha256 = self._content_sha256(path)
+                if imported_files.get(path_key) == content_sha256:
+                    continue
                 score = parse_csv_file(path)
             except Exception as error:
                 self.db.record_import_error(path_key, self._format_error(error))
                 failed += 1
+                failed_paths.append(path_key)
                 continue
             if score is None:
                 self.db.record_import_error(
                     path_key, "Malformed or unsupported CSV result",
                 )
                 failed += 1
+                failed_paths.append(path_key)
                 continue
-            parsed.append((path, path_key, score))
+            parsed.append((path, path_key, content_sha256, score))
 
         imported = 0
+        updated = 0
         duplicates = 0
         if parsed:
             with self.db.conn:
-                for path, path_key, score in parsed:
-                    if self.db.score_record_exists(score):
-                        self.db.mark_score_path_imported(path_key, commit=False)
+                for path, path_key, content_sha256, score in parsed:
+                    owns_score = self.db.score_exists(path_key)
+                    if self.db.score_record_exists(
+                        score, exclude_csv_path=path_key,
+                    ):
+                        if owns_score:
+                            self.db.delete_score_for_path(path_key, commit=False)
+                        self.db.mark_score_path_imported(
+                            path_key, content_sha256, commit=False
+                        )
                         duplicates += 1
                     else:
-                        self.db.insert_score(score, path_key, commit=False)
-                        imported += 1
+                        self.db.insert_score(
+                            score,
+                            path_key,
+                            content_sha256=content_sha256,
+                            commit=False,
+                        )
+                        if owns_score:
+                            updated += 1
+                        else:
+                            imported += 1
                     self.db.clear_import_error(path_key, commit=False)
 
         return ImportBatchResult(
@@ -72,6 +95,8 @@ class ScoreImporter:
             duplicates=duplicates,
             failed=failed,
             paths=tuple(candidates),
+            updated=updated,
+            failed_paths=tuple(failed_paths),
         )
 
     @classmethod
@@ -90,6 +115,14 @@ class ScoreImporter:
     @staticmethod
     def _path_key(path: str) -> str:
         return os.path.normcase(os.path.normpath(os.path.abspath(path)))
+
+    @staticmethod
+    def _content_sha256(path: str) -> str:
+        digest = hashlib.sha256()
+        with open(path, "rb") as score_file:
+            for chunk in iter(lambda: score_file.read(64 * 1024), b""):
+                digest.update(chunk)
+        return digest.hexdigest()
 
     @staticmethod
     def _format_error(error: Exception) -> str:

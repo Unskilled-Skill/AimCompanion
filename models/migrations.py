@@ -258,9 +258,15 @@ def add_benchmark_metadata_tables(connection: MigrationConnection) -> None:
     """)
 
 
+def add_score_import_identity(connection: MigrationConnection) -> None:
+    """Track the content last imported for each normalized score path."""
+    _ensure_columns(connection, "imported_files", {"content_sha256": "TEXT"})
+
+
 MIGRATIONS = (
     Migration(1, "baseline", baseline_existing_schema),
     Migration(2, "benchmark_metadata", add_benchmark_metadata_tables),
+    Migration(3, "score_import_identity", add_score_import_identity),
 )
 
 

@@ -1,3 +1,19 @@
+# Aim Companion 2.0.1
+
+This update gives Home a cleaner, user-first coaching dashboard.
+
+## Home dashboard refresh
+
+- Reorganized the recommendation into a prominent Today's Coaching Focus card.
+- Added plain-language guidance for Warm-up, Step-by-Step Training, and Full
+  Routine so the right session is easier to choose before starting.
+- Grouped current rank, priority weakness, confidence, recent coverage, and
+  benchmark readiness into compact, scannable cards.
+- Improved spacing, typography, contrast, hover states, and keyboard-accessible
+  training actions while preserving all existing behavior and user data.
+- Restricted the installer upgrade smoke test to disposable CI runners so it
+  cannot alter a developer's installed application registration.
+
 # Aim Companion 2.0.0
 
 This release rebuilds Aim Companion around guided, resumable coaching while

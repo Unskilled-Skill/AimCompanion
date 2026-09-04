@@ -1,4 +1,7 @@
-# Unreleased
+# Aim Companion 2.0.0
+
+This release rebuilds Aim Companion around guided, resumable coaching while
+preserving existing scores, settings, and training history.
 
 ## Coaching-first interface
 

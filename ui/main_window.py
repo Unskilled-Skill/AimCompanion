@@ -12,7 +12,7 @@ from core.analyzer import build_profile
 from core.notifications import NotificationManager
 from core.kovaaks_launcher import open_kovaaks
 from core.score_watcher import ScoreDirectoryWatcher
-from core.service_health import ServiceStatus
+from core.service_health import ServiceHealthStore, ServiceStatus
 from core.benchmarks import DefinitionRepository
 from core.coaching.freshness import BenchmarkFreshness
 from core.coaching.summary import build_coaching_summary
@@ -21,6 +21,8 @@ from core.coaching.recommender import (
 )
 from core.recommender import SCENARIOS, TACFPS_GUIDE
 from core.run_tracker import KovaaksRunTracker
+from core.scenario_files import installed_scenario_names
+from core.scenario_installer import ScenarioAvailability, build_install_guide
 from core.session_coordinator import SessionCoordinator
 from core.sessions import (
     SessionMode, SessionPlan, SessionState, SessionStatus,
@@ -76,6 +78,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1120, 760)
 
         self.db = Database()
+        self.service_health = ServiceHealthStore(self.db.conn)
         self._load_window_geometry()
         self._run_first_setup()
         self.score_mode = "best"
@@ -144,6 +147,9 @@ class MainWindow(QMainWindow):
         )
         self.session_view.restart_requested.connect(self._restart_session_step)
         self.session_view.next_requested.connect(self._continue_step_by_step)
+        self.session_view.recheck_scenario_requested.connect(
+            self._refresh_scenario_availability
+        )
         self.session_view.overlay_enabled_changed.connect(
             self._set_session_overlay_enabled
         )
@@ -260,11 +266,17 @@ class MainWindow(QMainWindow):
         self.nav_buttons = self.shell.nav_buttons
         self.pages.currentChanged.connect(self._on_page_changed)
         self._update_tier_label()
-        self.status_indicator.update_service(ServiceStatus(
+        for status in self.service_health.all().values():
+            self.status_indicator.update_service(status)
+        self._update_service(ServiceStatus(
             "scores", "ok", "Score history ready",
             "Automatic score monitoring is active.",
         ))
         self._navigate("home")
+
+    def _update_service(self, status):
+        self.service_health.update(status)
+        self.status_indicator.update_service(status)
 
     def _create_sidebar(self):
         sidebar = QFrame()
@@ -543,6 +555,7 @@ class MainWindow(QMainWindow):
             state, self._session_evidence,
         )
         self.session_view.set_state(view)
+        self._refresh_scenario_availability()
         self.session_overlay.set_state(view)
         if self._overlay_enabled and state.status in {
             SessionStatus.READY, SessionStatus.RUNNING, SessionStatus.PAUSED,
@@ -584,6 +597,19 @@ class MainWindow(QMainWindow):
             self.session_overlay.show()
         else:
             self.session_overlay.hide()
+
+    def _refresh_scenario_availability(self):
+        state = self.session_coordinator.state
+        if state is None:
+            return
+        installed = installed_scenario_names(
+            TrainingConfig.load().get_scenario_dirs()
+        )
+        result = ScenarioAvailability.resolve(
+            state.current_step.scenario, installed,
+        )
+        guide = build_install_guide(state.current_step.scenario)
+        self.session_view.set_scenario_availability(result, guide)
 
     def _refresh_home(self):
         definitions = DefinitionRepository.bundled().load_active()
@@ -687,7 +713,7 @@ class MainWindow(QMainWindow):
         self.refresh_btn.setEnabled(False)
         self.refresh_btn.setText("Syncing…")
         self.statusBar().showMessage("Checking for new Kovaak's scores…")
-        self.status_indicator.update_service(ServiceStatus(
+        self._update_service(ServiceStatus(
             "scores", "busy", "Checking scores",
             "Scanning the configured Kovaak's stats folder.",
         ))
@@ -703,7 +729,7 @@ class MainWindow(QMainWindow):
                 f"Score sync needs attention  •  {result.failure_summary()}  •  "
                 f"{result.imported} new  •  {result.updated} updated"
             )
-            self.status_indicator.update_service(ServiceStatus(
+            self._update_service(ServiceStatus(
                 "scores", "warning", "Score import needs attention",
                 result.failure_summary(), "Retry score import",
             ))
@@ -712,7 +738,7 @@ class MainWindow(QMainWindow):
                 f"Refresh complete  •  {result.imported} new scores  •  "
                 f"{result.updated} updated scores  •  {self._profile_summary(self.profile)}"
             )
-            self.status_indicator.update_service(ServiceStatus(
+            self._update_service(ServiceStatus(
                 "scores", "ok", "Scores are current",
                 f"{result.imported} new and {result.updated} updated scores imported.",
             ))
@@ -721,7 +747,7 @@ class MainWindow(QMainWindow):
         self.refresh_btn.setEnabled(True)
         self.refresh_btn.setText("Sync scores")
         self.statusBar().showMessage(f"Score sync failed: {message}")
-        self.status_indicator.update_service(ServiceStatus(
+        self._update_service(ServiceStatus(
             "scores", "error", "Score sync failed", message,
             "Retry score import",
         ))
@@ -792,14 +818,14 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(
             f"Automatic update check failed: {message}", 15000
         )
-        self.status_indicator.update_service(ServiceStatus(
+        self._update_service(ServiceStatus(
             "updates", "warning", "Update check failed", message,
             "Check again from Settings",
         ))
 
     def _on_update_checked(self, release):
         if not is_newer_version(release["version"], VERSION):
-            self.status_indicator.update_service(ServiceStatus(
+            self._update_service(ServiceStatus(
                 "updates", "ok", "App is up to date",
                 f"Aim Companion {VERSION} is the latest available version.",
             ))
@@ -833,7 +859,7 @@ class MainWindow(QMainWindow):
         QApplication.instance().quit()
 
     def _on_update_failed(self, message):
-        self.status_indicator.update_service(ServiceStatus(
+        self._update_service(ServiceStatus(
             "updates", "error", "Update failed", message,
             "Download the installer from GitHub Releases",
         ))

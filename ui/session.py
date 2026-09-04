@@ -28,6 +28,7 @@ class SessionWidget(QWidget):
     restart_requested = pyqtSignal()
     next_requested = pyqtSignal()
     overlay_enabled_changed = pyqtSignal(bool)
+    recheck_scenario_requested = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -64,6 +65,15 @@ class SessionWidget(QWidget):
         self.guide = ScenarioGuideWidget()
         self.run_progress = self.guide.run_progress
         guide_layout.addWidget(self.guide)
+        self.availability_label = QLabel()
+        self.availability_label.setWordWrap(True)
+        self.availability_label.setAccessibleName("Scenario installation guidance")
+        self.availability_label.hide()
+        guide_layout.addWidget(self.availability_label)
+        self.recheck_button = QPushButton("Recheck installed scenarios")
+        self.recheck_button.setAccessibleName(self.recheck_button.text())
+        self.recheck_button.hide()
+        guide_layout.addWidget(self.recheck_button)
         layout.addWidget(guide_panel)
 
         overview_panel = QFrame()
@@ -112,6 +122,7 @@ class SessionWidget(QWidget):
         self.restart_button.clicked.connect(self.restart_requested)
         self.next_button.clicked.connect(self.next_requested)
         self.overlay_checkbox.toggled.connect(self.overlay_enabled_changed)
+        self.recheck_button.clicked.connect(self.recheck_scenario_requested)
 
     def action_controls(self):
         return (
@@ -150,3 +161,15 @@ class SessionWidget(QWidget):
 
     def progress_text(self):
         return self._view_model.progress_text
+
+    def set_scenario_availability(self, result, guide=None):
+        missing = result.state == "missing"
+        self.launch_button.setEnabled(self._view_model.can_launch and not missing)
+        self.availability_label.setVisible(missing)
+        self.recheck_button.setVisible(missing)
+        if missing and guide is not None:
+            self.availability_label.setText(
+                "Scenario is not installed\n" + "\n".join(
+                    f"{index}. {step}" for index, step in enumerate(guide.steps, 1)
+                )
+            )

@@ -16,6 +16,8 @@ from core.version import GITHUB_REPOSITORY, VERSION
 
 API_URL = f"https://api.github.com/repos/{GITHUB_REPOSITORY}/releases/latest"
 USER_AGENT = f"AimCompanion/{VERSION}"
+INSTALLER_ASSET = "AimCompanion-Setup.exe"
+CHECKSUM_ASSET = f"{INSTALLER_ASSET}.sha256"
 
 
 class UpdateError(RuntimeError):
@@ -37,11 +39,11 @@ def parse_release(payload: dict) -> dict:
         raise UpdateError("The latest GitHub release has no version tag.")
     assets = payload.get("assets") or []
     installer = next(
-        (asset for asset in assets if asset.get("name") == "AimCompanion-Setup.exe"),
+        (asset for asset in assets if asset.get("name") == INSTALLER_ASSET),
         None,
     )
     checksum = next(
-        (asset for asset in assets if asset.get("name") == "AimCompanion-Setup.exe.sha256"),
+        (asset for asset in assets if asset.get("name") == CHECKSUM_ASSET),
         None,
     )
     if not installer:

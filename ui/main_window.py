@@ -40,11 +40,13 @@ from ui.dashboard import DashboardWidget
 from ui.export import ExportWidget
 from ui.import_widget import DragDropImport
 from ui.progress import ProgressWidget
+from ui.progress_hub import ProgressHub
 from ui.routines import RoutineWidget
 from ui.scenarios import ScenarioBrowser
 from ui.setup import SetupDialog
 from ui.tools import ToolsWidget
 from ui.skill_overview import SkillOverviewWidget
+from ui.stats import StatsSummary
 from ui.app_shell import AppShell
 from ui.status_indicator import StatusIndicator
 from ui.home import HomeWidget
@@ -188,12 +190,14 @@ class MainWindow(QMainWindow):
         self.aim_hub_view.train_requested.connect(self._start_training_method)
         self.tools_view = ToolsWidget(self.profile, self.db)
         self.skill_overview = SkillOverviewWidget(self.rank_profile, self.db)
+        self.stats_summary = StatsSummary(self.profile, self.db)
         self._refresh_home()
 
-        self.progress_destination = QTabWidget()
-        self.progress_destination.addTab(self.dashboard, "Summary")
-        self.progress_destination.addTab(self.skill_overview, "Skills")
-        self.progress_destination.addTab(self.progress_view, "History")
+        self.progress_destination = ProgressHub(
+            self.dashboard, self.skill_overview, self.progress_view,
+            self.stats_summary,
+        )
+        self._refresh_progress_hub()
         self.library_destination = QTabWidget()
         self.library_destination.addTab(self.aim_hub_view, "Training methods")
         self.library_destination.addTab(self.scenario_view, "Scenarios")
@@ -589,6 +593,24 @@ class MainWindow(QMainWindow):
         )
         self.home_view.set_view_model(build_home_view(summary, recent))
 
+    def _refresh_progress_hub(self):
+        definitions = DefinitionRepository.bundled().load_active()
+        freshness = BenchmarkFreshness(self.db.conn).status(
+            definitions.required_subcategories
+        )
+        summary = build_coaching_summary(self.rank_profile, {}, freshness)
+        missing = tuple(
+            name for name, state in freshness.items() if not state.measured
+        )
+        from ui.view_models import ProgressViewModel
+        self.progress_destination.set_view_model(ProgressViewModel(
+            conclusion=(
+                f"{summary.rank_text}. {summary.weakness_text or summary.headline}"
+            ),
+            missing_subcategories=missing,
+            definition_version=definitions.version,
+        ))
+
     def _update_tier_label(self):
         self.tier_label.setText(self.rank_profile.overall_tier)
         self.energy_label.setText(self._overall_energy_text(self.rank_profile))
@@ -639,10 +661,12 @@ class MainWindow(QMainWindow):
         )
         self._update_tier_label()
         self._refresh_home()
+        self._refresh_progress_hub()
 
         for view in (
             self.dashboard, self.progress_view,
             self.export_view, self.aim_hub_view, self.tools_view,
+            self.stats_summary,
         ):
             view.update_profile(self.profile)
         self.routine_view.update_profile(self.training_profile)

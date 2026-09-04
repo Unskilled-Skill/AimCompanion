@@ -41,6 +41,10 @@ class StatusIndicator(QWidget):
     def summary_text(self) -> str:
         return self._highest().summary if self._statuses else "Ready"
 
+    def text(self) -> str:
+        """Return the visible status wording for accessibility and smoke checks."""
+        return self.state_label.text()
+
     def _highest(self):
         return max(
             self._statuses.values(),

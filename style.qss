@@ -356,6 +356,13 @@ QPushButton:pressed {
     background-color: #111b30;
 }
 
+QPushButton:focus,
+QCheckBox:focus,
+QRadioButton:focus,
+QTabBar::tab:focus {
+    border: 2px solid #89b4fa;
+}
+
 QPushButton:disabled {
     background-color: #141c2d;
     color: #56637a;

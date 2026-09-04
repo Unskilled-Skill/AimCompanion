@@ -96,6 +96,20 @@ scenario restarts at its full run requirement in the next Full Routine session.
 See [training modes](docs/training-modes.md) for the exact circular-resume example,
 evidence fields, manual fallback, and fatigue opt-in behavior.
 
+## Coaching-first interface
+
+Home now leads with your official rank state, current weakness, evidence, and
+three choices: Warm-up, Step-by-Step Training, or Full Routine. Session shows
+the complete selected routine alongside a detailed current-scenario guide,
+including purpose, setup, numbered actions, success criteria, adjustment rules,
+prescribed runs, and the original source. An optional compact panel can stay on
+top of Kovaak's and always reflects the same saved session state.
+
+Progress combines the rank summary, nine skills, benchmark detail, and history.
+Library holds complete routines, scenarios, warm-up references, and deathmatch
+game-transfer guidance. Secondary utilities, import, settings, and backup live
+under Tools.
+
 ## Development
 
 ```powershell

@@ -1,5 +1,17 @@
 # Unreleased
 
+## Coaching-first interface
+
+- Replaced the crowded Today workflow with five destinations: Home, Session,
+  Progress, Library, and Tools.
+- Selecting a full routine now opens a guided Session view with the complete
+  routine and the detailed hnA source instructions for the current scenario.
+- Added an opt-in always-on-top compact training panel sharing the same durable
+  progress state as the main Session screen.
+- Consolidated official rank conclusions, skills, benchmarks, and history into
+  one Progress area; moved routines, warm-ups, and deathmatch guidance into the
+  reference Library.
+
 ## Guided coaching and durable sessions
 
 - Added explicit Warm-up, Step-by-Step Training, and Full Routine session

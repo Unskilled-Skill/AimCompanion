@@ -70,6 +70,9 @@ def test_main_window_starts_and_stops_score_watcher(qtbot, monkeypatch, tmp_path
     qtbot.addWidget(window)
     try:
         qtbot.waitUntil(lambda: len(window.db.get_all_scores()) == 1, timeout=2500)
+        assert window.shell.destination_keys == (
+            "home", "session", "progress", "library", "tools"
+        )
         assert window.score_watcher is not None
         assert window.score_watcher.is_started
     finally:

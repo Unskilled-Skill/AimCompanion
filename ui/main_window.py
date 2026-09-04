@@ -4,13 +4,14 @@ from PyQt6.QtCore import QEvent, Qt, QTimer
 from PyQt6.QtWidgets import (
     QApplication, QButtonGroup, QComboBox, QFrame, QHBoxLayout,
     QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
-    QStackedWidget, QVBoxLayout, QWidget,
+    QStackedWidget, QTabWidget, QVBoxLayout, QWidget,
 )
 
 from core.analyzer import build_profile
 from core.notifications import NotificationManager
 from core.kovaaks_launcher import open_kovaaks
 from core.score_watcher import ScoreDirectoryWatcher
+from core.service_health import ServiceStatus
 from core.updater import (
     UpdateCheckWorker, UpdateDownloadWorker, automatic_updates_supported,
     is_newer_version, launch_installer,
@@ -28,6 +29,8 @@ from ui.scenarios import ScenarioBrowser
 from ui.setup import SetupDialog
 from ui.tools import ToolsWidget
 from ui.skill_overview import SkillOverviewWidget
+from ui.app_shell import AppShell
+from ui.status_indicator import StatusIndicator
 
 
 SCORE_MODES = {
@@ -111,25 +114,23 @@ class MainWindow(QMainWindow):
         self.tools_view = ToolsWidget(self.profile, self.db)
         self.skill_overview = SkillOverviewWidget(self.rank_profile, self.db)
 
-        self.page_groups = [
-            ("START", [
-                ("dashboard", "Home", "Your current level and recommended next step", self.dashboard),
-                ("routines", "Today", "Complete one focused 3–5 minute block whenever you feel fresh", self.routine_view),
-            ]),
-            ("LEARN", [
-                ("aim_hub", "Training methods", "Choose a philosophy and set up its session", self.aim_hub_view),
-                ("scenarios", "Scenario library", "Find official scenarios by skill", self.scenario_view),
-            ]),
-            ("REVIEW", [
-                ("skills", "Skill matrix", "Ranks, confidence, maintenance, and benchmark checks", self.skill_overview),
-                ("progress", "Progress", "Review benchmark history and improvement", self.progress_view),
-                ("tools", "Training tools", "Sessions, calendar, comparisons, routines, and sensitivity", self.tools_view),
-            ]),
-            ("DATA", [
-                ("import", "Import scores", "Add Kovaak's score files", self.import_view),
-                ("export", "Backup data", "Export your benchmark history", self.export_view),
-            ]),
-        ]
+        self.progress_destination = QTabWidget()
+        self.progress_destination.addTab(self.progress_view, "Summary")
+        self.progress_destination.addTab(self.skill_overview, "Skills")
+        self.library_destination = QTabWidget()
+        self.library_destination.addTab(self.aim_hub_view, "Training methods")
+        self.library_destination.addTab(self.scenario_view, "Scenarios")
+        self.tools_destination = QTabWidget()
+        self.tools_destination.addTab(self.tools_view, "Training tools")
+        self.tools_destination.addTab(self.import_view, "Manual import")
+        self.tools_destination.addTab(self.export_view, "Backup")
+        self.destinations = {
+            "home": self.dashboard,
+            "session": self.routine_view,
+            "progress": self.progress_destination,
+            "library": self.library_destination,
+            "tools": self.tools_destination,
+        }
 
     def eventFilter(self, obj, event):
         """Stop card styles from leaking onto QLabel, which subclasses QFrame in Qt."""
@@ -154,34 +155,23 @@ class MainWindow(QMainWindow):
         return super().eventFilter(obj, event)
 
     def _build_shell(self):
-        central = QWidget()
-        central.setObjectName("appRoot")
-        self.setCentralWidget(central)
-        shell = QHBoxLayout(central)
-        shell.setContentsMargins(0, 0, 0, 0)
-        shell.setSpacing(0)
-
-        shell.addWidget(self._create_sidebar())
-
-        workspace = QWidget()
-        workspace.setObjectName("workspace")
-        workspace.setMaximumWidth(1500)
-        workspace_layout = QVBoxLayout(workspace)
-        workspace_layout.setContentsMargins(24, 18, 24, 18)
-        workspace_layout.setSpacing(14)
-        workspace_layout.addWidget(self._create_topbar())
-
-        self.pages = QStackedWidget()
-        self.pages.setObjectName("pageStack")
-        self.page_indexes = {}
-        for _, entries in self.page_groups:
-            for key, _, _, widget in entries:
-                self.page_indexes[key] = self.pages.addWidget(widget)
+        self.status_indicator = StatusIndicator()
+        self.shell = AppShell(
+            self.destinations,
+            topbar=self._create_topbar(),
+            status_indicator=self.status_indicator,
+        )
+        self.setCentralWidget(self.shell)
+        self.pages = self.shell.pages
+        self.page_indexes = self.shell.page_indexes
+        self.nav_buttons = self.shell.nav_buttons
         self.pages.currentChanged.connect(self._on_page_changed)
-        workspace_layout.addWidget(self.pages, 1)
-        shell.addWidget(workspace, 1, Qt.AlignmentFlag.AlignHCenter)
-
-        self._navigate("dashboard")
+        self._update_tier_label()
+        self.status_indicator.update_service(ServiceStatus(
+            "scores", "ok", "Score history ready",
+            "Automatic score monitoring is active.",
+        ))
+        self._navigate("home")
 
     def _create_sidebar(self):
         sidebar = QFrame()
@@ -271,6 +261,18 @@ class MainWindow(QMainWindow):
         heading.addWidget(self.page_subtitle)
         layout.addLayout(heading, 1)
 
+        rank_block = QVBoxLayout()
+        rank_block.setSpacing(1)
+        self.tier_label = QLabel()
+        self.tier_label.setObjectName("rankValue")
+        self.tier_label.setAccessibleName("Official rank")
+        self.energy_label = QLabel()
+        self.energy_label.setObjectName("rankMeta")
+        self.energy_label.setAccessibleName("Official rank energy")
+        rank_block.addWidget(self.tier_label)
+        rank_block.addWidget(self.energy_label)
+        layout.addLayout(rank_block)
+
         difficulty_block = QVBoxLayout()
         difficulty_block.setSpacing(2)
         difficulty_label = QLabel("BENCHMARK")
@@ -315,16 +317,26 @@ class MainWindow(QMainWindow):
         return topbar
 
     def _navigate(self, key):
-        if key not in self.page_indexes:
+        aliases = {
+            "dashboard": "home", "routines": "session",
+            "skills": "progress", "aim_hub": "library",
+            "scenarios": "library", "import": "tools", "export": "tools",
+        }
+        destination = aliases.get(key, key)
+        if destination not in self.page_indexes:
             return
-        self.pages.setCurrentIndex(self.page_indexes[key])
-        self.nav_buttons[key].setChecked(True)
-        for _, entries in self.page_groups:
-            for page_key, title, description, _ in entries:
-                if page_key == key:
-                    self.page_title.setText(title)
-                    self.page_subtitle.setText(description)
-                    return
+        self.shell.navigate(destination)
+        title, subtitle = {
+            "home": ("Home", "Your coaching conclusion and next training action"),
+            "session": ("Session", "Follow the current scenario and source-backed guide"),
+            "progress": ("Progress", "Review conclusions, skills, benchmarks, and history"),
+            "library": ("Library", "Browse routines, scenarios, warm-ups, and game transfer"),
+            "tools": ("Tools", "Use secondary utilities, manual import, and backup"),
+        }[destination]
+        self.page_title.setText(title)
+        self.page_subtitle.setText(subtitle)
+        if destination == "library":
+            self.scenario_view.refresh_installed()
 
     def _quick_scenario(self, warmup=False):
         self._navigate("routines")
@@ -411,6 +423,10 @@ class MainWindow(QMainWindow):
         self.refresh_btn.setEnabled(False)
         self.refresh_btn.setText("Syncing…")
         self.statusBar().showMessage("Checking for new Kovaak's scores…")
+        self.status_indicator.update_service(ServiceStatus(
+            "scores", "busy", "Checking scores",
+            "Scanning the configured Kovaak's stats folder.",
+        ))
         self.score_watcher.notify_directory_changed()
 
     def _on_sync_complete(self, result):
@@ -423,16 +439,28 @@ class MainWindow(QMainWindow):
                 f"Score sync needs attention  •  {result.failure_summary()}  •  "
                 f"{result.imported} new  •  {result.updated} updated"
             )
+            self.status_indicator.update_service(ServiceStatus(
+                "scores", "warning", "Score import needs attention",
+                result.failure_summary(), "Retry score import",
+            ))
         else:
             self.statusBar().showMessage(
                 f"Refresh complete  •  {result.imported} new scores  •  "
                 f"{result.updated} updated scores  •  {self._profile_summary(self.profile)}"
             )
+            self.status_indicator.update_service(ServiceStatus(
+                "scores", "ok", "Scores are current",
+                f"{result.imported} new and {result.updated} updated scores imported.",
+            ))
 
     def _on_sync_failed(self, message):
         self.refresh_btn.setEnabled(True)
         self.refresh_btn.setText("Sync scores")
         self.statusBar().showMessage(f"Score sync failed: {message}")
+        self.status_indicator.update_service(ServiceStatus(
+            "scores", "error", "Score sync failed", message,
+            "Retry score import",
+        ))
 
     def _check_new_pbs(self):
         last_check = self.db.get_settings_value("last_pb_check") or "2000-01-01T00:00:00"
@@ -454,7 +482,7 @@ class MainWindow(QMainWindow):
             self.mode_label, self.mode_combo, self.refresh_btn,
         ):
             widget.setVisible(not is_today)
-        if self.pages.widget(index) is self.scenario_view:
+        if self.pages.widget(index) is self.library_destination:
             self.scenario_view.refresh_installed()
 
     def _launch_kovaaks(self):
@@ -500,9 +528,17 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(
             f"Automatic update check failed: {message}", 15000
         )
+        self.status_indicator.update_service(ServiceStatus(
+            "updates", "warning", "Update check failed", message,
+            "Check again from Settings",
+        ))
 
     def _on_update_checked(self, release):
         if not is_newer_version(release["version"], VERSION):
+            self.status_indicator.update_service(ServiceStatus(
+                "updates", "ok", "App is up to date",
+                f"Aim Companion {VERSION} is the latest available version.",
+            ))
             return
         answer = QMessageBox.question(
             self,
@@ -533,6 +569,10 @@ class MainWindow(QMainWindow):
         QApplication.instance().quit()
 
     def _on_update_failed(self, message):
+        self.status_indicator.update_service(ServiceStatus(
+            "updates", "error", "Update failed", message,
+            "Download the installer from GitHub Releases",
+        ))
         QMessageBox.warning(
             self, "Update failed",
             f"Aim Companion could not install the update.\n\n{message}",

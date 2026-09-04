@@ -1,5 +1,22 @@
 # Unreleased
 
+## Guided coaching and durable sessions
+
+- Added explicit Warm-up, Step-by-Step Training, and Full Routine session
+  models with save-after-run persistence and crash recovery.
+- Full Routine keeps exact authored order and prescribed runs. An interrupted
+  routine resumes with unfinished material, completes one circular pass, and
+  then resets to the official start.
+- Step-by-Step recommendations prioritize due benchmark checks, then use a
+  deterministic 50/30/20 weakness rotation with visible evidence and confidence.
+- Benchmark freshness is tracked per subcategory and becomes due after 12
+  relevant completed non-warm-up blocks.
+- The last warm-up context is remembered; warm-ups never advance Full Routine
+  progress or freshness counters.
+- Automatic and manual run confirmations use the same durable transition.
+  Fatigue coaching remains disabled until explicitly enabled, and historical
+  game observations no longer influence active recommendations.
+
 ## Benchmark accuracy and score imports
 
 - Official Voltaic S5 energy now selects the maximum eligible scenario energy

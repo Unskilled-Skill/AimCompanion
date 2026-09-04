@@ -77,6 +77,25 @@ content checksum, so unchanged files skip parsing while a changed or completed
 file is re-imported transactionally without deleting unrelated history. The
 recorded failure is cleared after a successful retry.
 
+## Guided training modes
+
+Aim Companion has three session modes:
+
+- **Warm-up** remembers the last game or routine context and prepares the
+  relevant movements without changing routine progress or benchmark freshness.
+- **Step-by-Step Training** presents one evidence-backed 3–5 minute block at a
+  time. Due benchmark checks come first; otherwise the three highest-priority
+  weaknesses follow a deterministic 50/30/20 rotation without avoidable
+  scenario or subcategory repeats. You can stop after any completed block.
+- **Full Routine** preserves the selected source's scenario order, guide text,
+  and complete prescribed run counts. If you stop early, the next session
+  starts with unfinished material and makes exactly one circular pass.
+
+Every detected or manually confirmed run is persisted. A partially completed
+scenario restarts at its full run requirement in the next Full Routine session.
+See [training modes](docs/training-modes.md) for the exact circular-resume example,
+evidence fields, manual fallback, and fatigue opt-in behavior.
+
 ## Development
 
 ```powershell

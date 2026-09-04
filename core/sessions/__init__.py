@@ -4,6 +4,7 @@ from .engine import InvalidSessionTransition, SessionEngine
 from .builders import (
     build_full_routine_plan,
     build_warmup_plan,
+    append_step_by_step_recommendation,
     next_full_routine_resume,
 )
 from .model import (
@@ -14,16 +15,20 @@ from .model import (
     SessionStep,
 )
 from .repository import SessionRepository
+from .repository import WarmupPreference, WarmupPreferenceRepository
 
 __all__ = [
     "InvalidSessionTransition",
     "build_full_routine_plan",
     "build_warmup_plan",
+    "append_step_by_step_recommendation",
     "next_full_routine_resume",
     "SessionEngine",
     "SessionMode",
     "SessionPlan",
     "SessionRepository",
+    "WarmupPreference",
+    "WarmupPreferenceRepository",
     "SessionState",
     "SessionStatus",
     "SessionStep",

@@ -337,12 +337,32 @@ def add_subcategory_activity(connection: MigrationConnection) -> None:
     """)
 
 
+def add_coaching_preferences(connection: MigrationConnection) -> None:
+    """Remember warm-up intent and accepted recommendation rotation."""
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS warmup_preference (
+            id INTEGER PRIMARY KEY CHECK(id = 1),
+            context TEXT NOT NULL,
+            target_id TEXT NOT NULL
+        )
+    """)
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS coaching_rotation_state (
+            id INTEGER PRIMARY KEY CHECK(id = 1),
+            cursor INTEGER NOT NULL DEFAULT 0 CHECK(cursor >= 0),
+            last_scenario TEXT NOT NULL DEFAULT '',
+            last_subcategory TEXT NOT NULL DEFAULT ''
+        )
+    """)
+
+
 MIGRATIONS = (
     Migration(1, "baseline", baseline_existing_schema),
     Migration(2, "benchmark_metadata", add_benchmark_metadata_tables),
     Migration(3, "score_import_identity", add_score_import_identity),
     Migration(4, "guided_sessions", add_guided_session_tables),
     Migration(5, "subcategory_activity", add_subcategory_activity),
+    Migration(6, "coaching_preferences", add_coaching_preferences),
 )
 
 

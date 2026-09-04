@@ -5,10 +5,11 @@ from __future__ import annotations
 import json
 import sqlite3
 from collections.abc import Mapping
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from types import MappingProxyType
 from uuid import uuid4
+from typing import Literal
 
 from .engine import SessionEngine
 from .model import SessionMode, SessionPlan, SessionState, SessionStatus, SessionStep
@@ -19,6 +20,48 @@ ACTIVE_STATUSES = (
     SessionStatus.RUNNING.value,
     SessionStatus.PAUSED.value,
 )
+
+
+@dataclass(frozen=True)
+class WarmupPreference:
+    context: Literal["game", "routine"]
+    target_id: str
+
+
+class WarmupPreferenceRepository:
+    DEFAULT = WarmupPreference("game", "Valorant & Counterstrike")
+
+    def __init__(self, connection: sqlite3.Connection):
+        self.connection = connection
+        self.connection.row_factory = sqlite3.Row
+
+    def get(self) -> WarmupPreference:
+        row = self.connection.execute(
+            "SELECT context, target_id FROM warmup_preference WHERE id = 1"
+        ).fetchone()
+        if (
+            row is None
+            or row["context"] not in {"game", "routine"}
+            or not str(row["target_id"]).strip()
+        ):
+            return self.DEFAULT
+        return WarmupPreference(row["context"], row["target_id"])
+
+    def set(self, context: str, target_id: str) -> WarmupPreference:
+        if context not in {"game", "routine"}:
+            raise ValueError("warm-up context must be game or routine")
+        target = target_id.strip()
+        if not target:
+            raise ValueError("warm-up target is required")
+        with self.connection:
+            self.connection.execute("""
+                INSERT INTO warmup_preference (id, context, target_id)
+                VALUES (1, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    context = excluded.context,
+                    target_id = excluded.target_id
+            """, (context, target))
+        return WarmupPreference(context, target)
 
 
 def _plain(value: object) -> object:
@@ -156,6 +199,35 @@ class SessionRepository:
             start_boundary=boundary,
             initial_confirmed_runs=0,
         )
+
+    def load_rotation_state(self):
+        from core.coaching.recommender import RotationState
+
+        row = self.connection.execute(
+            "SELECT cursor, last_scenario, last_subcategory "
+            "FROM coaching_rotation_state WHERE id = 1"
+        ).fetchone()
+        if row is None:
+            return RotationState()
+        return RotationState(
+            cursor=int(row["cursor"]),
+            last_scenario=row["last_scenario"],
+            last_subcategory=row["last_subcategory"],
+        )
+
+    def save_rotation_state(self, state) -> None:
+        if state.cursor < 0:
+            raise ValueError("rotation cursor cannot be negative")
+        with self.connection:
+            self.connection.execute("""
+                INSERT INTO coaching_rotation_state (
+                    id, cursor, last_scenario, last_subcategory
+                ) VALUES (1, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    cursor = excluded.cursor,
+                    last_scenario = excluded.last_scenario,
+                    last_subcategory = excluded.last_subcategory
+            """, (state.cursor, state.last_scenario, state.last_subcategory))
 
     def _resolve_plan_id(self, plan: SessionPlan) -> int:
         known = self._plan_ids.get(id(plan))

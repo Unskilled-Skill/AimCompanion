@@ -6,11 +6,14 @@ import json
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TypeVar
+from dataclasses import replace
+from datetime import datetime, timezone
 
 from core.recommender import infer_routine_target
 from core.warmups import GAME_WARMUP_ROUTINES, RECOMMENDED_WARMUP_ROUTINE
 
 from .model import SessionMode, SessionPlan, SessionStep
+from .model import SessionState, SessionStatus
 
 
 T = TypeVar("T")
@@ -159,4 +162,41 @@ def build_warmup_plan(context: str, target_id: str) -> SessionPlan:
         source_version="warmup-v1",
         steps=steps,
         official_steps=steps,
+    )
+
+
+def append_step_by_step_recommendation(state: SessionState, recommendation) -> SessionState:
+    if state.plan.mode is not SessionMode.STEP_BY_STEP:
+        raise ValueError("recommendations can only extend step-by-step sessions")
+    if state.status is SessionStatus.STOPPED:
+        raise ValueError("cannot append to a stopped session")
+    if state.plan.steps and state.status is not SessionStatus.COMPLETED:
+        raise ValueError("previous block must be completed before appending")
+    seconds = max(180, min(300, int(recommendation.estimated_seconds)))
+    step = SessionStep(
+        scenario=recommendation.scenario,
+        required_runs=max(1, round(seconds / 60)),
+        estimated_seconds=seconds,
+        category=recommendation.category,
+        subcategory=recommendation.subcategory,
+        guide=dict(recommendation.guide),
+        source=recommendation.source,
+        source_url=recommendation.source_url,
+    )
+    steps = state.plan.steps + (step,)
+    plan = SessionPlan(
+        mode=SessionMode.STEP_BY_STEP,
+        source_id=state.plan.source_id,
+        source_version=state.plan.source_version,
+        steps=steps,
+        official_steps=steps,
+    )
+    return replace(
+        state,
+        plan=plan,
+        status=SessionStatus.RUNNING,
+        current_step_index=len(steps) - 1,
+        confirmed_runs=0,
+        updated_at=datetime.now(timezone.utc),
+        stop_reason="",
     )

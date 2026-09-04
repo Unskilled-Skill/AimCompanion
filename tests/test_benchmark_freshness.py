@@ -78,7 +78,7 @@ def test_benchmark_resets_only_its_exact_subcategory():
 def test_schema_version_five_contains_activity_table(tmp_path):
     database = Database(str(tmp_path / "freshness.sqlite3"))
     try:
-        assert database.schema_version == 5
+        assert database.schema_version >= 5
         assert "subcategory_activity" in database.table_names()
     finally:
         database.close()

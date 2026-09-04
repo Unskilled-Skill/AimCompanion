@@ -146,7 +146,7 @@ def test_fresh_database_reaches_current_schema_without_pre_migration_backup(tmp_
 
     db = Database(str(path))
     try:
-        assert db.schema_version == 7
+        assert db.schema_version == 8
         assert not list(tmp_path.glob("*.pre-v*.sqlite3"))
     finally:
         db.close()
@@ -157,7 +157,7 @@ def test_v1_database_is_backed_up_and_migrated_without_score_or_setting_loss(tmp
 
     db = Database(str(path))
     try:
-        assert db.schema_version == 7
+        assert db.schema_version == 8
         assert len(db.get_all_scores()) == 3
         assert db.get_settings_value("legacy_preference") == "preserve this exactly"
     finally:
@@ -201,7 +201,7 @@ def test_complete_v1_upgrades_without_losing_representative_user_rows(tmp_path):
 
     db = Database(str(path))
     try:
-        assert db.schema_version == 7
+        assert db.schema_version == 8
         assert len(db.get_all_scores()) == 1
         assert db.get_settings_value("legacy_preference") == "preserve this exactly"
         assert db.get_sessions()[0]["notes"] == "preserve session"
@@ -279,7 +279,7 @@ def test_v2_database_upgrades_import_identity_without_losing_path_rows(tmp_path)
 
     db = Database(str(path))
     try:
-        assert db.schema_version == 7
+        assert db.schema_version == 8
         assert db.get_imported_score_files() == {"preserved.csv": None}
     finally:
         db.close()
@@ -294,7 +294,7 @@ def test_apply_migrations_accepts_a_plain_sqlite_connection(tmp_path):
     try:
         assert migrations.apply_migrations(
             connection, lambda version: tmp_path / f"plain.pre-v{version + 1}.sqlite3",
-        ) == 7
+        ) == 8
         assert "schema_migrations" in sqlite_table_names(path)
     finally:
         connection.close()
@@ -308,13 +308,13 @@ def test_reopening_migrated_legacy_database_does_not_make_another_backup(tmp_pat
 
     second = Database(str(path))
     try:
-        assert second.schema_version == 7
+        assert second.schema_version == 8
         assert len(second.get_all_scores()) == 3
         assert list(tmp_path.glob("*.pre-v2.sqlite3")) == backups_after_first_open
         versions = second.conn.execute(
             "SELECT version FROM schema_migrations ORDER BY version"
         ).fetchall()
-        assert [row["version"] for row in versions] == [1, 2, 3, 4, 5, 6, 7]
+        assert [row["version"] for row in versions] == [1, 2, 3, 4, 5, 6, 7, 8]
     finally:
         second.close()
 

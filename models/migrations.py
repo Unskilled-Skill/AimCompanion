@@ -356,6 +356,19 @@ def add_session_run_identity(connection: MigrationConnection) -> None:
         ON session_runs(result_identity)
         WHERE result_identity IS NOT NULL AND result_identity != ''
     """)
+
+
+def add_service_health(connection: MigrationConnection) -> None:
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS service_health (
+            service TEXT PRIMARY KEY,
+            state TEXT NOT NULL,
+            summary TEXT NOT NULL,
+            details TEXT NOT NULL DEFAULT '',
+            recovery_action TEXT NOT NULL DEFAULT '',
+            updated_at TEXT NOT NULL
+        )
+    """)
     connection.execute("""
         CREATE TABLE IF NOT EXISTS coaching_rotation_state (
             id INTEGER PRIMARY KEY CHECK(id = 1),
@@ -374,6 +387,7 @@ MIGRATIONS = (
     Migration(5, "subcategory_activity", add_subcategory_activity),
     Migration(6, "coaching_preferences", add_coaching_preferences),
     Migration(7, "session_run_identity", add_session_run_identity),
+    Migration(8, "service_health", add_service_health),
 )
 
 

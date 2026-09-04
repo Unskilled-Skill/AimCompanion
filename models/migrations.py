@@ -263,10 +263,72 @@ def add_score_import_identity(connection: MigrationConnection) -> None:
     _ensure_columns(connection, "imported_files", {"content_sha256": "TEXT"})
 
 
+def add_guided_session_tables(connection: MigrationConnection) -> None:
+    """Persist immutable plans, current state, and confirmed run boundaries."""
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS session_plans (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            mode TEXT NOT NULL CHECK(mode IN ('warmup', 'step_by_step', 'full_routine')),
+            source_id TEXT NOT NULL,
+            source_version TEXT NOT NULL,
+            start_boundary INTEGER NOT NULL DEFAULT 0,
+            initial_confirmed_runs INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL
+        )
+    """)
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS session_steps (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plan_id INTEGER NOT NULL REFERENCES session_plans(id) ON DELETE CASCADE,
+            execution_index INTEGER NOT NULL,
+            official_index INTEGER NOT NULL,
+            scenario TEXT NOT NULL,
+            required_runs INTEGER NOT NULL CHECK(required_runs > 0),
+            estimated_seconds INTEGER NOT NULL CHECK(estimated_seconds > 0),
+            category TEXT NOT NULL,
+            subcategory TEXT NOT NULL,
+            guide_json TEXT NOT NULL,
+            source TEXT NOT NULL,
+            source_url TEXT NOT NULL,
+            UNIQUE(plan_id, execution_index),
+            UNIQUE(plan_id, official_index)
+        )
+    """)
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS session_state (
+            plan_id INTEGER PRIMARY KEY REFERENCES session_plans(id) ON DELETE CASCADE,
+            status TEXT NOT NULL CHECK(status IN ('ready', 'running', 'paused', 'stopped', 'completed')),
+            current_step_index INTEGER NOT NULL,
+            confirmed_runs INTEGER NOT NULL,
+            started_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            stop_reason TEXT NOT NULL DEFAULT '',
+            owner_token TEXT NOT NULL DEFAULT ''
+        )
+    """)
+    connection.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS one_active_session
+        ON session_state((1))
+        WHERE status IN ('ready', 'running', 'paused')
+    """)
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS session_runs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plan_id INTEGER NOT NULL REFERENCES session_plans(id) ON DELETE CASCADE,
+            step_index INTEGER NOT NULL,
+            run_index INTEGER NOT NULL,
+            confirmed_at TEXT NOT NULL,
+            confirmation_source TEXT NOT NULL DEFAULT 'state',
+            UNIQUE(plan_id, step_index, run_index)
+        )
+    """)
+
+
 MIGRATIONS = (
     Migration(1, "baseline", baseline_existing_schema),
     Migration(2, "benchmark_metadata", add_benchmark_metadata_tables),
     Migration(3, "score_import_identity", add_score_import_identity),
+    Migration(4, "guided_sessions", add_guided_session_tables),
 )
 
 

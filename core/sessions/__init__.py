@@ -13,6 +13,7 @@ from .model import (
     SessionStatus,
     SessionStep,
 )
+from .repository import SessionRepository
 
 __all__ = [
     "InvalidSessionTransition",
@@ -22,6 +23,7 @@ __all__ = [
     "SessionEngine",
     "SessionMode",
     "SessionPlan",
+    "SessionRepository",
     "SessionState",
     "SessionStatus",
     "SessionStep",

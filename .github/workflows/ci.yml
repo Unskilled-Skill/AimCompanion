@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m ruff check core/benchmarks core/coaching core/sessions core/scenario_installer.py core/service_health.py core/score_importer.py core/score_watcher.py core/session_coordinator.py ui/home.py ui/session.py ui/session_overlay.py ui/app_shell.py ui/progress_hub.py ui/library.py ui/status_indicator.py ui/view_models.py tests
+      - run: python -m compileall -q core models ui tests scripts
+      - name: Test with coverage
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m pytest --cov --cov-report=term-missing -q
+      - name: UI smoke
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python scripts/smoke_ui.py
+      - run: python -m PyInstaller --clean --noconfirm AimCompanion.spec
+      - run: python -m pytest tests/test_packaging_contract.py -q

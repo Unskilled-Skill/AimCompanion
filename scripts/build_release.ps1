@@ -5,7 +5,8 @@ Set-Location -LiteralPath $ReleaseRoot
 $env:QT_QPA_PLATFORM = "offscreen"
 python scripts/build_icon.py
 python -m compileall -q core models ui tests scripts
-python -m unittest discover -s tests
+python -m pytest -q
+python scripts/smoke_ui.py
 python -m PyInstaller --clean --noconfirm AimCompanion.spec
 
 $InnoCandidates = @(

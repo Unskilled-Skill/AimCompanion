@@ -12,6 +12,7 @@ datas = [
     ("data/aim_glossary.json", "data"),
     ("data/tacfps_guide.json", "data"),
     ("data/deathmatch_guide.json", "data"),
+    ("data/benchmark_definitions", "data/benchmark_definitions"),
     ("assets/AimCompanion.ico", "assets"),
 ]
 

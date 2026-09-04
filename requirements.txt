@@ -1,2 +1,2 @@
-PyQt6>=6.5.0
-matplotlib>=3.7.0
+PyQt6>=6.11,<6.12
+matplotlib>=3.11,<3.12

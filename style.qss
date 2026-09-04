@@ -567,6 +567,156 @@ QScrollBar::sub-line:horizontal {
 }
 
 /* Home page */
+QFrame#homeFocusCard {
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #151e35, stop: 0.68 #111a2e, stop: 1 #17213a
+    );
+    border: 1px solid #33415f;
+    border-left: 4px solid #8b9cfb;
+    border-radius: 14px;
+}
+
+QFrame#homeRankPanel {
+    background-color: #0d1528;
+    border: 1px solid #2b3854;
+    border-radius: 11px;
+}
+
+QLabel#homeEyebrow,
+QLabel#trainingModeEyebrow,
+QLabel#homeFactCaption {
+    color: #8f9fcb;
+    font-size: 8pt;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+QLabel#homeFocusTitle {
+    color: #f8fafc;
+    font-size: 20pt;
+    font-weight: 800;
+}
+
+QLabel#homeSupportingText {
+    color: #98a6bd;
+    font-size: 9pt;
+}
+
+QFrame#homeFact {
+    background-color: rgba(11, 17, 32, 150);
+    border: 1px solid #2d3b59;
+    border-radius: 8px;
+}
+
+QLabel#homeFactValue {
+    color: #edf1f8;
+    font-size: 10pt;
+    font-weight: 700;
+}
+
+QLabel#homeRankValue {
+    color: #f1d6a8;
+    font-size: 17pt;
+    font-weight: 850;
+}
+
+QFrame#primaryActionPanel,
+QFrame#homeInsights {
+    background: transparent;
+    border: none;
+}
+
+QFrame#trainingModeCard {
+    background-color: #11192b;
+    border: 1px solid #293651;
+    border-radius: 12px;
+}
+
+QFrame#trainingModeCard:hover {
+    background-color: #151f34;
+    border-color: #465979;
+}
+
+QFrame#trainingModeCard[recommended="true"] {
+    background-color: #151d35;
+    border: 1px solid #6f7fd5;
+}
+
+QLabel#recommendedBadge {
+    background-color: #29365f;
+    color: #cbd1ff;
+    border: 1px solid #5969ae;
+    border-radius: 7px;
+    padding: 3px 7px;
+    font-size: 7pt;
+    font-weight: 850;
+}
+
+QLabel#trainingModeTitle {
+    color: #f4f6fb;
+    font-size: 13pt;
+    font-weight: 780;
+}
+
+QLabel#trainingModeDescription {
+    color: #c2cad8;
+    font-size: 9pt;
+}
+
+QLabel#trainingModeMeta {
+    color: #7f8da7;
+    font-size: 8pt;
+    font-weight: 650;
+}
+
+QPushButton#modeStartButton {
+    background-color: #18243b;
+    border: 1px solid #394965;
+    color: #e8edf6;
+    font-weight: 750;
+}
+
+QPushButton#modeStartButton:hover {
+    background-color: #243451;
+    border-color: #60718f;
+}
+
+QFrame#homeInsightCard {
+    background-color: #0f1728;
+    border: 1px solid #26334d;
+    border-radius: 11px;
+}
+
+QLabel#homeCardTitle {
+    color: #edf1f8;
+    font-size: 11pt;
+    font-weight: 750;
+}
+
+QLabel#homeInsightBody {
+    color: #c9d2e2;
+    font-size: 9pt;
+}
+
+QWidget#statusIndicator {
+    background-color: #0f1728;
+    border: 1px solid #26334d;
+    border-radius: 9px;
+}
+
+QWidget#statusIndicator QPushButton {
+    background-color: transparent;
+    border: none;
+    color: #aeb8ff;
+    min-height: 16px;
+    padding: 4px 8px;
+}
+
+QWidget#statusIndicator QPushButton:hover {
+    background-color: #1b2740;
+}
+
 QFrame#homeHero {
     background-color: #121a2c;
     border: 1px solid #263149;

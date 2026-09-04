@@ -35,3 +35,11 @@ class ToolsWidget(QWidget):
         self.calendar.update_profile(profile)
         self.comparison.update_profile(profile)
         self.builder.update_profile(profile)
+
+    def add_secondary_pages(self, backup, settings, manual_import):
+        self.tabs.addTab(backup, "Backup")
+        self.tabs.addTab(settings, "Settings")
+        self.tabs.addTab(manual_import, "Manual import")
+
+    def tab_names(self):
+        return tuple(self.tabs.tabText(index) for index in range(self.tabs.count()))

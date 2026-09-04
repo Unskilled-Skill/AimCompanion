@@ -41,7 +41,6 @@ from ui.export import ExportWidget
 from ui.import_widget import DragDropImport
 from ui.progress import ProgressWidget
 from ui.progress_hub import ProgressHub
-from ui.routines import RoutineWidget
 from ui.scenarios import ScenarioBrowser
 from ui.setup import SetupDialog
 from ui.tools import ToolsWidget
@@ -50,6 +49,7 @@ from ui.stats import StatsSummary
 from ui.app_shell import AppShell
 from ui.status_indicator import StatusIndicator
 from ui.home import HomeWidget
+from ui.library import LibraryWidget
 from ui.session import SessionWidget
 from ui.session_overlay import SessionOverlay
 from ui.view_models import build_home_view, build_session_view
@@ -174,11 +174,6 @@ class MainWindow(QMainWindow):
         self.dashboard.quick_training_requested.connect(
             lambda: self._quick_scenario(False)
         )
-        self.routine_view = RoutineWidget(
-            self.training_profile, self.db, self.notifier,
-            on_scores_updated=self._rebuild_profile,
-        )
-        self.routine_view.navigate_requested.connect(self._navigate)
         self.progress_view = ProgressWidget(self.profile, self.db)
         self.scenario_view = ScenarioBrowser(self.db)
         self.scenario_view.status_changed.connect(self.statusBar().showMessage)
@@ -198,13 +193,26 @@ class MainWindow(QMainWindow):
             self.stats_summary,
         )
         self._refresh_progress_hub()
-        self.library_destination = QTabWidget()
-        self.library_destination.addTab(self.aim_hub_view, "Training methods")
-        self.library_destination.addTab(self.scenario_view, "Scenarios")
-        self.tools_destination = QTabWidget()
-        self.tools_destination.addTab(self.tools_view, "Training tools")
-        self.tools_destination.addTab(self.import_view, "Manual import")
-        self.tools_destination.addTab(self.export_view, "Backup")
+        self.library_destination = LibraryWidget(self.db, self.scenario_view)
+        self.library_destination.full_routine_requested.connect(
+            self._start_full_routine_home
+        )
+        settings_page = QWidget()
+        settings_layout = QVBoxLayout(settings_page)
+        settings_copy = QLabel(
+            "Change score folders, game preferences, update settings, and coaching options."
+        )
+        settings_copy.setWordWrap(True)
+        settings_layout.addWidget(settings_copy)
+        open_settings = QPushButton("Open settings")
+        open_settings.setAccessibleName("Open application settings")
+        open_settings.clicked.connect(self._open_settings)
+        settings_layout.addWidget(open_settings)
+        settings_layout.addStretch()
+        self.tools_view.add_secondary_pages(
+            self.export_view, settings_page, self.import_view,
+        )
+        self.tools_destination = self.tools_view
         self.destinations = {
             "home": self.home_view,
             "session": self.session_view,
@@ -424,26 +432,23 @@ class MainWindow(QMainWindow):
             self.scenario_view.refresh_installed()
 
     def _quick_scenario(self, warmup=False):
-        self._navigate("routines")
-        self.routine_view._set_training_mode("focused")
-        self.routine_view.show_quick_scenario(warmup)
-        recommendation = self.routine_view._current_quick
-        self.statusBar().showMessage(
-            f"{'Warm-up' if warmup else 'Training'} pick · "
-            f"{recommendation['scenario']} · {recommendation['runs']} "
-            f"{'run' if recommendation['runs'] == 1 else 'runs'}"
-        )
+        if warmup:
+            self._start_warmup_home()
+        else:
+            self._start_step_by_step_home()
 
     def _start_training_method(self, method_id):
-        self._navigate("routines")
-        self.routine_view.select_training_method(method_id)
-        self.statusBar().showMessage("Training method ready")
+        self._navigate("library")
+        self.statusBar().showMessage("Training reference ready")
 
-    def _start_full_routine_home(self):
+    def _start_full_routine_home(self, source_id=""):
         config = TrainingConfig.load()
         routines = TACFPS_GUIDE["routines"]
         routine = next(
-            (item for item in routines if item["name"] == config.preferred_routine),
+            (
+                item for item in routines
+                if item["name"] == (source_id or config.preferred_routine)
+            ),
             routines[0],
         )
         resume = self.session_repository.full_routine_resume(routine["name"])
@@ -669,7 +674,6 @@ class MainWindow(QMainWindow):
             self.stats_summary,
         ):
             view.update_profile(self.profile)
-        self.routine_view.update_profile(self.training_profile)
         self.skill_overview.update_profile(self.rank_profile)
 
         streak = self.db.get_streak()

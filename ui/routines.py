@@ -151,7 +151,11 @@ class RoutineWidget(QWidget):
         self._build_routine_display()
         self._build_quick_actions()
         self._build_weekly_plan()
-        self._build_game_review()
+        # Kept only as a hidden compatibility surface for the retired Today
+        # widget. The redesigned application does not construct observation UI.
+        self.game_review_frame = QFrame()
+        self.observation_form = QWidget()
+        self.observation_form.hide()
         self._build_share_codes()
 
         # Today always opens from a neutral recommendation. Authored routines

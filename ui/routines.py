@@ -354,31 +354,26 @@ class RoutineWidget(QWidget):
         issue_map = {
             "overflicking": (
                 "speed_stopping",
-                "your latest observation reports overflicking, which points to stopping power",
+                "your latest completed-block feedback reports overflicking, which points to stopping power",
             ),
             "underflicking": (
                 "speed_stopping",
-                "your latest observation reports underflicking, which points to acquisition and stopping",
+                "your latest completed-block feedback reports underflicking, which points to acquisition and stopping",
             ),
             "curved_path": (
                 "smooth_pathing",
-                "your latest observation reports curved or inefficient paths",
+                "your latest completed-block feedback reports curved or inefficient paths",
             ),
             "overcorrecting": (
                 "smooth_pathing",
-                "your latest observation reports repeated corrections near the target",
+                "your latest completed-block feedback reports repeated corrections near the target",
             ),
             "shaky_tense": (
                 "smooth_pathing",
-                "your latest observation reports shaky or tense movement",
+                "your latest completed-block feedback reports shaky or tense movement",
             ),
         }
         if self.db:
-            observations = self.db.get_open_game_observations(limit=20)
-            for observation in observations:
-                issue = (observation.get("issue") or "").casefold()
-                if issue in issue_map:
-                    return issue_map[issue]
             summaries = self.db.get_skill_feedback_summary()
             recent = sorted(
                 summaries.values(),
@@ -1489,7 +1484,10 @@ class RoutineWidget(QWidget):
             self.open_quick_btn.setEnabled(False)
             self.stop_quick_btn.setEnabled(False)
             self.feedback_frame.setVisible(True)
-            fatigue = detect_fatigue(self.db) if self.db else None
+            fatigue = (
+                detect_fatigue(self.db, enabled=self.config.fatigue_coaching_enabled)
+                if self.db else None
+            )
             if fatigue:
                 self.quick_launch_status.setText(
                     f"Fatigue warning  ·  {fatigue['scenario']} is "

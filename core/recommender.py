@@ -474,9 +474,6 @@ def generate_quick_scenario(
     selection_tier = profile.overall_tier
     progression = "hold"
     focus_issue = ""
-    observation_id = None
-    observed_game = ""
-    observation_note = ""
     if not warmup:
         if training_schedule:
             target = training_schedule[rotation_index % len(training_schedule)]
@@ -485,9 +482,6 @@ def generate_quick_scenario(
             selection_tier = target["tier"]
             progression = target.get("progression", "hold")
             focus_issue = target.get("latest_issue", "")
-            observation_id = target.get("observation_id")
-            observed_game = target.get("observed_game", "")
-            observation_note = target.get("observation_note", "")
             selection_basis = (
                 "evidence-building" if target.get("benchmark_due") else
                 "adaptive weakness" if target.get("weakness_severity", 0) >= 0.12 else
@@ -631,11 +625,7 @@ def generate_quick_scenario(
         f"Scheduled maintenance for {target_label} so stronger skills do not fall off."
     )
     if issue_cue:
-        reason += (
-            f" Your {observed_game} review identified this correction."
-            if observed_game else
-            " Your last review identified a specific correction for this skill."
-        )
+        reason += " Your completed-block feedback identified this correction."
 
     return {
         "scenario": scenario["name"],
@@ -655,8 +645,8 @@ def generate_quick_scenario(
         "game_context": config.game,
         "reason": reason,
         "focus_issue": focus_issue if issue_cue else "",
-        "observation_id": observation_id,
-        "observation_note": observation_note,
+        "observation_id": None,
+        "observation_note": "",
         "coaching_cue": issue_cue or get_exercise_cue(category, subcategory),
     }
 

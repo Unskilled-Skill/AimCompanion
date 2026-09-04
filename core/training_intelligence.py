@@ -90,7 +90,6 @@ def build_skill_intelligence(profile, db) -> list[dict]:
     """Build evidence, progression, maintenance, and next-rank data for all skills."""
     last_training = db.get_last_training_by_focus()
     skill_feedback = db.get_skill_feedback_summary()
-    game_observations = db.get_latest_observation_by_skill()
     skills = []
     for category in profile.categories:
         for subcategory in category.subcategories:
@@ -138,7 +137,6 @@ def build_skill_intelligence(profile, db) -> list[dict]:
 
             focus_key = f"{category.name} / {subcategory.name}"
             feedback = skill_feedback.get(focus_key.casefold(), {})
-            observation = game_observations.get(focus_key.casefold())
             latest_rating = feedback.get("latest_rating")
             if latest_rating == "too_easy":
                 progression = "advance"
@@ -170,13 +168,10 @@ def build_skill_intelligence(profile, db) -> list[dict]:
                 "trend_pct": trend_pct,
                 "progression": progression,
                 "latest_feedback": latest_rating,
-                "latest_issue": (
-                    observation["issue"] if observation else
-                    feedback.get("latest_notes", "")
-                ),
-                "observation_id": observation["id"] if observation else None,
-                "observed_game": observation["game"] if observation else "",
-                "observation_note": observation["notes"] if observation else "",
+                "latest_issue": feedback.get("latest_notes", ""),
+                "observation_id": None,
+                "observed_game": "",
+                "observation_note": "",
                 "last_trained": last_training.get(focus_key),
                 "training_age_days": training_days,
                 "next_tier": next_tier["name"] if next_tier else None,
@@ -194,8 +189,6 @@ def build_skill_intelligence(profile, db) -> list[dict]:
         evidence_factor = 0.5 + skill["confidence_score"] * 0.5
         skill["weakness_severity"] = weakness
         skill["priority"] = (weakness * 0.7 + overdue * 0.3) * evidence_factor
-        if skill["observation_id"]:
-            skill["priority"] += 0.25
         skill["benchmark_due"] = (
             skill["confidence"] == "low" or skill["test_age_days"] > 30
         )
@@ -280,7 +273,9 @@ def build_scenario_signals(db) -> dict[str, dict]:
     return signals
 
 
-def detect_fatigue(db) -> dict | None:
+def detect_fatigue(db, enabled: bool = False) -> dict | None:
+    if not enabled:
+        return None
     grouped = defaultdict(list)
     for score in reversed(db.get_recent_raw_scores(80)):
         grouped[score.scenario.casefold()].append(score)

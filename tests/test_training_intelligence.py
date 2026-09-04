@@ -132,7 +132,7 @@ class TrainingIntelligenceTests(unittest.TestCase):
         self.assertEqual(recommendation["focus_issue"], "overflicking")
         self.assertIn("stop just short", recommendation["coaching_cue"])
 
-    def test_game_observation_prioritizes_skill_and_closes_after_resolution(self):
+    def test_game_observation_does_not_influence_active_coaching(self):
         observation_id = self.db.record_game_observation(
             "Apex Legends", "Tracking", "Reactive", "predicting",
             "Guessed close-range direction changes",
@@ -142,16 +142,15 @@ class TrainingIntelligenceTests(unittest.TestCase):
             skill for skill in skills
             if skill["category"] == "Tracking" and skill["subcategory"] == "Reactive"
         )
-        self.assertEqual(reactive["observation_id"], observation_id)
-        self.assertEqual(reactive["latest_issue"], "predicting")
-        self.assertEqual(reactive["observed_game"], "Apex Legends")
+        self.assertIsNone(reactive["observation_id"])
+        self.assertEqual(reactive["latest_issue"], "")
+        self.assertEqual(reactive["observed_game"], "")
         recommendation = generate_quick_scenario(
             self.profile, training_schedule=[reactive],
             config=TrainingConfig(kovaaks_install_dir="Z:/missing"),
         )
-        self.assertEqual(recommendation["observation_id"], observation_id)
-        self.assertIn("Apex Legends review", recommendation["reason"])
-        self.assertIn("do not guess", recommendation["coaching_cue"])
+        self.assertIsNone(recommendation["observation_id"])
+        self.assertNotIn("Apex Legends review", recommendation["reason"])
         self.db.resolve_game_observation(observation_id)
         refreshed = build_skill_intelligence(self.profile, self.db)
         reactive = next(
@@ -242,7 +241,8 @@ class TrainingIntelligenceTests(unittest.TestCase):
                 self.db, "Fatigue benchmark", "Fatigue scenario", value,
                 start + timedelta(minutes=index),
             )
-        fatigue = detect_fatigue(self.db)
+        self.assertIsNone(detect_fatigue(self.db))
+        fatigue = detect_fatigue(self.db, enabled=True)
         self.assertIsNotNone(fatigue)
         self.assertAlmostEqual(fatigue["drop_pct"], -20.0)
 
@@ -454,7 +454,7 @@ class TrainingIntelligenceTests(unittest.TestCase):
         widget.deleteLater()
         app.processEvents()
 
-    def test_hna_chooser_uses_observations_and_advances_rotation(self):
+    def test_hna_chooser_ignores_game_observations_and_advances_rotation(self):
         os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
         from PyQt6.QtWidgets import QApplication
         from ui.routines import RoutineWidget
@@ -466,8 +466,8 @@ class TrainingIntelligenceTests(unittest.TestCase):
         app = QApplication.instance() or QApplication([])
         widget = RoutineWidget(self.profile, self.db)
         method_id, reason = widget._recommended_hna_method()
-        self.assertEqual(method_id, "smooth_pathing")
-        self.assertIn("curved", reason)
+        self.assertEqual(method_id, "speed_stopping")
+        self.assertIn("three-session rotation", reason)
 
         widget.select_training_method("speed_stopping")
         widget.start_method_button.click()

@@ -32,6 +32,24 @@ jobs:
         shell: powershell
         run: ./scripts/build_release.ps1
 
+      - name: Download preceding stable installer
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path previous-release -Force | Out-Null
+          gh release download --repo Unskilled-Skill/AimCompanion --pattern AimCompanion-Setup.exe --dir previous-release
+
+      - name: Verify clean upgrade from preceding release
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: powershell
+        run: >-
+          ./scripts/smoke_upgrade.ps1
+          -PreviousInstaller previous-release/AimCompanion-Setup.exe
+          -NewInstaller dist/AimCompanion-Setup.exe
+          -ExpectedVersion "${{ github.ref_name }}"
+
       - name: Publish GitHub release
         if: startsWith(github.ref, 'refs/tags/')
         env:

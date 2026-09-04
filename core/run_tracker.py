@@ -2,10 +2,12 @@ import os
 import re
 
 from core.parser import parse_csv_file
+from core.kovaaks_launcher import canonical_scenario_name
 
 
 def _scenario_key(name: str) -> str:
-    return re.sub(r"\s+", " ", name).strip().casefold()
+    canonical = canonical_scenario_name(name)
+    return re.sub(r"[^a-z0-9]+", "", canonical.casefold())
 
 
 class KovaaksRunTracker:

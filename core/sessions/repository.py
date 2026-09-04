@@ -229,6 +229,31 @@ class SessionRepository:
                     last_subcategory = excluded.last_subcategory
             """, (state.cursor, state.last_scenario, state.last_subcategory))
 
+    def result_identity_exists(self, identity: str) -> bool:
+        return self.connection.execute(
+            "SELECT 1 FROM session_runs WHERE result_identity = ? LIMIT 1",
+            (identity,),
+        ).fetchone() is not None
+
+    def attach_result_identity(self, state: SessionState, identity: str) -> None:
+        plan_id = self._resolve_plan_id(state.plan)
+        if state.status is SessionStatus.COMPLETED:
+            step_index = state.current_step_index
+            run_index = state.confirmed_runs - 1
+        elif state.confirmed_runs:
+            step_index = state.current_step_index
+            run_index = state.confirmed_runs - 1
+        else:
+            step_index = state.current_step_index - 1
+            if step_index < 0:
+                raise ValueError("no confirmed run is available for an identity")
+            run_index = state.plan.steps[step_index].required_runs - 1
+        with self.connection:
+            self.connection.execute("""
+                UPDATE session_runs SET result_identity = ?
+                WHERE plan_id = ? AND step_index = ? AND run_index = ?
+            """, (identity, plan_id, step_index, run_index))
+
     def _resolve_plan_id(self, plan: SessionPlan) -> int:
         known = self._plan_ids.get(id(plan))
         if known is not None:
@@ -314,6 +339,13 @@ class SessionRepository:
         ))
 
     def _write_confirmed_runs(self, plan_id: int, state: SessionState) -> None:
+        identities = {
+            (int(row["step_index"]), int(row["run_index"])): row["result_identity"]
+            for row in self.connection.execute("""
+                SELECT step_index, run_index, result_identity
+                FROM session_runs WHERE plan_id = ?
+            """, (plan_id,)).fetchall()
+        }
         self.connection.execute("DELETE FROM session_runs WHERE plan_id = ?", (plan_id,))
         for step_index, step in enumerate(state.plan.steps):
             if step_index < state.current_step_index:
@@ -325,9 +357,15 @@ class SessionRepository:
             for run_index in range(count):
                 self.connection.execute("""
                     INSERT INTO session_runs (
-                        plan_id, step_index, run_index, confirmed_at
-                    ) VALUES (?, ?, ?, ?)
-                """, (plan_id, step_index, run_index, state.updated_at.isoformat()))
+                        plan_id, step_index, run_index, confirmed_at, result_identity
+                    ) VALUES (?, ?, ?, ?, ?)
+                """, (
+                    plan_id,
+                    step_index,
+                    run_index,
+                    state.updated_at.isoformat(),
+                    identities.get((step_index, run_index)),
+                ))
 
     def _load_plan(self, plan_id: int) -> SessionPlan:
         plan_row = self.connection.execute(

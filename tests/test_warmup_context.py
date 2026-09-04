@@ -45,7 +45,7 @@ def test_routine_warmup_covers_multiple_skills_when_catalog_permits():
 def test_schema_version_six_contains_warmup_and_rotation_tables(tmp_path):
     database = Database(str(tmp_path / "preferences.sqlite3"))
     try:
-        assert database.schema_version == 6
+        assert database.schema_version >= 6
         assert {"warmup_preference", "coaching_rotation_state"} <= database.table_names()
     finally:
         database.close()

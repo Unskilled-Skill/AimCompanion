@@ -346,6 +346,16 @@ def add_coaching_preferences(connection: MigrationConnection) -> None:
             target_id TEXT NOT NULL
         )
     """)
+
+
+def add_session_run_identity(connection: MigrationConnection) -> None:
+    """Prevent one detected Kovaak's result from advancing twice."""
+    _ensure_columns(connection, "session_runs", {"result_identity": "TEXT"})
+    connection.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS unique_session_result_identity
+        ON session_runs(result_identity)
+        WHERE result_identity IS NOT NULL AND result_identity != ''
+    """)
     connection.execute("""
         CREATE TABLE IF NOT EXISTS coaching_rotation_state (
             id INTEGER PRIMARY KEY CHECK(id = 1),
@@ -363,6 +373,7 @@ MIGRATIONS = (
     Migration(4, "guided_sessions", add_guided_session_tables),
     Migration(5, "subcategory_activity", add_subcategory_activity),
     Migration(6, "coaching_preferences", add_coaching_preferences),
+    Migration(7, "session_run_identity", add_session_run_identity),
 )
 
 

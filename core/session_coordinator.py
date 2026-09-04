@@ -87,6 +87,10 @@ class SessionCoordinator:
     def resume(self) -> SessionState:
         return self._apply(lambda state: SessionEngine.resume(state))
 
+    def restart_step(self) -> SessionState:
+        self.tracker.stop()
+        return self._apply(lambda state: SessionEngine.restart_step(state))
+
     def stop(self, reason: str = "user") -> SessionState:
         self.tracker.stop()
         return self._apply(lambda state: SessionEngine.stop(state, reason=reason))

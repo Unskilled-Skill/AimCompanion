@@ -142,3 +142,17 @@ def test_every_transition_is_saved_and_observed():
         assert row["status"] == "completed"
     finally:
         database.close()
+
+
+def test_restart_step_resets_progress_and_stops_tracker():
+    database = Database(":memory:")
+    events = []
+    try:
+        coordinator = _coordinator(database, events)
+        coordinator.start(_plan())
+        coordinator.confirm_manual_run()
+        coordinator.restart_step()
+        assert coordinator.state.confirmed_runs == 0
+        assert events == [("stop",)]
+    finally:
+        database.close()

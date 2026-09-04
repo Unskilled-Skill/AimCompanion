@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 
 from PyQt6.QtCore import QEvent, Qt, QTimer
 from PyQt6.QtWidgets import (
@@ -15,6 +16,18 @@ from core.service_health import ServiceStatus
 from core.benchmarks import DefinitionRepository
 from core.coaching.freshness import BenchmarkFreshness
 from core.coaching.summary import build_coaching_summary
+from core.coaching.recommender import (
+    CoachingRecommender, RecommendationContext, ScenarioCandidate,
+)
+from core.recommender import SCENARIOS, TACFPS_GUIDE
+from core.run_tracker import KovaaksRunTracker
+from core.session_coordinator import SessionCoordinator
+from core.sessions import (
+    SessionMode, SessionPlan, SessionState, SessionStatus,
+    append_step_by_step_recommendation, build_full_routine_plan,
+    build_warmup_plan,
+)
+from core.sessions.repository import SessionRepository, WarmupPreferenceRepository
 from core.updater import (
     UpdateCheckWorker, UpdateDownloadWorker, automatic_updates_supported,
     is_newer_version, launch_installer,
@@ -35,7 +48,8 @@ from ui.skill_overview import SkillOverviewWidget
 from ui.app_shell import AppShell
 from ui.status_indicator import StatusIndicator
 from ui.home import HomeWidget
-from ui.view_models import build_home_view
+from ui.session import SessionWidget
+from ui.view_models import build_home_view, build_session_view
 
 
 SCORE_MODES = {
@@ -80,6 +94,9 @@ class MainWindow(QMainWindow):
 
         self._create_views()
         self._build_shell()
+        self.session_poll_timer = QTimer(self)
+        self.session_poll_timer.timeout.connect(self._poll_session_runs)
+        self.session_poll_timer.start(1000)
 
         streak = self.db.get_streak()
         streak_text = f"  •  {streak} day streak" if streak > 0 else ""
@@ -98,9 +115,36 @@ class MainWindow(QMainWindow):
 
     def _create_views(self):
         self.home_view = HomeWidget()
-        self.home_view.start_warmup.connect(lambda: self._quick_scenario(True))
-        self.home_view.start_step_by_step.connect(lambda: self._quick_scenario(False))
+        self.home_view.start_warmup.connect(self._start_warmup_home)
+        self.home_view.start_step_by_step.connect(self._start_step_by_step_home)
         self.home_view.start_full_routine.connect(self._start_full_routine_home)
+        self.session_view = SessionWidget()
+        self.session_repository = SessionRepository(self.db.conn)
+        self.warmup_preferences = WarmupPreferenceRepository(self.db.conn)
+        self.session_coordinator = SessionCoordinator(
+            self.session_repository,
+            KovaaksRunTracker(TrainingConfig.load().get_stats_dir()),
+            on_state_changed=self._on_session_state,
+            automatic_next=True,
+        )
+        self._session_evidence = None
+        self.session_view.launch_requested.connect(
+            self.session_coordinator.launch_current
+        )
+        self.session_view.manual_run_requested.connect(
+            self.session_coordinator.confirm_manual_run
+        )
+        self.session_view.pause_requested.connect(self._toggle_session_pause)
+        self.session_view.stop_requested.connect(
+            lambda: self.session_coordinator.stop("user")
+        )
+        self.session_view.restart_requested.connect(self._restart_session_step)
+        self.session_view.next_requested.connect(self._continue_step_by_step)
+        self.session_view.advance_mode.currentIndexChanged.connect(
+            lambda index: setattr(
+                self.session_coordinator, "automatic_next", index == 0,
+            )
+        )
         self.dashboard = DashboardWidget(self.profile)
         self.dashboard.navigate_requested.connect(self._navigate)
         self.dashboard.quick_training_requested.connect(
@@ -137,11 +181,15 @@ class MainWindow(QMainWindow):
         self.tools_destination.addTab(self.export_view, "Backup")
         self.destinations = {
             "home": self.home_view,
-            "session": self.routine_view,
+            "session": self.session_view,
             "progress": self.progress_destination,
             "library": self.library_destination,
             "tools": self.tools_destination,
         }
+        recovered = self.session_repository.load_active()
+        if recovered is not None:
+            self.session_coordinator.state = recovered
+            self._on_session_state(recovered)
 
     def eventFilter(self, obj, event):
         """Stop card styles from leaking onto QLabel, which subclasses QFrame in Qt."""
@@ -366,8 +414,126 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Training method ready")
 
     def _start_full_routine_home(self):
+        config = TrainingConfig.load()
+        routines = TACFPS_GUIDE["routines"]
+        routine = next(
+            (item for item in routines if item["name"] == config.preferred_routine),
+            routines[0],
+        )
+        resume = self.session_repository.full_routine_resume(routine["name"])
+        self._start_session(build_full_routine_plan(routine, resume))
+
+    def _start_warmup_home(self):
+        preference = self.warmup_preferences.get()
+        self._start_session(build_warmup_plan(
+            preference.context, preference.target_id,
+        ))
+
+    def _start_step_by_step_home(self):
+        recommendation = self._next_recommendation()
+        timestamp = datetime.now(timezone.utc)
+        draft = SessionState(
+            plan=SessionPlan(
+                SessionMode.STEP_BY_STEP, "Adaptive coaching", "v1", (), (),
+            ),
+            status=SessionStatus.COMPLETED,
+            current_step_index=0,
+            confirmed_runs=0,
+            started_at=timestamp,
+            updated_at=timestamp,
+        )
+        state = append_step_by_step_recommendation(draft, recommendation)
+        self._session_evidence = recommendation.evidence
+        self.session_repository.save_rotation_state(
+            CoachingRecommender.accept(
+                self.session_repository.load_rotation_state(), recommendation,
+            )
+        )
+        self._start_session(state.plan)
+
+    def _start_session(self, plan):
+        current = self.session_coordinator.state
+        if current and current.status in {
+            SessionStatus.READY, SessionStatus.RUNNING, SessionStatus.PAUSED,
+        }:
+            self.session_coordinator.stop("replaced")
+        self.session_coordinator.start(plan)
         self._navigate("session")
-        self.routine_view._set_training_mode("routine")
+
+    def _next_recommendation(self):
+        definitions = DefinitionRepository.bundled().load_active()
+        freshness = BenchmarkFreshness(self.db.conn).status(
+            definitions.required_subcategories
+        )
+        candidates = tuple(
+            ScenarioCandidate(
+                scenario=item["name"],
+                category=item.get("category", "General"),
+                subcategory=item.get("subcategory", "Mixed"),
+                estimated_seconds=180,
+                guide={
+                    "purpose": item.get("description", "Train the selected skill."),
+                    "setup": "Use your normal training sensitivity unless the scenario says otherwise.",
+                    "steps": [item.get("instructions") or "Follow the scenario goal with controlled technique."],
+                    "success": "Complete the block with repeatable technique, not one lucky score.",
+                },
+                source="Voltaic recommendation catalog" if item.get("official_recommended") else "Aim Companion scenario catalog",
+            )
+            for item in SCENARIOS
+            if item.get("category") and item.get("subcategory")
+        )
+        return CoachingRecommender().next(RecommendationContext(
+            profile=self.training_profile,
+            freshness=freshness,
+            trends={},
+            candidates=candidates,
+            rotation=self.session_repository.load_rotation_state(),
+            fatigue_coaching_enabled=TrainingConfig.load().fatigue_coaching_enabled,
+        ))
+
+    def _continue_step_by_step(self):
+        state = self.session_coordinator.state
+        if not state or state.plan.mode is not SessionMode.STEP_BY_STEP:
+            return
+        recommendation = self._next_recommendation()
+        state = append_step_by_step_recommendation(state, recommendation)
+        self.session_coordinator.state = state
+        self.session_repository.save(state)
+        self._session_evidence = recommendation.evidence
+        self.session_repository.save_rotation_state(
+            CoachingRecommender.accept(
+                self.session_repository.load_rotation_state(), recommendation,
+            )
+        )
+        self._on_session_state(state)
+
+    def _on_session_state(self, state):
+        self.session_view.set_state(build_session_view(
+            state, self._session_evidence,
+        ))
+        self.statusBar().showMessage(
+            f"{state.plan.source_id} · {state.status.value.replace('_', ' ').title()}"
+        )
+
+    def _toggle_session_pause(self):
+        state = self.session_coordinator.state
+        if not state:
+            return
+        if state.status is SessionStatus.RUNNING:
+            self.session_coordinator.pause()
+        elif state.status is SessionStatus.PAUSED:
+            self.session_coordinator.resume()
+
+    def _restart_session_step(self):
+        if self.session_coordinator.state is not None:
+            self.session_coordinator.restart_step()
+
+    def _poll_session_runs(self):
+        tracker = self.session_coordinator.tracker
+        if tracker.active:
+            scores = tracker.poll()
+            if scores:
+                self.session_coordinator.confirm_detected_runs(scores)
 
     def _refresh_home(self):
         definitions = DefinitionRepository.bundled().load_active()
@@ -505,7 +671,7 @@ class MainWindow(QMainWindow):
             self.notifier.notify("New personal best!", f"You hit {pb_count} new personal best(s).")
 
     def _on_page_changed(self, index):
-        is_today = self.pages.widget(index) is self.routine_view
+        is_today = self.pages.widget(index) is self.session_view
         for widget in (
             self.difficulty_label, self.difficulty_combo,
             self.mode_label, self.mode_combo, self.refresh_btn,

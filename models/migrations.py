@@ -324,11 +324,25 @@ def add_guided_session_tables(connection: MigrationConnection) -> None:
     """)
 
 
+def add_subcategory_activity(connection: MigrationConnection) -> None:
+    """Track benchmark age in relevant completed blocks."""
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS subcategory_activity (
+            subcategory TEXT PRIMARY KEY,
+            measured INTEGER NOT NULL DEFAULT 0 CHECK(measured IN (0, 1)),
+            blocks_since_check INTEGER NOT NULL DEFAULT 0 CHECK(blocks_since_check >= 0),
+            last_benchmark_at TEXT,
+            updated_at TEXT NOT NULL
+        )
+    """)
+
+
 MIGRATIONS = (
     Migration(1, "baseline", baseline_existing_schema),
     Migration(2, "benchmark_metadata", add_benchmark_metadata_tables),
     Migration(3, "score_import_identity", add_score_import_identity),
     Migration(4, "guided_sessions", add_guided_session_tables),
+    Migration(5, "subcategory_activity", add_subcategory_activity),
 )
 
 

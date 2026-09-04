@@ -114,7 +114,7 @@ def test_source_guidance_round_trip_does_not_fill_missing_keys(db):
 def test_schema_migration_adds_session_tables(tmp_path):
     database = Database(str(tmp_path / "sessions.sqlite3"))
     try:
-        assert database.schema_version == 4
+        assert database.schema_version >= 4
         assert {
             "session_plans", "session_steps", "session_state", "session_runs"
         } <= database.table_names()

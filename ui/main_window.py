@@ -49,6 +49,7 @@ from ui.app_shell import AppShell
 from ui.status_indicator import StatusIndicator
 from ui.home import HomeWidget
 from ui.session import SessionWidget
+from ui.session_overlay import SessionOverlay
 from ui.view_models import build_home_view, build_session_view
 
 
@@ -119,6 +120,7 @@ class MainWindow(QMainWindow):
         self.home_view.start_step_by_step.connect(self._start_step_by_step_home)
         self.home_view.start_full_routine.connect(self._start_full_routine_home)
         self.session_view = SessionWidget()
+        self.session_overlay = SessionOverlay()
         self.session_repository = SessionRepository(self.db.conn)
         self.warmup_preferences = WarmupPreferenceRepository(self.db.conn)
         self.session_coordinator = SessionCoordinator(
@@ -140,10 +142,30 @@ class MainWindow(QMainWindow):
         )
         self.session_view.restart_requested.connect(self._restart_session_step)
         self.session_view.next_requested.connect(self._continue_step_by_step)
+        self.session_view.overlay_enabled_changed.connect(
+            self._set_session_overlay_enabled
+        )
         self.session_view.advance_mode.currentIndexChanged.connect(
             lambda index: setattr(
                 self.session_coordinator, "automatic_next", index == 0,
             )
+        )
+        self._overlay_enabled = (
+            self.db.get_settings_value("overlay_enabled") == "1"
+        )
+        self.session_view.overlay_checkbox.setChecked(self._overlay_enabled)
+        geometry = self.db.get_settings_value("overlay_geometry")
+        if geometry:
+            try:
+                values = json.loads(geometry)
+                self.session_overlay.setGeometry(
+                    values["x"], values["y"], values["width"], values["height"],
+                )
+            except (json.JSONDecodeError, KeyError, TypeError):
+                pass
+        self.session_overlay.pause_requested.connect(self._toggle_session_pause)
+        self.session_overlay.stop_requested.connect(
+            lambda: self.session_coordinator.stop("user")
         )
         self.dashboard = DashboardWidget(self.profile)
         self.dashboard.navigate_requested.connect(self._navigate)
@@ -508,9 +530,17 @@ class MainWindow(QMainWindow):
         self._on_session_state(state)
 
     def _on_session_state(self, state):
-        self.session_view.set_state(build_session_view(
+        view = build_session_view(
             state, self._session_evidence,
-        ))
+        )
+        self.session_view.set_state(view)
+        self.session_overlay.set_state(view)
+        if self._overlay_enabled and state.status in {
+            SessionStatus.READY, SessionStatus.RUNNING, SessionStatus.PAUSED,
+        }:
+            self.session_overlay.show()
+        else:
+            self.session_overlay.hide()
         self.statusBar().showMessage(
             f"{state.plan.source_id} · {state.status.value.replace('_', ' ').title()}"
         )
@@ -534,6 +564,17 @@ class MainWindow(QMainWindow):
             scores = tracker.poll()
             if scores:
                 self.session_coordinator.confirm_detected_runs(scores)
+
+    def _set_session_overlay_enabled(self, enabled):
+        self._overlay_enabled = bool(enabled)
+        self.db.set_settings_value("overlay_enabled", "1" if enabled else "0")
+        state = self.session_coordinator.state
+        if enabled and state and state.status in {
+            SessionStatus.READY, SessionStatus.RUNNING, SessionStatus.PAUSED,
+        }:
+            self.session_overlay.show()
+        else:
+            self.session_overlay.hide()
 
     def _refresh_home(self):
         definitions = DefinitionRepository.bundled().load_active()
@@ -789,6 +830,11 @@ class MainWindow(QMainWindow):
             "window_geometry",
             json.dumps({"width": self.width(), "height": self.height()}),
         )
+        geometry = self.session_overlay.geometry()
+        self.db.set_settings_value("overlay_geometry", json.dumps({
+            "x": geometry.x(), "y": geometry.y(),
+            "width": geometry.width(), "height": geometry.height(),
+        }))
 
     def closeEvent(self, event):
         if self._shutdown_complete:
@@ -807,6 +853,7 @@ class MainWindow(QMainWindow):
 
     def _finish_close(self, event):
         self._save_window_geometry()
+        self.session_overlay.close()
         for worker in (self._update_checker, self._update_downloader):
             if worker and worker.isRunning():
                 worker.requestInterruption()

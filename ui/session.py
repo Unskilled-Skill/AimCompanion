@@ -2,6 +2,7 @@
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QFrame,
     QHBoxLayout,
@@ -26,6 +27,7 @@ class SessionWidget(QWidget):
     stop_requested = pyqtSignal()
     restart_requested = pyqtSignal()
     next_requested = pyqtSignal()
+    overlay_enabled_changed = pyqtSignal(bool)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -82,6 +84,9 @@ class SessionWidget(QWidget):
         self.advance_mode.addItems(("Automatic with manual fallback", "Manual only"))
         self.advance_mode.setAccessibleName("Run detection mode")
         advance_row.addWidget(self.advance_mode, 1)
+        self.overlay_checkbox = QCheckBox("Show compact always-on-top panel")
+        self.overlay_checkbox.setAccessibleName("Show compact training panel")
+        advance_row.addWidget(self.overlay_checkbox)
         controls.addLayout(advance_row)
 
         actions = QHBoxLayout()
@@ -106,6 +111,7 @@ class SessionWidget(QWidget):
         self.stop_button.clicked.connect(self.stop_requested)
         self.restart_button.clicked.connect(self.restart_requested)
         self.next_button.clicked.connect(self.next_requested)
+        self.overlay_checkbox.toggled.connect(self.overlay_enabled_changed)
 
     def action_controls(self):
         return (

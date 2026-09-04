@@ -12,6 +12,9 @@ from core.notifications import NotificationManager
 from core.kovaaks_launcher import open_kovaaks
 from core.score_watcher import ScoreDirectoryWatcher
 from core.service_health import ServiceStatus
+from core.benchmarks import DefinitionRepository
+from core.coaching.freshness import BenchmarkFreshness
+from core.coaching.summary import build_coaching_summary
 from core.updater import (
     UpdateCheckWorker, UpdateDownloadWorker, automatic_updates_supported,
     is_newer_version, launch_installer,
@@ -31,6 +34,8 @@ from ui.tools import ToolsWidget
 from ui.skill_overview import SkillOverviewWidget
 from ui.app_shell import AppShell
 from ui.status_indicator import StatusIndicator
+from ui.home import HomeWidget
+from ui.view_models import build_home_view
 
 
 SCORE_MODES = {
@@ -92,6 +97,10 @@ class MainWindow(QMainWindow):
         QTimer.singleShot(5000, self._check_for_updates)
 
     def _create_views(self):
+        self.home_view = HomeWidget()
+        self.home_view.start_warmup.connect(lambda: self._quick_scenario(True))
+        self.home_view.start_step_by_step.connect(lambda: self._quick_scenario(False))
+        self.home_view.start_full_routine.connect(self._start_full_routine_home)
         self.dashboard = DashboardWidget(self.profile)
         self.dashboard.navigate_requested.connect(self._navigate)
         self.dashboard.quick_training_requested.connect(
@@ -113,10 +122,12 @@ class MainWindow(QMainWindow):
         self.aim_hub_view.train_requested.connect(self._start_training_method)
         self.tools_view = ToolsWidget(self.profile, self.db)
         self.skill_overview = SkillOverviewWidget(self.rank_profile, self.db)
+        self._refresh_home()
 
         self.progress_destination = QTabWidget()
-        self.progress_destination.addTab(self.progress_view, "Summary")
+        self.progress_destination.addTab(self.dashboard, "Summary")
         self.progress_destination.addTab(self.skill_overview, "Skills")
+        self.progress_destination.addTab(self.progress_view, "History")
         self.library_destination = QTabWidget()
         self.library_destination.addTab(self.aim_hub_view, "Training methods")
         self.library_destination.addTab(self.scenario_view, "Scenarios")
@@ -125,7 +136,7 @@ class MainWindow(QMainWindow):
         self.tools_destination.addTab(self.import_view, "Manual import")
         self.tools_destination.addTab(self.export_view, "Backup")
         self.destinations = {
-            "home": self.dashboard,
+            "home": self.home_view,
             "session": self.routine_view,
             "progress": self.progress_destination,
             "library": self.library_destination,
@@ -354,6 +365,23 @@ class MainWindow(QMainWindow):
         self.routine_view.select_training_method(method_id)
         self.statusBar().showMessage("Training method ready")
 
+    def _start_full_routine_home(self):
+        self._navigate("session")
+        self.routine_view._set_training_mode("routine")
+
+    def _refresh_home(self):
+        definitions = DefinitionRepository.bundled().load_active()
+        freshness = BenchmarkFreshness(self.db.conn).status(
+            definitions.required_subcategories
+        )
+        summary = build_coaching_summary(self.rank_profile, {}, freshness)
+        recent = tuple(
+            f"{item.get('focus') or item.get('scenario') or 'Training'} · "
+            f"{item.get('duration_minutes') or 0} min"
+            for item in self.db.get_sessions()[:3]
+        )
+        self.home_view.set_view_model(build_home_view(summary, recent))
+
     def _update_tier_label(self):
         self.tier_label.setText(self.rank_profile.overall_tier)
         self.energy_label.setText(self._overall_energy_text(self.rank_profile))
@@ -403,6 +431,7 @@ class MainWindow(QMainWindow):
             self.db, difficulty=self.difficulty, score_mode="best"
         )
         self._update_tier_label()
+        self._refresh_home()
 
         for view in (
             self.dashboard, self.progress_view,

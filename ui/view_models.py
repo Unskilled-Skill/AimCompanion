@@ -61,6 +61,19 @@ class ProgressViewModel:
     definition_version: str
 
 
+def build_home_view(summary, recent_progress=()) -> HomeViewModel:
+    return HomeViewModel(
+        rank_text=summary.rank_text,
+        next_rank_text=summary.next_rank_text,
+        headline=summary.headline,
+        evidence_text=summary.evidence.summary,
+        confidence_text=f"{summary.evidence.confidence.title()} confidence",
+        recent_progress=tuple(recent_progress),
+        weakness_text=summary.weakness_text,
+        trend_text=summary.trend_text,
+    )
+
+
 def build_session_view(
     state: SessionState,
     evidence: RecommendationEvidence | None,

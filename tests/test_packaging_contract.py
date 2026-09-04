@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+import subprocess
 
 from core import updater
 
@@ -26,3 +28,24 @@ def test_release_workflow_smoke_tests_upgrade_from_previous_installer():
     assert "NewInstaller" in smoke
     assert "ExpectedVersion" in smoke
     assert "ProductVersion" in smoke
+
+
+def test_upgrade_smoke_refuses_to_change_a_developer_machine():
+    environment = os.environ.copy()
+    environment.pop("CI", None)
+    result = subprocess.run(
+        [
+            "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+            "-File", "scripts/smoke_upgrade.ps1",
+            "-PreviousInstaller", "missing-previous.exe",
+            "-NewInstaller", "missing-new.exe",
+            "-ExpectedVersion", "9.9.9",
+        ],
+        capture_output=True,
+        check=False,
+        text=True,
+        env=environment,
+    )
+
+    assert result.returncode != 0
+    assert "disposable CI runner" in (result.stdout + result.stderr)

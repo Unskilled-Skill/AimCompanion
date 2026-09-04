@@ -8,6 +8,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+if ($env:CI -ne "true") {
+    throw "Upgrade smoke may run only on a disposable CI runner."
+}
 $ExpectedVersion = $ExpectedVersion.TrimStart('v', 'V')
 $PreviousInstaller = (Resolve-Path -LiteralPath $PreviousInstaller).Path
 $NewInstaller = (Resolve-Path -LiteralPath $NewInstaller).Path

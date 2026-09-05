@@ -74,3 +74,27 @@ def test_controls_emit_intents_without_mutating_view(qtbot):
     with qtbot.waitSignal(widget.manual_run_requested):
         widget.manual_button.click()
     assert widget.progress_text() == view.progress_text
+
+
+def test_empty_session_offers_all_training_modes(qtbot):
+    widget = SessionWidget()
+    qtbot.addWidget(widget)
+
+    assert widget.session_stack.currentWidget() is widget.empty_state
+    assert widget.warmup_button.text() == "Start warm-up"
+    assert widget.step_button.text() == "Start step-by-step"
+    assert widget.full_button.text() == "Start full routine"
+
+
+def test_starting_session_replaces_empty_state_with_complete_detail_view(qtbot):
+    widget = SessionWidget()
+    qtbot.addWidget(widget)
+    view = _view()
+
+    widget.set_state(view)
+
+    assert widget.session_stack.currentWidget() is widget.active_session
+    assert widget.guide.scenario_title.text() == "A"
+    assert "Move directly" in widget.guide.steps_label.text()
+    assert "Clean stop" in widget.guide.success_label.text()
+    assert widget.overview.count() == 3

@@ -5,7 +5,7 @@ from PyQt6.QtCore import QEvent, Qt, QTimer
 from PyQt6.QtWidgets import (
     QApplication, QButtonGroup, QComboBox, QFrame, QHBoxLayout,
     QLabel, QMainWindow, QMessageBox, QPushButton, QScrollArea,
-    QStackedWidget, QTabWidget, QVBoxLayout, QWidget,
+    QVBoxLayout, QWidget,
 )
 
 from core.analyzer import build_profile
@@ -147,6 +147,13 @@ class MainWindow(QMainWindow):
         )
         self.session_view.restart_requested.connect(self._restart_session_step)
         self.session_view.next_requested.connect(self._continue_step_by_step)
+        self.session_view.warmup_requested.connect(self._start_warmup_home)
+        self.session_view.step_by_step_requested.connect(
+            self._start_step_by_step_home
+        )
+        self.session_view.full_routine_requested.connect(
+            self._start_full_routine_home
+        )
         self.session_view.recheck_scenario_requested.connect(
             self._refresh_scenario_availability
         )
@@ -264,6 +271,7 @@ class MainWindow(QMainWindow):
         self.pages = self.shell.pages
         self.page_indexes = self.shell.page_indexes
         self.nav_buttons = self.shell.nav_buttons
+        self.shell.destination_changed.connect(self._update_destination_heading)
         self.pages.currentChanged.connect(self._on_page_changed)
         self._update_tier_label()
         for status in self.service_health.all().values():
@@ -431,6 +439,10 @@ class MainWindow(QMainWindow):
         if destination not in self.page_indexes:
             return
         self.shell.navigate(destination)
+        if destination == "library":
+            self.scenario_view.refresh_installed()
+
+    def _update_destination_heading(self, destination):
         title, subtitle = {
             "home": ("Home", "Your coaching conclusion and next training action"),
             "session": ("Session", "Follow the current scenario and source-backed guide"),
@@ -440,8 +452,6 @@ class MainWindow(QMainWindow):
         }[destination]
         self.page_title.setText(title)
         self.page_subtitle.setText(subtitle)
-        if destination == "library":
-            self.scenario_view.refresh_installed()
 
     def _quick_scenario(self, warmup=False):
         if warmup:

@@ -862,6 +862,182 @@ QToolButton#quietButton {
     padding: 8px 14px;
 }
 
+/* Guided session */
+QStackedWidget#sessionStack,
+QWidget#sessionEmptyState,
+QWidget#sessionContent,
+QScrollArea#sessionScroll,
+QScrollArea#sessionScroll > QWidget > QWidget {
+    background: transparent;
+    border: none;
+}
+
+QFrame#sessionEmptyHero,
+QFrame#sessionHero {
+    background-color: #121b30;
+    border: 1px solid #2a3854;
+    border-radius: 13px;
+}
+
+QFrame#sessionHero {
+    border-left: 3px solid #8b9cfb;
+}
+
+QLabel#sessionEyebrow,
+QLabel#sessionGuideSectionTitle {
+    color: #8fa4cf;
+    font-size: 8pt;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+QLabel#sessionEmptyTitle {
+    color: #f7f9fd;
+    font-size: 22pt;
+    font-weight: 800;
+}
+
+QLabel#sessionTitle {
+    color: #f7f9fd;
+    font-size: 18pt;
+    font-weight: 780;
+}
+
+QLabel#sessionModeTitle,
+QLabel#sessionQueueTitle {
+    color: #f1f4fa;
+    font-size: 13pt;
+    font-weight: 750;
+}
+
+QLabel#sessionSupportingText,
+QLabel#sessionPosition,
+QLabel#sessionOptionLabel {
+    color: #9eabc0;
+}
+
+QFrame#sessionModeCard,
+QFrame#sessionGuideCard,
+QFrame#sessionQueueCard,
+QFrame#sessionControls {
+    background-color: #10192b;
+    border: 1px solid #273550;
+    border-radius: 12px;
+}
+
+QFrame#sessionModeCard[featured="true"] {
+    background-color: #151f38;
+    border: 1px solid #6677d9;
+}
+
+QFrame#sessionProgressSummary {
+    background-color: #0c1528;
+    border: 1px solid #2d3b58;
+    border-radius: 9px;
+    min-width: 190px;
+}
+
+QLabel#sessionStatusPill {
+    color: #a6e3a1;
+    font-size: 9pt;
+    font-weight: 850;
+    letter-spacing: 1px;
+}
+
+QLabel#sessionScenarioTitle {
+    color: #ffffff;
+    font-size: 21pt;
+    font-weight: 800;
+}
+
+QFrame#sessionGuideSection {
+    background-color: #0c1527;
+    border: 1px solid #25334c;
+    border-radius: 8px;
+}
+
+QLabel#sessionGuideSectionBody {
+    color: #d9e0ec;
+    font-size: 10pt;
+    line-height: 1.35;
+}
+
+QProgressBar#sessionRunProgress {
+    background-color: #091120;
+    color: #eef0ff;
+    border: 1px solid #324361;
+    border-radius: 7px;
+    min-height: 22px;
+    font-weight: 750;
+}
+
+QProgressBar#sessionRunProgress::chunk {
+    background-color: #7889ef;
+    border-radius: 6px;
+}
+
+QPushButton#sessionSourceButton {
+    background: transparent;
+    color: #aeb8ff;
+    border: 1px solid #39486a;
+    padding: 7px 12px;
+}
+
+QPushButton#sessionSourceButton:hover {
+    background-color: #1a2640;
+    border-color: #7889ef;
+}
+
+QListWidget#sessionRoutineList {
+    background-color: #0b1425;
+    border: none;
+    border-radius: 8px;
+    padding: 6px;
+    min-width: 340px;
+}
+
+QListWidget#sessionRoutineList::item {
+    color: #cdd5e4;
+    border-bottom: 1px solid #202d44;
+    border-radius: 5px;
+    padding: 11px 9px;
+}
+
+QListWidget#sessionRoutineList::item:hover {
+    background-color: #16223a;
+}
+
+QListWidget#sessionRoutineList::item:selected {
+    background-color: #202d4d;
+    color: #f3f5ff;
+    border-left: 3px solid #8b9cfb;
+}
+
+QLabel#sessionWarning {
+    background-color: #2a2015;
+    color: #f4d39a;
+    border: 1px solid #604b2d;
+    border-radius: 7px;
+    padding: 10px 12px;
+}
+
+QPushButton#dangerButton {
+    background-color: #211722;
+    color: #f2b8c0;
+    border-color: #5c3441;
+}
+
+QPushButton#dangerButton:hover {
+    background-color: #3a2029;
+    border-color: #a15364;
+}
+
+QPushButton#dangerButton:disabled {
+    background-color: #17151d;
+    color: #654e58;
+    border-color: #30232a;
+}
+
 /* QLabel inherits QFrame in Qt. Keep generic frame rules away from text. */
 QLabel {
     background: transparent;

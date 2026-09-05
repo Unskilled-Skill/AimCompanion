@@ -31,7 +31,8 @@ def test_home_full_routine_opens_guided_source_backed_session(
         assert isinstance(window.shell.currentWidget(), SessionWidget)
         assert window.session_view.overview.count() == 7
         assert "hnA TacFPS" in window.session_view.title_label.text()
-        assert "What to do" in window.session_view.guide.steps_label.text()
+        assert window.session_view.guide.steps_label.accessibleName() == "What to do"
+        assert window.session_view.guide.steps_label.text()
         assert window.session_view.guide.source_link.isEnabled()
     finally:
         window.close()
@@ -48,5 +49,36 @@ def test_home_training_modes_create_real_session_plans(
         window.home_view.step_button.click()
         assert window.session_coordinator.state.plan.mode.value == "step_by_step"
         assert window.session_view.overview.count() == 1
+    finally:
+        window.close()
+
+
+def test_sidebar_session_navigation_updates_page_heading(
+    qtbot, monkeypatch, tmp_path,
+):
+    window = _window(qtbot, monkeypatch, tmp_path)
+    try:
+        window.shell.nav_buttons["session"].click()
+
+        assert window.shell.currentWidget() is window.session_view
+        assert window.page_title.text() == "Session"
+        assert "current scenario" in window.page_subtitle.text().casefold()
+    finally:
+        window.close()
+
+
+def test_empty_session_quick_start_creates_real_session_plan(
+    qtbot, monkeypatch, tmp_path,
+):
+    window = _window(qtbot, monkeypatch, tmp_path)
+    try:
+        window.shell.nav_buttons["session"].click()
+        window.session_view.step_button.click()
+
+        assert window.session_coordinator.state is not None
+        assert window.session_coordinator.state.plan.mode.value == "step_by_step"
+        assert window.session_view.session_stack.currentWidget() is (
+            window.session_view.active_session
+        )
     finally:
         window.close()

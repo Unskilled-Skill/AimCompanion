@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Literal
 
+from core.benchmarks.definitions import normalize_alias
+from models.score import Score
+
 
 @dataclass(frozen=True)
 class FreshnessState:
@@ -59,6 +62,74 @@ class BenchmarkFreshness:
                     last_benchmark_at = excluded.last_benchmark_at,
                     updated_at = excluded.updated_at
             """, (name, timestamp, timestamp))
+
+    def reconcile(self, scores: list["Score"], definitions=None) -> set[str]:
+        """Refresh official subcategories only when a newer score is available.
+
+        When definitions are supplied, only scores matching that official
+        benchmark set are eligible. Historical scores are idempotent so later
+        training blocks remain counted toward the next freshness check.
+
+        Returns the set of subcategory keys that were written/refreshed.
+        """
+
+        scored: dict[str, str] = {}
+        official = None
+        if definitions is not None:
+            official = {}
+            for benchmark in definitions.benchmarks:
+                for alias in (
+                    benchmark.name, benchmark.scenario, *benchmark.aliases,
+                ):
+                    official[normalize_alias(alias)] = benchmark
+
+        for score in scores:
+            if not isinstance(score, Score):
+                continue
+            benchmark = None
+            if official is not None:
+                for candidate in (score.benchmark_name, score.scenario):
+                    benchmark = official.get(normalize_alias(candidate))
+                    if benchmark is not None:
+                        break
+                if benchmark is None or (
+                    score.difficulty.casefold() != benchmark.difficulty.casefold()
+                ):
+                    continue
+            cat = benchmark.category if benchmark else getattr(score, "category", "")
+            sub = benchmark.subcategory if benchmark else getattr(score, "subcategory", "")
+            if not cat or not sub or cat == "Unknown" or sub == "Unknown":
+                continue
+            key = f"{cat} / {sub}"
+            ts = score.timestamp.isoformat(timespec="seconds")
+            if key not in scored or ts > scored[key]:
+                scored[key] = ts
+
+        refreshed = set()
+        with self.connection:
+            for key, ts in scored.items():
+                row = self.connection.execute(
+                    "SELECT last_benchmark_at FROM subcategory_activity "
+                    "WHERE subcategory = ?",
+                    (key,),
+                ).fetchone()
+                if row is not None and row["last_benchmark_at"] is not None:
+                    if str(row["last_benchmark_at"]) >= ts:
+                        continue
+                self.connection.execute("""
+                    INSERT INTO subcategory_activity (
+                        subcategory, measured, blocks_since_check,
+                        last_benchmark_at, updated_at
+                    ) VALUES (?, 1, 0, ?, ?)
+                    ON CONFLICT(subcategory) DO UPDATE SET
+                        measured = 1,
+                        blocks_since_check = 0,
+                        last_benchmark_at = excluded.last_benchmark_at,
+                        updated_at = excluded.updated_at
+                """, (key, ts, ts))
+                refreshed.add(key)
+
+        return refreshed
 
     def status(self, required_subcategories) -> dict[str, FreshnessState]:
         names = tuple(dict.fromkeys(str(name).strip() for name in required_subcategories))

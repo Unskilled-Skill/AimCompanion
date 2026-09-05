@@ -38,10 +38,12 @@ def build_coaching_summary(
     trend = trends.get(weakness)
     due = [state for state in freshness.values() if state.due]
     confidence = "low" if any(not item.measured for item in due) else "medium" if due else "high"
-    headline = (
-        "Complete the due benchmark check before weakness training"
-        if due else f"Train {weakness} next"
-    )
+    if due:
+        remaining = len(due) - 1
+        suffix = f" + {remaining} more" if remaining else ""
+        headline = f"Benchmark check: {due[0].subcategory}{suffix}"
+    else:
+        headline = f"Train {weakness} next"
     overall = profile.overall_energy
     definitions = DefinitionRepository.bundled().load_active()
     next_rank = next(

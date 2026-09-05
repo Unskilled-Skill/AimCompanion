@@ -165,6 +165,48 @@ def build_warmup_plan(context: str, target_id: str) -> SessionPlan:
     )
 
 
+def build_benchmark_check_plan(
+    definitions, due_subcategories: Sequence[str], difficulty: str,
+) -> SessionPlan:
+    due = set(due_subcategories)
+    ordered = tuple(
+        item for key in definitions.required_subcategories
+        if key in due
+        for item in definitions.benchmarks
+        if (
+            f"{item.category} / {item.subcategory}" == key
+            and item.difficulty.casefold() == difficulty.casefold()
+        )
+    )
+    if not ordered:
+        raise ValueError("no official benchmark scenarios match the due areas")
+    steps = tuple(
+        SessionStep(
+            scenario=item.scenario,
+            required_runs=1,
+            estimated_seconds=60,
+            category=item.category,
+            subcategory=item.subcategory,
+            guide={
+                "purpose": f"Refresh the official {item.category} / {item.subcategory} benchmark.",
+                "setup": "Use your normal benchmark sensitivity and settings.",
+                "steps": ["Complete one scored benchmark run with your normal technique."],
+                "success": "Finish the run so Kovaak's writes a result for Aim Companion to import.",
+            },
+            source=f"Voltaic {definitions.version} benchmark",
+            source_url=definitions.source_url,
+        )
+        for item in ordered
+    )
+    return SessionPlan(
+        mode=SessionMode.STEP_BY_STEP,
+        source_id=f"Aim Companion {difficulty} Benchmark Check",
+        source_version=definitions.version,
+        steps=steps,
+        official_steps=steps,
+    )
+
+
 def append_step_by_step_recommendation(state: SessionState, recommendation) -> SessionState:
     if state.plan.mode is not SessionMode.STEP_BY_STEP:
         raise ValueError("recommendations can only extend step-by-step sessions")

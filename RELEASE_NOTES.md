@@ -1,3 +1,20 @@
+# Aim Companion 2.0.4
+
+This update connects imported benchmark results to coaching readiness and
+turns benchmark recommendations into complete Kovaak's playlists.
+
+## Benchmark coaching
+
+- Reconciles existing and newly imported official benchmark scores with the
+  exact subcategory freshness records used by recommendations.
+- Keeps reconciliation timestamp-aware so old scores cannot erase training
+  completed after a benchmark.
+- Names the next due benchmark area instead of repeating a generic prompt.
+- Builds a Kovaak's playlist and matching guided session containing every
+  official scenario currently due at the selected difficulty.
+- Switches Home back to weakness training as soon as benchmark coverage is
+  current.
+
 # Aim Companion 2.0.3
 
 This update restores reliable Windows taskbar and shortcut icon association.

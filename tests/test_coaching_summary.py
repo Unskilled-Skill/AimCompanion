@@ -46,3 +46,23 @@ def test_summary_lowers_confidence_when_benchmark_is_due():
     summary = build_coaching_summary(profile, {}, freshness)
     assert summary.evidence.confidence == "low"
     assert "benchmark" in summary.headline.casefold()
+
+
+def test_due_benchmark_headline_names_the_next_area_and_remaining_count():
+    profile = PlayerProfile(
+        categories=[], overall_energy=None, overall_tier="Unranked",
+        definition_version="kovaaks_s5", calculation_method="voltaic_official",
+    )
+    freshness = {
+        "Clicking / Static": FreshnessState(
+            "Clicking / Static", False, 0, True, "missing",
+        ),
+        "Tracking / Reactive": FreshnessState(
+            "Tracking / Reactive", False, 0, True, "missing",
+        ),
+    }
+
+    summary = build_coaching_summary(profile, {}, freshness)
+
+    assert "Clicking / Static" in summary.headline
+    assert "1 more" in summary.headline

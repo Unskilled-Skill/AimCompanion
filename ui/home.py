@@ -243,3 +243,19 @@ class HomeWidget(QWidget):
             "\n".join(view_model.recent_progress)
             if view_model.recent_progress else "No completed sessions yet"
         )
+
+    def set_benchmark_recommendation(self, due_count: int):
+        if due_count > 0:
+            noun = "area" if due_count == 1 else "areas"
+            self.step_button.setText("Start benchmark playlist")
+            self.step_button.setAccessibleName("Start benchmark playlist")
+            self.step_description.setText(
+                f"Create and run the official scenarios for {due_count} due "
+                f"benchmark {noun}."
+            )
+            return
+        self.step_button.setText("Step-by-Step Training")
+        self.step_button.setAccessibleName("Start Step-by-Step Training")
+        self.step_description.setText(
+            "Get one scenario at a time, selected around your current weakness."
+        )

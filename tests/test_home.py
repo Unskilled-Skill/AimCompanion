@@ -74,3 +74,16 @@ def test_home_view_model_populates_compact_focus_summary(qtbot):
     assert home.weakness_value.text() == "Clicking / Static"
     assert home.confidence_value.text() == "High confidence"
     assert home.readiness_value.text() == "Next: Gold at 400 energy"
+
+
+def test_benchmark_recommendation_exposes_playlist_action(qtbot):
+    home = HomeWidget()
+    qtbot.addWidget(home)
+
+    home.set_benchmark_recommendation(9)
+
+    assert home.step_button.text() == "Start benchmark playlist"
+    assert "9" in home.step_description.text()
+
+    home.set_benchmark_recommendation(0)
+    assert home.step_button.text() == "Step-by-Step Training"

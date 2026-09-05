@@ -26,9 +26,11 @@ from core.scenario_installer import ScenarioAvailability, build_install_guide
 from core.session_coordinator import SessionCoordinator
 from core.sessions import (
     SessionMode, SessionPlan, SessionState, SessionStatus,
-    append_step_by_step_recommendation, build_full_routine_plan,
+    append_step_by_step_recommendation, build_benchmark_check_plan,
+    build_full_routine_plan,
     build_warmup_plan,
 )
+from core.playlist_export import export_playlist
 from core.sessions.repository import SessionRepository, WarmupPreferenceRepository
 from core.updater import (
     UpdateCheckWorker, UpdateDownloadWorker, automatic_updates_supported,
@@ -100,6 +102,7 @@ class MainWindow(QMainWindow):
 
         self._create_views()
         self._build_shell()
+        self._seed_freshness_on_startup()
         self.session_poll_timer = QTimer(self)
         self.session_poll_timer.timeout.connect(self._poll_session_runs)
         self.session_poll_timer.start(1000)
@@ -484,6 +487,41 @@ class MainWindow(QMainWindow):
 
     def _start_step_by_step_home(self):
         recommendation = self._next_recommendation()
+        if recommendation.kind == "benchmark_check":
+            definitions = DefinitionRepository.bundled().load_active()
+            freshness = BenchmarkFreshness(self.db.conn).status(
+                definitions.required_subcategories
+            )
+            due = tuple(
+                name for name, state in freshness.items() if state.due
+            )
+            plan = build_benchmark_check_plan(
+                definitions, due, self.difficulty,
+            )
+            playlist_path = None
+            playlist_error = None
+            try:
+                playlist_path = export_playlist(
+                    [
+                        {"name": step.scenario, "count": step.required_runs}
+                        for step in plan.steps
+                    ],
+                    name=plan.source_id,
+                )
+            except OSError as error:
+                playlist_error = error
+            self._session_evidence = recommendation.evidence
+            self._start_session(plan)
+            if playlist_error is not None:
+                self.statusBar().showMessage(
+                    f"Benchmark session ready, but playlist export failed: "
+                    f"{playlist_error}"
+                )
+            elif playlist_path:
+                self.statusBar().showMessage(
+                    f"Benchmark playlist ready: {playlist_path}"
+                )
+            return
         timestamp = datetime.now(timezone.utc)
         draft = SessionState(
             plan=SessionPlan(
@@ -633,6 +671,9 @@ class MainWindow(QMainWindow):
             for item in self.db.get_sessions()[:3]
         )
         self.home_view.set_view_model(build_home_view(summary, recent))
+        self.home_view.set_benchmark_recommendation(
+            sum(state.due for state in freshness.values())
+        )
 
     def _refresh_progress_hub(self):
         definitions = DefinitionRepository.bundled().load_active()
@@ -651,6 +692,28 @@ class MainWindow(QMainWindow):
             missing_subcategories=missing,
             definition_version=definitions.version,
         ))
+
+    def _seed_freshness_on_startup(self):
+        """Seed benchmark freshness from newer pre-existing official scores.
+
+        Users who imported Voltaic benchmarks before this fix had valid scores
+        sitting in the DB but zero subcategory_activity rows. Reconciliation is
+        timestamp-aware, so repeated startup checks do not erase later blocks.
+        """
+        if self.home_view is None or not hasattr(self, "db") or self.db is None:
+            return
+
+        definitions = DefinitionRepository.bundled().load_active()
+        all_scores = self.db.get_all_scores()
+        if not all_scores:
+            return
+
+        reconciled = BenchmarkFreshness(self.db.conn).reconcile(
+            all_scores, definitions,
+        )
+        if reconciled:
+            # Rebuild profile so ranking reflects the newly-measured categories
+            self._rebuild_profile()
 
     def _update_tier_label(self):
         self.tier_label.setText(self.rank_profile.overall_tier)
@@ -732,6 +795,10 @@ class MainWindow(QMainWindow):
     def _on_sync_complete(self, result):
         self.refresh_btn.setEnabled(True)
         self.refresh_btn.setText("Sync scores")
+        # Reconcile freshness table with imported/imported-then-existing scores
+        if result.imported > 0 or result.updated > 0:
+            self._reconcile_freshness()
+
         self._rebuild_profile()
         self._check_new_pbs()
         if result.failed:
@@ -752,6 +819,18 @@ class MainWindow(QMainWindow):
                 "scores", "ok", "Scores are current",
                 f"{result.imported} new and {result.updated} updated scores imported.",
             ))
+
+    def _reconcile_freshness(self):
+        """Seed benchmark-freshness table with whatever scores are already in the database.
+
+        After a score import we walk every stored Score row through the official
+        calculator so its (category / subcategory) is marked as ``measured=1`` in
+        the freshness table.  That immediately stops the coach from saying
+        "complete benchmark scenarios" when valid scores already exist.
+        """
+        definitions = DefinitionRepository.bundled().load_active()
+        all_scores = self.db.get_all_scores()
+        BenchmarkFreshness(self.db.conn).reconcile(all_scores, definitions)
 
     def _on_sync_failed(self, message):
         self.refresh_btn.setEnabled(True)

@@ -4,6 +4,7 @@ from .engine import InvalidSessionTransition, SessionEngine
 from .builders import (
     build_full_routine_plan,
     build_warmup_plan,
+    build_benchmark_check_plan,
     append_step_by_step_recommendation,
     next_full_routine_resume,
 )
@@ -21,6 +22,7 @@ __all__ = [
     "InvalidSessionTransition",
     "build_full_routine_plan",
     "build_warmup_plan",
+    "build_benchmark_check_plan",
     "append_step_by_step_recommendation",
     "next_full_routine_resume",
     "SessionEngine",

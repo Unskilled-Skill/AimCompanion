@@ -4,7 +4,9 @@ from pathlib import Path
 import pytest
 
 from core.sessions import SessionMode
+from core.sessions import builders
 from core.sessions.builders import build_full_routine_plan, build_warmup_plan
+from core.benchmarks import DefinitionRepository
 from core.warmups import GAME_WARMUP_ROUTINES
 
 
@@ -82,3 +84,22 @@ def test_game_warmup_uses_exact_selected_context_without_prompt():
 def test_unknown_warmup_context_is_rejected():
     with pytest.raises(ValueError, match="warm-up context"):
         build_warmup_plan("unknown", "anything")
+
+
+def test_benchmark_check_plan_contains_every_due_official_scenario():
+    definitions = DefinitionRepository.bundled().load_active()
+
+    plan = builders.build_benchmark_check_plan(
+        definitions,
+        ("Clicking / Static", "Tracking / Reactive"),
+        "Novice",
+    )
+
+    assert plan.mode is SessionMode.STEP_BY_STEP
+    assert [step.scenario for step in plan.steps] == [
+        "VT 1w4ts Novice S5",
+        "VT ww5t Novice S5",
+        "VT Aether Novice S5",
+        "VT Ground Novice S5",
+    ]
+    assert all(step.required_runs == 1 for step in plan.steps)

@@ -1,3 +1,20 @@
+# Aim Companion 2.0.2
+
+This update makes guided sessions easier to read and control without removing
+any routine or coaching detail.
+
+## Session workspace refresh
+
+- Reorganized the active session into a prominent routine summary, complete
+  current-scenario guide, full routine queue, and clearly grouped controls.
+- Kept every source-backed purpose, setup step, instruction, success criterion,
+  adjustment, progress value, routine item, source link, and session action.
+- Added a polished empty state with direct Warm-up, Step-by-Step, and Full
+  Routine starts.
+- Made the routine queue read-only, added status-specific visual states, and
+  kept all controls visible at narrow and high-scale window sizes.
+- Fixed sidebar navigation so the top heading always matches the selected area.
+
 # Aim Companion 2.0.1
 
 This update gives Home a cleaner, user-first coaching dashboard.

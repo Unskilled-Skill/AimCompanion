@@ -3,6 +3,7 @@
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QAbstractItemView,
+    QBoxLayout,
     QCheckBox,
     QComboBox,
     QFrame,
@@ -186,7 +187,8 @@ class SessionWidget(QWidget):
         header_layout.addWidget(summary)
         layout.addWidget(header)
 
-        workspace = QHBoxLayout()
+        self.workspace_layout = QBoxLayout(QBoxLayout.Direction.LeftToRight)
+        workspace = self.workspace_layout
         workspace.setSpacing(14)
         self.guide_panel = QFrame()
         self.guide_panel.setObjectName("sessionGuideCard")
@@ -291,6 +293,17 @@ class SessionWidget(QWidget):
         scroll.setWidget(content)
         root.addWidget(scroll)
         return page
+
+    def resizeEvent(self, event):
+        """Stack guide and queue before either can force horizontal scrolling."""
+        direction = (
+            QBoxLayout.Direction.TopToBottom
+            if event.size().width() < 1200
+            else QBoxLayout.Direction.LeftToRight
+        )
+        if self.workspace_layout.direction() != direction:
+            self.workspace_layout.setDirection(direction)
+        super().resizeEvent(event)
 
     def action_controls(self):
         return (

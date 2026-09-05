@@ -1,8 +1,9 @@
 from dataclasses import replace
 from datetime import datetime, timezone
+from pathlib import Path
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QAbstractItemView
+from PyQt6.QtWidgets import QApplication, QAbstractItemView, QBoxLayout
 
 from core.sessions import SessionEngine, SessionMode, SessionPlan, SessionStep
 from ui.session import SessionWidget
@@ -103,14 +104,23 @@ def test_starting_session_replaces_empty_state_with_complete_detail_view(qtbot):
 
 
 def test_active_session_keeps_controls_visible_without_horizontal_scroll(qtbot):
-    widget = SessionWidget()
-    qtbot.addWidget(widget)
-    widget.resize(900, 720)
-    widget.set_state(_view())
-    widget.show()
-    qtbot.waitExposed(widget)
+    app = QApplication.instance()
+    previous_style = app.styleSheet()
+    app.setStyleSheet(Path("style.qss").read_text(encoding="utf-8"))
+    try:
+        widget = SessionWidget()
+        qtbot.addWidget(widget)
+        widget.resize(900, 720)
+        widget.set_state(_view())
+        widget.show()
+        qtbot.waitExposed(widget)
 
-    assert widget.session_scroll.horizontalScrollBar().maximum() == 0
+        assert widget.workspace_layout.direction() == (
+            QBoxLayout.Direction.TopToBottom
+        )
+        assert widget.session_scroll.horizontalScrollBar().maximum() == 0
+    finally:
+        app.setStyleSheet(previous_style)
 
 
 def test_routine_queue_cannot_create_a_false_selection(qtbot):

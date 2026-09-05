@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
+import re
 import subprocess
 
 from core import updater
+from core.version import VERSION
 
 
 def test_spec_collects_versioned_benchmark_data():
@@ -13,6 +15,21 @@ def test_spec_collects_versioned_benchmark_data():
 def test_installer_and_updater_expect_same_asset_name():
     assert updater.INSTALLER_ASSET == "AimCompanion-Setup.exe"
     assert "AimCompanion-Setup" in Path("installer.iss").read_text(encoding="utf-8")
+
+
+def test_windows_numeric_file_versions_match_application_version():
+    text = Path("version_info.txt").read_text(encoding="utf-8")
+    numeric_version = tuple(int(part) for part in VERSION.split(".")) + (0,)
+
+    filevers = tuple(int(part.strip()) for part in re.search(
+        r"filevers=\(([^)]+)\)", text,
+    ).group(1).split(","))
+    prodvers = tuple(int(part.strip()) for part in re.search(
+        r"prodvers=\(([^)]+)\)", text,
+    ).group(1).split(","))
+
+    assert filevers == numeric_version
+    assert prodvers == numeric_version
 
 
 def test_release_workflow_smoke_tests_upgrade_from_previous_installer():

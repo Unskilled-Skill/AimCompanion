@@ -11,6 +11,13 @@ from core.benchmarks.definitions import normalize_alias
 from models.score import Score
 
 
+def _as_utc(value: datetime | str) -> datetime:
+    timestamp = datetime.fromisoformat(value) if isinstance(value, str) else value
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.astimezone()
+    return timestamp.astimezone(timezone.utc)
+
+
 @dataclass(frozen=True)
 class FreshnessState:
     subcategory: str
@@ -73,7 +80,7 @@ class BenchmarkFreshness:
         Returns the set of subcategory keys that were written/refreshed.
         """
 
-        scored: dict[str, str] = {}
+        scored: dict[str, datetime] = {}
         official = None
         if definitions is not None:
             official = {}
@@ -101,7 +108,7 @@ class BenchmarkFreshness:
             if not cat or not sub or cat == "Unknown" or sub == "Unknown":
                 continue
             key = f"{cat} / {sub}"
-            ts = score.timestamp.isoformat(timespec="seconds")
+            ts = _as_utc(score.timestamp)
             if key not in scored or ts > scored[key]:
                 scored[key] = ts
 
@@ -114,8 +121,9 @@ class BenchmarkFreshness:
                     (key,),
                 ).fetchone()
                 if row is not None and row["last_benchmark_at"] is not None:
-                    if str(row["last_benchmark_at"]) >= ts:
+                    if _as_utc(str(row["last_benchmark_at"])) >= ts:
                         continue
+                timestamp = ts.isoformat()
                 self.connection.execute("""
                     INSERT INTO subcategory_activity (
                         subcategory, measured, blocks_since_check,
@@ -126,7 +134,7 @@ class BenchmarkFreshness:
                         blocks_since_check = 0,
                         last_benchmark_at = excluded.last_benchmark_at,
                         updated_at = excluded.updated_at
-                """, (key, ts, ts))
+                """, (key, timestamp, timestamp))
                 refreshed.add(key)
 
         return refreshed

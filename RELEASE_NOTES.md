@@ -1,3 +1,15 @@
+# Aim Companion 2.0.5
+
+This maintenance update makes benchmark freshness comparisons reliable in
+every Windows timezone and keeps the hosted verification suite deterministic.
+
+## Reliability
+
+- Compares benchmark timestamps as real UTC instants instead of formatted
+  strings, so equivalent timestamps with different offsets stay idempotent.
+- Preserves subcategory training-block counts when an already-seen benchmark
+  result is reconciled again.
+
 # Aim Companion 2.0.4
 
 This update connects imported benchmark results to coaching readiness and

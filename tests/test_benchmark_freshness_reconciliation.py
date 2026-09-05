@@ -1,6 +1,7 @@
 """Tests for benchmark-freshness reconciliation with imported scores."""
 
 from datetime import datetime as dt
+from datetime import timedelta, timezone
 
 import pytest
 
@@ -28,7 +29,14 @@ def _calculator():
         return None
 
 
-def _make_score(benchmark_name, category, subcategory, difficulty="Novice", score=100.0):
+def _make_score(
+    benchmark_name,
+    category,
+    subcategory,
+    difficulty="Novice",
+    score=100.0,
+    timestamp=None,
+):
     return Score(
         benchmark_name=benchmark_name,
         scenario=benchmark_name,
@@ -36,7 +44,7 @@ def _make_score(benchmark_name, category, subcategory, difficulty="Novice", scor
         subcategory=subcategory,
         difficulty=difficulty,
         score=score,
-        timestamp=dt.now(),
+        timestamp=timestamp or dt.now(),
     )
 
 
@@ -160,7 +168,12 @@ def test_reconcile_updates_blocks_since_check_to_zero():
         assert pre.due is False  # 5 < 12
 
         # Now reconcile with an imported score
-        freshness.reconcile([_make_score("VT Pasu Novice S5", "Clicking", "Dynamic")])
+        freshness.reconcile([_make_score(
+            "VT Pasu Novice S5",
+            "Clicking",
+            "Dynamic",
+            timestamp=dt.now(timezone.utc) + timedelta(seconds=1),
+        )])
 
         post = freshness.status(["Clicking / Dynamic"])["Clicking / Dynamic"]
         assert post.blocks_since_check == 0
@@ -197,6 +210,40 @@ def test_old_score_does_not_reset_blocks_completed_after_that_benchmark():
             freshness.record_block(["Clicking / Dynamic"], warmup=False)
 
         refreshed = freshness.reconcile([score])
+
+        assert refreshed == set()
+        assert freshness.status(["Clicking / Dynamic"])[
+            "Clicking / Dynamic"
+        ].blocks_since_check == 5
+    finally:
+        database.close()
+
+
+def test_reconcile_compares_timezone_aware_timestamps_as_instants():
+    database, freshness = _freshness()
+    try:
+        database.conn.execute("""
+            INSERT INTO subcategory_activity (
+                subcategory, measured, blocks_since_check,
+                last_benchmark_at, updated_at
+            ) VALUES (?, 1, 5, ?, ?)
+        """, (
+            "Clicking / Dynamic",
+            "2026-01-01T12:00:00+00:00",
+            "2026-01-01T12:00:00+00:00",
+        ))
+        database.conn.commit()
+        same_instant = dt(
+            2026, 1, 1, 13, 0, 0,
+            tzinfo=timezone(timedelta(hours=1)),
+        )
+
+        refreshed = freshness.reconcile([_make_score(
+            "VT Pasu Novice S5",
+            "Clicking",
+            "Dynamic",
+            timestamp=same_instant,
+        )])
 
         assert refreshed == set()
         assert freshness.status(["Clicking / Dynamic"])[

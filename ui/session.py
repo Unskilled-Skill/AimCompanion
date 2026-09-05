@@ -2,6 +2,7 @@
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
+    QAbstractItemView,
     QCheckBox,
     QComboBox,
     QFrame,
@@ -142,7 +143,8 @@ class SessionWidget(QWidget):
         page = QWidget()
         root = QVBoxLayout(page)
         root.setContentsMargins(0, 0, 0, 0)
-        scroll = QScrollArea()
+        self.session_scroll = QScrollArea()
+        scroll = self.session_scroll
         scroll.setObjectName("sessionScroll")
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
@@ -227,6 +229,9 @@ class SessionWidget(QWidget):
         self.overview = QListWidget()
         self.overview.setObjectName("sessionRoutineList")
         self.overview.setAccessibleName("Full routine overview")
+        self.overview.setSelectionMode(
+            QAbstractItemView.SelectionMode.NoSelection
+        )
         overview_layout.addWidget(queue_eyebrow)
         overview_layout.addWidget(self.queue_title)
         overview_layout.addWidget(self.queue_summary)
@@ -243,22 +248,19 @@ class SessionWidget(QWidget):
         advance_row.setSpacing(10)
         options_label = QLabel("SESSION OPTIONS")
         options_label.setObjectName("sessionEyebrow")
-        advance_row.addWidget(options_label)
-        advance_row.addStretch()
+        controls.addWidget(options_label)
         detection_label = QLabel("Run detection")
         detection_label.setObjectName("sessionOptionLabel")
         advance_row.addWidget(detection_label)
         self.advance_mode = QComboBox()
         self.advance_mode.addItems(("Automatic with manual fallback", "Manual only"))
         self.advance_mode.setAccessibleName("Run detection mode")
-        advance_row.addWidget(self.advance_mode)
+        advance_row.addWidget(self.advance_mode, 1)
+        controls.addLayout(advance_row)
         self.overlay_checkbox = QCheckBox("Show compact always-on-top panel")
         self.overlay_checkbox.setAccessibleName("Show compact training panel")
-        advance_row.addWidget(self.overlay_checkbox)
-        controls.addLayout(advance_row)
+        controls.addWidget(self.overlay_checkbox)
 
-        actions = QHBoxLayout()
-        actions.setSpacing(8)
         self.launch_button = QPushButton("Launch in KovaaK's")
         self.launch_button.setObjectName("primaryButton")
         self.manual_button = QPushButton("Count completed run")
@@ -270,8 +272,20 @@ class SessionWidget(QWidget):
         for button in self.action_controls():
             button.setAccessibleName(button.text())
             button.setCursor(Qt.CursorShape.PointingHandCursor)
-            actions.addWidget(button)
-        controls.addLayout(actions)
+        primary_actions = QHBoxLayout()
+        primary_actions.setSpacing(8)
+        for button in (
+            self.launch_button, self.manual_button, self.pause_button,
+        ):
+            primary_actions.addWidget(button, 1)
+        controls.addLayout(primary_actions)
+        secondary_actions = QHBoxLayout()
+        secondary_actions.setSpacing(8)
+        for button in (
+            self.restart_button, self.next_button, self.stop_button,
+        ):
+            secondary_actions.addWidget(button, 1)
+        controls.addLayout(secondary_actions)
         layout.addWidget(self.controls_panel)
 
         scroll.setWidget(content)
@@ -294,6 +308,9 @@ class SessionWidget(QWidget):
         mode = view_model.mode.replace("_", " ").title()
         self.title_label.setText(f"{view_model.title} · {mode}")
         self.status_label.setText(view_model.status.upper())
+        self.status_label.setProperty("sessionStatus", view_model.status)
+        self.status_label.style().unpolish(self.status_label)
+        self.status_label.style().polish(self.status_label)
         completed = sum(step.completed for step in view_model.steps)
         total = len(view_model.steps)
         current = min(completed + 1, total) if total else 0

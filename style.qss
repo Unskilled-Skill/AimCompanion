@@ -944,6 +944,19 @@ QLabel#sessionStatusPill {
     letter-spacing: 1px;
 }
 
+QLabel#sessionStatusPill[sessionStatus="paused"],
+QLabel#sessionStatusPill[sessionStatus="ready"] {
+    color: #f4d39a;
+}
+
+QLabel#sessionStatusPill[sessionStatus="stopped"] {
+    color: #f2b8c0;
+}
+
+QLabel#sessionStatusPill[sessionStatus="completed"] {
+    color: #aeb8ff;
+}
+
 QLabel#sessionScenarioTitle {
     color: #ffffff;
     font-size: 21pt;
@@ -993,7 +1006,7 @@ QListWidget#sessionRoutineList {
     border: none;
     border-radius: 8px;
     padding: 6px;
-    min-width: 340px;
+    min-width: 280px;
 }
 
 QListWidget#sessionRoutineList::item {

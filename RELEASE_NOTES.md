@@ -1,3 +1,14 @@
+# Aim Companion 2.0.3
+
+This update restores reliable Windows taskbar and shortcut icon association.
+
+## Windows app identity
+
+- Matched the installed Start-menu and optional desktop shortcuts to the
+  runtime AppUserModelID used by Aim Companion.
+- Added an explicit icon source and working directory to both shortcuts so
+  Windows can consistently display and pin the packaged app icon.
+
 # Aim Companion 2.0.2
 
 This update makes guided sessions easier to read and control without removing

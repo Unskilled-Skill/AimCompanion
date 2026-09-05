@@ -4,7 +4,7 @@ import re
 import subprocess
 
 from core import updater
-from core.version import VERSION
+from core.version import APP_ID, VERSION
 
 
 def test_spec_collects_versioned_benchmark_data():
@@ -15,6 +15,20 @@ def test_spec_collects_versioned_benchmark_data():
 def test_installer_and_updater_expect_same_asset_name():
     assert updater.INSTALLER_ASSET == "AimCompanion-Setup.exe"
     assert "AimCompanion-Setup" in Path("installer.iss").read_text(encoding="utf-8")
+
+
+def test_installed_shortcuts_match_the_runtime_taskbar_identity():
+    text = Path("installer.iss").read_text(encoding="utf-8")
+    shortcut_lines = [
+        line for line in text.splitlines()
+        if line.startswith("Name:")
+        and 'Filename: "{app}\\{#MyAppExeName}"' in line
+    ]
+
+    assert len(shortcut_lines) == 2
+    assert f'#define MyAppUserModelID "{APP_ID}"' in text
+    assert all('AppUserModelID: "{#MyAppUserModelID}"' in line for line in shortcut_lines)
+    assert all('IconFilename: "{app}\\{#MyAppExeName}"' in line for line in shortcut_lines)
 
 
 def test_windows_numeric_file_versions_match_application_version():

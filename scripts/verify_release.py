@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import urllib.request
 from dataclasses import dataclass
@@ -60,9 +61,14 @@ def verify_release_payload(payload, installer_bytes, checksum_text, expected_ver
 
 
 def _get_json(url):
-    request = urllib.request.Request(url, headers={
-        "Accept": "application/vnd.github+json", "User-Agent": f"AimCompanion/{VERSION}",
-    })
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": f"AimCompanion/{VERSION}",
+    }
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    request = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(request, timeout=20) as response:
         return json.loads(response.read(8_000_001).decode("utf-8"))
 

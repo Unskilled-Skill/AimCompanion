@@ -1,8 +1,12 @@
 import hashlib
+import os
+from unittest.mock import patch
 
 import pytest
 
-from scripts.verify_release import ReleaseVerificationError, verify_release_payload
+from scripts.verify_release import (
+    ReleaseVerificationError, _get_json, verify_release_payload,
+)
 
 
 def _release(include_checksum=True):
@@ -41,3 +45,16 @@ def test_missing_checksum_fails_release():
             _release(False), b"installer", "0" * 64,
             expected_version="2.0.0",
         )
+
+
+def test_github_api_request_uses_workflow_token():
+    with patch.dict(os.environ, {"GITHUB_TOKEN": "workflow-token"}), patch(
+        "scripts.verify_release.urllib.request.urlopen"
+    ) as urlopen:
+        response = urlopen.return_value.__enter__.return_value
+        response.read.return_value = b"{}"
+
+        _get_json("https://api.github.com/repos/example/project/releases/tags/v1")
+
+    request = urlopen.call_args.args[0]
+    assert request.get_header("Authorization") == "Bearer workflow-token"

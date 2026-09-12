@@ -127,7 +127,7 @@ class MainWindow(QMainWindow):
         self.home_view = HomeWidget()
         self.home_view.start_warmup.connect(self._start_warmup_home)
         self.home_view.start_step_by_step.connect(self._start_step_by_step_home)
-        self.home_view.start_full_routine.connect(self._start_full_routine_home)
+        self.home_view.start_full_routine.connect(self._show_routine_picker)
         self.session_view = SessionWidget()
         self.session_overlay = SessionOverlay()
         self.session_repository = SessionRepository(self.db.conn)
@@ -155,9 +155,7 @@ class MainWindow(QMainWindow):
         self.session_view.step_by_step_requested.connect(
             self._start_step_by_step_home
         )
-        self.session_view.full_routine_requested.connect(
-            self._start_full_routine_home
-        )
+        self.session_view.full_routine_requested.connect(self._show_routine_picker)
         self.session_view.recheck_scenario_requested.connect(
             self._refresh_scenario_availability
         )
@@ -466,6 +464,11 @@ class MainWindow(QMainWindow):
     def _start_training_method(self, method_id):
         self._navigate("library")
         self.statusBar().showMessage("Training reference ready")
+
+    def _show_routine_picker(self):
+        self._navigate("library")
+        self.library_destination.setCurrentIndex(0)
+        self.statusBar().showMessage("Choose a routine, then start when ready")
 
     def _start_full_routine_home(self, source_id=""):
         config = TrainingConfig.load()

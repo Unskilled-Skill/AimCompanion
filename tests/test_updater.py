@@ -50,6 +50,25 @@ class UpdaterTests(unittest.TestCase):
         self.assertIn("-Wait -PassThru", script)
         self.assertIn("Start-Process -FilePath $targetPath", script)
 
+    def test_installer_helper_resets_inherited_pyinstaller_environment(self):
+        with tempfile.TemporaryDirectory() as directory:
+            installer = Path(directory) / "AimCompanion-Setup.exe"
+            installer.touch()
+            inherited = {
+                "PATH": "C:\\Windows",
+                "_PYI_ARCHIVE_FILE": "old-app.exe",
+                "_PYI_PARENT_PROCESS_LEVEL": "1",
+            }
+            with patch("core.updater.subprocess.Popen") as launch, patch(
+                "core.updater.sys.executable", str(Path(directory) / "AimCompanion.exe")
+            ), patch.dict("core.updater.os.environ", inherited, clear=True):
+                launch_installer(str(installer))
+
+        environment = launch.call_args.kwargs["env"]
+        self.assertEqual(environment["PATH"], "C:\\Windows")
+        self.assertEqual(environment["PYINSTALLER_RESET_ENVIRONMENT"], "1")
+        self.assertFalse(any(key.startswith("_PYI_") for key in environment))
+
     def test_first_launch_completes_without_blocking_dialog(self):
         from ui.main_window import MainWindow
 

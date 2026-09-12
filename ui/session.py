@@ -105,7 +105,7 @@ class SessionWidget(QWidget):
         full_card, self.full_button = self._mode_card(
             "STRUCTURED", "Full Routine",
             "Complete every scenario in a source-backed routine from start to finish.",
-            "Start full routine",
+            "Choose a routine",
         )
         choices.addWidget(warmup_card, 1, Qt.AlignmentFlag.AlignTop)
         choices.addWidget(step_card, 1, Qt.AlignmentFlag.AlignTop)

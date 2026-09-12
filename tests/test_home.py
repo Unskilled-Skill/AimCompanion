@@ -19,7 +19,7 @@ def test_home_places_three_training_actions_before_details(qtbot):
     home = HomeWidget()
     qtbot.addWidget(home)
     assert [button.text() for button in home.primary_actions] == [
-        "Warm-up", "Step-by-Step Training", "Full Routine"
+        "Warm-up", "Step-by-Step Training", "Choose a routine"
     ]
     assert home.layout().indexOf(home.action_panel) < home.layout().indexOf(
         home.insights_panel

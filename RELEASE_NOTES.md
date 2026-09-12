@@ -1,3 +1,20 @@
+# Aim Companion 2.1.1
+
+This maintenance release makes routine selection clear and fixes the automatic
+restart after an update.
+
+## Routine selection
+
+- Changes the Home and Session full-routine actions to open the routine picker
+  instead of silently starting the default routine.
+- Remembers the last routine started from Library and restores that selection
+  the next time the picker opens.
+
+## Updating
+
+- Starts the installer helper with a clean PyInstaller environment so the
+  updated app can restart without a parent-process security validation error.
+
 # Aim Companion 2.1.0
 
 This release improves adaptive coaching, guided-session reliability, data safety,

@@ -1,4 +1,8 @@
+from PyQt6.QtWidgets import QLabel, QPushButton
+
+from models.config import TrainingConfig
 from models.database import Database
+from ui.library import LibraryWidget
 from ui.session import SessionWidget
 from core.playlist_export import export_playlist
 
@@ -36,6 +40,7 @@ def test_home_full_routine_opens_guided_source_backed_session(
     window = _window(qtbot, monkeypatch, tmp_path)
     try:
         window.home_view.full_button.click()
+        window.library_destination.start_routine_button.click()
         assert isinstance(window.shell.currentWidget(), SessionWidget)
         assert window.session_view.overview.count() == 7
         assert "hnA TacFPS" in window.session_view.title_label.text()
@@ -88,6 +93,59 @@ def test_empty_session_quick_start_creates_real_session_plan(
         assert window.session_view.session_stack.currentWidget() is (
             window.session_view.active_session
         )
+    finally:
+        window.close()
+
+
+def test_home_full_routine_opens_routine_picker(
+    qtbot, monkeypatch, tmp_path,
+):
+    window = _window(qtbot, monkeypatch, tmp_path)
+    try:
+        window.home_view.full_button.click()
+
+        assert window.shell.currentWidget() is window.library_destination
+        assert window.library_destination.currentIndex() == 0
+        assert window.session_coordinator.state is None
+    finally:
+        window.close()
+
+
+def test_empty_session_full_routine_opens_routine_picker(
+    qtbot, monkeypatch, tmp_path,
+):
+    window = _window(qtbot, monkeypatch, tmp_path)
+    try:
+        window.shell.nav_buttons["session"].click()
+        window.session_view.full_button.click()
+
+        assert window.shell.currentWidget() is window.library_destination
+        assert window.library_destination.currentIndex() == 0
+        assert window.session_coordinator.state is None
+    finally:
+        window.close()
+
+
+def test_starting_library_routine_remembers_selection(
+    qtbot, monkeypatch, tmp_path,
+):
+    window = _window(qtbot, monkeypatch, tmp_path)
+    try:
+        library = window.library_destination
+        library.routine_selector.setCurrentIndex(1)
+        start_button = next(
+            button for button in library.findChildren(QPushButton)
+            if button.text() == "Start this full routine"
+        )
+        start_button.click()
+
+        selected_name = library._routines[1]["name"]
+        assert window.session_coordinator.state.plan.source_id == selected_name
+        assert TrainingConfig.load().preferred_routine == selected_name
+
+        restored_library = LibraryWidget(window.db, QLabel("Scenarios"))
+        qtbot.addWidget(restored_library)
+        assert restored_library.routine_selector.currentText() == selected_name
     finally:
         window.close()
 

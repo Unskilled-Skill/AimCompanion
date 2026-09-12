@@ -5,6 +5,7 @@ __pycache__/
 build/
 dist/
 artifacts/
+.test-work/
 .worktrees/
 *.spec.bak
 *.sha256

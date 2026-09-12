@@ -87,7 +87,7 @@ def test_empty_session_offers_all_training_modes(qtbot):
     assert widget.session_stack.currentWidget() is widget.empty_state
     assert widget.warmup_button.text() == "Start warm-up"
     assert widget.step_button.text() == "Start step-by-step"
-    assert widget.full_button.text() == "Start full routine"
+    assert widget.full_button.text() == "Choose a routine"
 
 
 def test_starting_session_replaces_empty_state_with_complete_detail_view(qtbot):

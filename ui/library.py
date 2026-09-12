@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
 
 from core.recommender import TACFPS_GUIDE
 from core.warmups import GAME_WARMUP_ROUTINES, RECOMMENDED_WARMUP_ROUTINE
+from models.config import TrainingConfig
 from .deathmatch import DeathmatchProgressWidget
 
 
@@ -24,7 +25,11 @@ class LibraryWidget(QTabWidget):
         self.addTab(self._build_warmups(), "Warm-ups")
         self._deathmatch = DeathmatchProgressWidget(db, show_source=True)
         self.addTab(self._deathmatch, "Game Transfer")
-        self._show_routine(0)
+        preferred = TrainingConfig.load().preferred_routine
+        preferred_index = self.routine_selector.findText(preferred)
+        if preferred_index >= 0:
+            self.routine_selector.setCurrentIndex(preferred_index)
+        self._show_routine(self.routine_selector.currentIndex())
 
     def _build_routines(self):
         page = QWidget()
@@ -44,15 +49,22 @@ class LibraryWidget(QTabWidget):
         self.source_button.setAccessibleName("Open original routine source")
         self.source_button.clicked.connect(self._open_source)
         layout.addWidget(self.source_button)
-        start = QPushButton("Start this full routine")
-        start.setAccessibleName(start.text())
-        start.clicked.connect(
-            lambda: self.full_routine_requested.emit(
-                self._routines[self.routine_selector.currentIndex()]["name"]
-            )
+        self.start_routine_button = QPushButton("Start this full routine")
+        self.start_routine_button.setAccessibleName(
+            self.start_routine_button.text()
         )
-        layout.addWidget(start)
+        self.start_routine_button.clicked.connect(self._start_selected_routine)
+        layout.addWidget(self.start_routine_button)
         return page
+
+    def _start_selected_routine(self):
+        routine_name = self._routines[
+            self.routine_selector.currentIndex()
+        ]["name"]
+        config = TrainingConfig.load()
+        config.preferred_routine = routine_name
+        config.save()
+        self.full_routine_requested.emit(routine_name)
 
     def _build_warmups(self):
         scroll = QScrollArea()

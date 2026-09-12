@@ -162,6 +162,11 @@ def launch_installer(path: str):
     target = Path(sys.executable).resolve()
     script = _delayed_installer_script(installer, target)
     encoded_script = base64.b64encode(script.encode("utf-16le")).decode("ascii")
+    environment = {
+        key: value for key, value in os.environ.items()
+        if not key.startswith("_PYI_")
+    }
+    environment["PYINSTALLER_RESET_ENVIRONMENT"] = "1"
     subprocess.Popen(
         [
             "powershell.exe", "-NoProfile", "-NonInteractive",
@@ -169,6 +174,7 @@ def launch_installer(path: str):
         ],
         cwd=str(installer.parent),
         creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        env=environment,
     )
 
 

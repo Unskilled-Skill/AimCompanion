@@ -111,6 +111,8 @@ class HomeWidget(QWidget):
             "Focused · fixed routine structure",
         )
         self.full_description, self.full_button = full[1], full[2]
+        self.full_button.setText("Choose a routine")
+        self.full_button.setAccessibleName("Choose a full routine")
         for card in (warmup[0], step[0], full[0]):
             actions.addWidget(card, 1)
 

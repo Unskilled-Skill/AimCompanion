@@ -15,6 +15,7 @@ function Invoke-Checked {
 $TestTemp = Join-Path $ReleaseRoot (
     "artifacts\release-tests-" + [guid]::NewGuid().ToString("N")
 )
+New-Item -ItemType Directory -Path (Split-Path -Parent $TestTemp) -Force | Out-Null
 Invoke-Checked { python scripts/build_icon.py }
 Invoke-Checked { python -m compileall -q core models ui tests scripts }
 Invoke-Checked { python -m pytest -q --basetemp $TestTemp }

@@ -33,7 +33,7 @@ GAME_WARMUP_ROUTINES = {
         {"scenario": "1wall5targets_pasu", "duration_min": 4,
          "category": "Clicking", "subcategory": "Dynamic",
          "cue": "Track each moving target briefly, then commit to a clean timed flick."},
-        {"scenario": "TileFrenzyMini", "duration_min": 3,
+        {"scenario": "Tile Frenzy Mini", "duration_min": 3,
          "category": "Clicking", "subcategory": "Static",
          "cue": "Build speed with compact motions while keeping the hand and shoulder loose."},
     ],

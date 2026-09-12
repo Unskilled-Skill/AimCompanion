@@ -35,6 +35,7 @@ class SessionWidget(QWidget):
     full_routine_requested = pyqtSignal()
     overlay_enabled_changed = pyqtSignal(bool)
     recheck_scenario_requested = pyqtSignal()
+    skip_requested = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -276,22 +277,30 @@ class SessionWidget(QWidget):
             button.setCursor(Qt.CursorShape.PointingHandCursor)
         primary_actions = QHBoxLayout()
         primary_actions.setSpacing(8)
-        for button in (
-            self.launch_button, self.manual_button, self.pause_button,
-        ):
+        for button in (self.launch_button, self.manual_button, self.pause_button):
             primary_actions.addWidget(button, 1)
         controls.addLayout(primary_actions)
+
+        self.skip_button = QPushButton("Skip scenario")
+        self.skip_button.setObjectName("secondaryButton")
+        self.skip_button.setAccessibleName("Skip scenario")
+        self.skip_button.setToolTip("Omit this scenario without counting unplayed runs.")
+        self.skip_button.clicked.connect(self._skip_requested)
+
         secondary_actions = QHBoxLayout()
         secondary_actions.setSpacing(8)
-        for button in (
-            self.restart_button, self.next_button, self.stop_button,
-        ):
+        for button in (self.restart_button, self.next_button):
             secondary_actions.addWidget(button, 1)
         controls.addLayout(secondary_actions)
-        layout.addWidget(self.controls_panel)
 
+        final_actions = QHBoxLayout()
+        final_actions.setSpacing(8)
+        final_actions.addWidget(self.skip_button, 1)
+        final_actions.addWidget(self.stop_button, 1)
+        controls.addLayout(final_actions)
         scroll.setWidget(content)
-        root.addWidget(scroll)
+        root.addWidget(scroll, 1)
+        root.addWidget(self.controls_panel)
         return page
 
     def resizeEvent(self, event):
@@ -326,11 +335,16 @@ class SessionWidget(QWidget):
         self.status_label.style().polish(self.status_label)
         completed = sum(step.completed for step in view_model.steps)
         total = len(view_model.steps)
-        current = min(completed + 1, total) if total else 0
+        skipped = sum(step.skipped for step in view_model.steps)
+        if skipped and view_model.status == "completed":
+            self.status_label.setText("FINISHED WITH SKIPS")
+        current = view_model.current_step_index + 1 if total else 0
         self.position_label.setText(
             f"Scenario {current} of {total}  ·  {view_model.progress_text}"
         )
-        self.queue_summary.setText(f"{completed} complete · {total - completed} remaining")
+        self.queue_summary.setText(
+            f"{completed} complete · {skipped} skipped · {total - completed - skipped} remaining"
+        )
         self.evidence_label.setText(
             view_model.evidence.summary
             if view_model.evidence else "Source-backed routine order"
@@ -338,7 +352,9 @@ class SessionWidget(QWidget):
         self.guide.set_guide(view_model.current_guide)
         self.overview.clear()
         for index, step in enumerate(view_model.steps, 1):
-            if step.completed:
+            if step.skipped:
+                state = "Skipped"
+            elif step.completed:
                 state = "Complete"
             elif index == current:
                 state = "Now"
@@ -351,20 +367,41 @@ class SessionWidget(QWidget):
             self.overview.addItem(item)
         self.launch_button.setEnabled(view_model.can_launch)
         active = view_model.status in ("running", "paused")
-        self.manual_button.setEnabled(active)
+        self.manual_button.setEnabled(view_model.status == "running")
+        self.skip_button.setEnabled(active)
         self.pause_button.setEnabled(active)
+        self.pause_button.setText("Resume" if view_model.status == "paused" else "Pause")
+        self.pause_button.setAccessibleName(self.pause_button.text())
         self.restart_button.setEnabled(active)
         self.stop_button.setEnabled(active)
         self.next_button.setEnabled(view_model.can_advance)
+        self.next_button.setText(
+            "Start training"
+            if view_model.mode in ("warmup", "full_routine") and view_model.status == "completed"
+            else "Next recommendation"
+        )
+        self.next_button.setAccessibleName(self.next_button.text())
 
     def progress_text(self):
         return self._view_model.progress_text
 
+    def _skip_requested(self):
+        # Emit a signal; MainWindow will handle the actual skip logic.
+        self.skip_requested.emit()
+
     def set_scenario_availability(self, result, guide=None):
         missing = result.state == "missing"
-        self.launch_button.setEnabled(
-            bool(self._view_model and self._view_model.can_launch and not missing)
-        )
+        if missing:
+            # Scenario not installed – allow the user to open Kovaak's and download it.
+            self.launch_button.setText("Open Kovaak's")
+            self.launch_button.setEnabled(
+                bool(self._view_model and self._view_model.can_launch)
+            )
+        else:
+            self.launch_button.setText("Launch in KovaaK's")
+            self.launch_button.setEnabled(
+                bool(self._view_model and self._view_model.can_launch)
+            )
         self.availability_label.setVisible(missing)
         self.recheck_button.setVisible(missing)
         if missing and guide is not None:

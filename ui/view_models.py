@@ -27,6 +27,7 @@ class SessionStepViewModel:
     scenario: str
     completed: bool
     run_text: str
+    skipped: bool = False
 
 
 @dataclass(frozen=True)
@@ -40,6 +41,7 @@ class SessionViewModel:
     can_launch: bool
     can_advance: bool
     evidence: RecommendationEvidence | None
+    current_step_index: int = 0
 
 
 @dataclass(frozen=True)
@@ -80,21 +82,24 @@ def build_session_view(
 ) -> SessionViewModel:
     step = state.current_step
     guide = step.guide
+    skipped = dict(state.skipped_steps)
     steps = tuple(
         SessionStepViewModel(
             scenario=item.scenario,
             completed=(
-                index < state.current_step_index
+                index not in skipped and (index < state.current_step_index
                 or (
                     state.status is SessionStatus.COMPLETED
                     and index == state.current_step_index
-                )
+                ))
             ),
             run_text=(
+                f"{skipped[index]} / {item.required_runs} runs" if index in skipped else
                 f"{state.confirmed_runs} / {item.required_runs} runs"
                 if index == state.current_step_index
                 else f"{item.required_runs} runs"
             ),
+            skipped=index in skipped,
         )
         for index, item in enumerate(state.plan.steps)
     )
@@ -123,4 +128,5 @@ def build_session_view(
         can_launch=state.status is SessionStatus.RUNNING,
         can_advance=state.status is SessionStatus.COMPLETED,
         evidence=evidence,
+        current_step_index=state.current_step_index,
     )

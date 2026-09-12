@@ -119,7 +119,8 @@ def profile_from_benchmark_result(
     for category in categories.values():
         for subcategory in category.subcategories:
             subcategory.combined_score = sum(
-                benchmark.best_score for benchmark in subcategory.benchmarks
+                scenarios[benchmark.name].score for benchmark in subcategory.benchmarks
+                if benchmark.name in scenarios
             )
         measured = [
             subcategory.energy

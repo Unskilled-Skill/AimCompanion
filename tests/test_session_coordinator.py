@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+from core.run_tracker import KovaaksRunTracker
 from core.session_coordinator import SessionCoordinator
 from core.sessions import SessionMode, SessionPlan, SessionStatus, SessionStep
 from core.sessions.repository import SessionRepository
@@ -35,6 +36,27 @@ def _plan(runs=2):
         source_version="v1",
         steps=(step,),
         official_steps=(step,),
+    )
+
+
+def _two_step_plan(first_runs=1, second_runs=1):
+    first = _plan(first_runs).steps[0]
+    second = SessionStep(
+        scenario="Static B",
+        required_runs=second_runs,
+        estimated_seconds=180,
+        category="Clicking",
+        subcategory="Static",
+        guide={"steps": ["Move directly."]},
+        source="Fixture",
+        source_url="https://example.test/source",
+    )
+    return SessionPlan(
+        mode=SessionMode.FULL_ROUTINE,
+        source_id="Fixture",
+        source_version="v1",
+        steps=(first, second),
+        official_steps=(first, second),
     )
 
 
@@ -120,6 +142,75 @@ def test_tracker_starts_before_deep_link_launch():
         database.close()
 
 
+def test_session_detects_run_when_kovaaks_is_opened_outside_session_button(tmp_path):
+    database = Database(":memory:")
+    tracker = KovaaksRunTracker(str(tmp_path))
+    try:
+        coordinator = SessionCoordinator(
+            SessionRepository(database.conn),
+            tracker,
+            launcher=lambda _: True,
+        )
+        coordinator.start(_plan())
+        result = tmp_path / (
+            "Static A - Challenge - 2026.09.05-18.19.02 Stats.csv"
+        )
+        result.write_text("Score: , 100\n", encoding="utf-8")
+
+        coordinator.confirm_detected_runs(tracker.poll())
+
+        assert coordinator.state.confirmed_runs == 1
+    finally:
+        database.close()
+
+
+def test_session_detects_run_after_pause_and_resume(tmp_path):
+    database = Database(":memory:")
+    tracker = KovaaksRunTracker(str(tmp_path))
+    try:
+        coordinator = SessionCoordinator(
+            SessionRepository(database.conn),
+            tracker,
+            launcher=lambda _: True,
+        )
+        coordinator.start(_plan())
+        coordinator.pause()
+        coordinator.resume()
+        result = tmp_path / (
+            "Static A - Challenge - 2026.09.05-18.20.25 Stats.csv"
+        )
+        result.write_text("Score: , 100\n", encoding="utf-8")
+
+        coordinator.confirm_detected_runs(tracker.poll())
+
+        assert coordinator.state.confirmed_runs == 1
+    finally:
+        database.close()
+
+
+def test_session_detects_run_after_restarting_current_step(tmp_path):
+    database = Database(":memory:")
+    tracker = KovaaksRunTracker(str(tmp_path))
+    try:
+        coordinator = SessionCoordinator(
+            SessionRepository(database.conn),
+            tracker,
+            launcher=lambda _: True,
+        )
+        coordinator.start(_plan())
+        coordinator.restart_step()
+        result = tmp_path / (
+            "Static A - Challenge - 2026.09.05-18.21.25 Stats.csv"
+        )
+        result.write_text("Score: , 100\n", encoding="utf-8")
+
+        coordinator.confirm_detected_runs(tracker.poll())
+
+        assert coordinator.state.confirmed_runs == 1
+    finally:
+        database.close()
+
+
 def test_every_transition_is_saved_and_observed():
     database = Database(":memory:")
     observed = []
@@ -144,7 +235,7 @@ def test_every_transition_is_saved_and_observed():
         database.close()
 
 
-def test_restart_step_resets_progress_and_stops_tracker():
+def test_restart_step_resets_progress_and_restarts_tracker():
     database = Database(":memory:")
     events = []
     try:
@@ -153,6 +244,65 @@ def test_restart_step_resets_progress_and_stops_tracker():
         coordinator.confirm_manual_run()
         coordinator.restart_step()
         assert coordinator.state.confirmed_runs == 0
-        assert events == [("stop",)]
+        assert events == [
+            ("track", "Static A", 2),
+            ("stop",),
+            ("track", "Static A", 2),
+        ]
+    finally:
+        database.close()
+
+
+def test_manual_auto_next_launches_after_advancement_in_consecutive_sessions():
+    database = Database(":memory:")
+    events = []
+    try:
+        coordinator = SessionCoordinator(
+            SessionRepository(database.conn),
+            FakeTracker(events),
+            launcher=lambda scenario: events.append(("launch", scenario)) or True,
+            automatic_next=True,
+        )
+
+        for _ in range(2):
+            coordinator.start(_two_step_plan())
+            coordinator.confirm_manual_run()
+            coordinator.confirm_manual_run()
+
+        assert events.count(("launch", "Static B")) == 2
+    finally:
+        database.close()
+
+
+def test_start_rearms_tracker_for_same_scenario_after_completed_session():
+    database = Database(":memory:")
+    events = []
+    try:
+        coordinator = _coordinator(database, events)
+        for _ in range(2):
+            coordinator.start(_plan(runs=1))
+            coordinator.confirm_manual_run()
+
+        assert events.count(("track", "Static A", 1)) == 2
+    finally:
+        database.close()
+
+
+def test_manual_partial_run_does_not_relaunch_step_entered_by_detection():
+    database = Database(":memory:")
+    events = []
+    try:
+        coordinator = SessionCoordinator(
+            SessionRepository(database.conn),
+            FakeTracker(events),
+            launcher=lambda scenario: events.append(("launch", scenario)) or True,
+            automatic_next=True,
+        )
+        coordinator.start(_two_step_plan(second_runs=2))
+        coordinator.confirm_detected_runs([_score()])
+
+        coordinator.confirm_manual_run()
+
+        assert events.count(("launch", "Static B")) == 1
     finally:
         database.close()

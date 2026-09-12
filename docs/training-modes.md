@@ -57,12 +57,27 @@ If C was stopped before all prescribed runs were confirmed, C remains the
 first unfinished scenario and restarts with its full prescribed run count. A
 partial run count never reduces the source requirement.
 
+**Skip scenario** omits that scenario from the current pass and labels it
+**Skipped**. Only runs already confirmed are retained in history; unplayed runs
+are never credited. Skipping while paused keeps the session paused, and the last
+scenario can also be skipped. A pass with omissions is shown as **Finished with
+skips**, with separate complete, skipped, and remaining counts. Skip markers
+survive application recovery. They do not change the source routine for future
+sessions.
+
 ## Confirmation, stopping, and recovery
 
 Kovaak's result detection and the manual confirmation action use the same state
 transition. Results for another scenario are ignored, and a durable result
 identity prevents one detected result from being counted twice after restart.
 The run tracker begins before the Steam scenario link opens.
+
+**Manual only** disables automatic run counting. Returning to automatic mode
+starts watching for new results without counting files already present. Paused
+sessions cannot confirm runs; the pause button becomes **Resume**. Session
+controls remain visible while the guide and queue scroll. After a Full Routine
+or Warm-up, **Start training** opens the next adaptive or official benchmark
+session.
 
 The database is updated after every confirmed run and pause, resume, stop, or
 completion transition. If the app closes while a session is running, the next

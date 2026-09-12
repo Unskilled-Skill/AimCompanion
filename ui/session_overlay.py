@@ -45,6 +45,11 @@ class SessionOverlay(QWidget):
         self.expand_button.clicked.connect(self._toggle_expanded)
 
     def set_state(self, view_model):
+        self.pause_button.setText("Resume" if view_model.status == "paused" else "Pause")
+        self.pause_button.setAccessibleName(self.pause_button.text())
+        active = view_model.status in ("running", "paused")
+        self.pause_button.setEnabled(active)
+        self.stop_button.setEnabled(active)
         self.scenario.setText(view_model.current_guide.scenario)
         self.progress.setText(view_model.progress_text)
         self.cue.setText(

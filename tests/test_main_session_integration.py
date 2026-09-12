@@ -92,6 +92,28 @@ def test_empty_session_quick_start_creates_real_session_plan(
         window.close()
 
 
+def test_completed_warmup_can_start_the_next_training_recommendation(
+    qtbot, monkeypatch, tmp_path,
+):
+    window = _window(qtbot, monkeypatch, tmp_path)
+    window.session_coordinator.launcher = lambda _: True
+    try:
+        window.home_view.warmup_button.click()
+        state = window.session_coordinator.state
+        for _ in range(sum(step.required_runs for step in state.plan.steps)):
+            window.session_coordinator.confirm_manual_run()
+
+        assert window.session_coordinator.state.status.value == "completed"
+        assert window.session_view.next_button.text() == "Start training"
+
+        window.session_view.next_button.click()
+
+        assert window.session_coordinator.state.plan.mode.value == "step_by_step"
+        assert window.session_coordinator.state.status.value == "running"
+    finally:
+        window.close()
+
+
 def test_due_benchmarks_create_playlist_and_matching_session_queue(
     qtbot, monkeypatch, tmp_path,
 ):

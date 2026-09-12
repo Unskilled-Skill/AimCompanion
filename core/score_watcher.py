@@ -45,6 +45,22 @@ class ScoreDirectoryWatcher(QObject):
         if self._watch_stats_directory():
             self._schedule_scan()
 
+    def set_stats_dir(self, stats_dir: str):
+        """Switch folders while allowing any existing import to finish first."""
+        path = os.path.abspath(stats_dir)
+        if os.path.normcase(path) == os.path.normcase(self._stats_dir):
+            return
+        self._timer.stop()
+        watched_paths = self._file_watcher.directories()
+        if watched_paths:
+            self._file_watcher.removePaths(watched_paths)
+        self._stats_dir = path
+        self._parent_dir = os.path.dirname(path)
+        if self._started:
+            self._watch_parent_directory()
+            if self._watch_stats_directory():
+                self._schedule_scan()
+
     def stop(self) -> bool:
         """Stop scans, returning whether no worker remains alive."""
         if not self._started and self._worker is None:

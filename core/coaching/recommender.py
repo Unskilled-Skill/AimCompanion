@@ -55,6 +55,7 @@ class RecommendationContext:
     candidates: tuple[ScenarioCandidate, ...]
     rotation: RotationState
     fatigue_coaching_enabled: bool = False
+    benchmark_candidates: tuple[ScenarioCandidate, ...] = ()
 
 
 class CoachingRecommender:
@@ -72,7 +73,7 @@ class CoachingRecommender:
             state = due[0]
             category, subcategory = self._split_skill(state.subcategory)
             candidate = self._select_candidate(
-                context.candidates,
+                context.benchmark_candidates or context.candidates,
                 category,
                 subcategory,
                 context.rotation,
@@ -98,15 +99,15 @@ class CoachingRecommender:
 
         assigned = ROTATION[context.rotation.cursor % len(ROTATION)]
         rank_order = (assigned,) + tuple(rank for rank in (1, 2, 3) if rank != assigned)
+        # Prefer a different skill, but repeat when no other skill has candidates.
+        rank_order = sorted(rank_order, key=lambda rank: (
+            rank <= len(priorities)
+            and " / ".join(priorities[rank - 1]) == context.rotation.last_subcategory
+        ))
         for rank in rank_order:
             if rank > len(priorities):
                 continue
             category, subcategory = priorities[rank - 1]
-            if (
-                context.rotation.last_subcategory == f"{category} / {subcategory}"
-                and len(priorities) > 1
-            ):
-                continue
             try:
                 candidate = self._select_candidate(
                     context.candidates,

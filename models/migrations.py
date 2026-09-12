@@ -379,6 +379,12 @@ def add_service_health(connection: MigrationConnection) -> None:
     """)
 
 
+def add_skipped_session_steps(connection: MigrationConnection) -> None:
+    connection.execute(
+        "ALTER TABLE session_state ADD COLUMN skipped_steps_json TEXT NOT NULL DEFAULT '[]'"
+    )
+
+
 MIGRATIONS = (
     Migration(1, "baseline", baseline_existing_schema),
     Migration(2, "benchmark_metadata", add_benchmark_metadata_tables),
@@ -388,6 +394,7 @@ MIGRATIONS = (
     Migration(6, "coaching_preferences", add_coaching_preferences),
     Migration(7, "session_run_identity", add_session_run_identity),
     Migration(8, "service_health", add_service_health),
+    Migration(9, "skipped_session_steps", add_skipped_session_steps),
 )
 
 

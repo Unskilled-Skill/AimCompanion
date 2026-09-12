@@ -54,6 +54,21 @@ class SessionEngine:
         )
 
     @staticmethod
+    def skip_step(state: SessionState, *, now: datetime | None = None) -> SessionState:
+        if state.status not in {SessionStatus.RUNNING, SessionStatus.PAUSED}:
+            raise InvalidSessionTransition(f"cannot skip a {state.status.value} session step")
+        skipped = state.skipped_steps + ((state.current_step_index, state.confirmed_runs),)
+        if state.current_step_index + 1 < len(state.plan.steps):
+            return replace(
+                state, current_step_index=state.current_step_index + 1,
+                confirmed_runs=0, skipped_steps=skipped, updated_at=_now(now),
+            )
+        return replace(
+            state, status=SessionStatus.COMPLETED, skipped_steps=skipped,
+            updated_at=_now(now),
+        )
+
+    @staticmethod
     def pause(state: SessionState, *, now: datetime | None = None) -> SessionState:
         SessionEngine._require(state, SessionStatus.RUNNING, "pause")
         return replace(state, status=SessionStatus.PAUSED, updated_at=_now(now))

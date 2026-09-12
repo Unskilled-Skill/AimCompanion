@@ -1,3 +1,40 @@
+# Aim Companion 2.1.0
+
+This release improves adaptive coaching, guided-session reliability, data safety,
+and the session workspace.
+
+## Coaching and progress
+
+- Uses official benchmark scenarios at the selected difficulty for due checks,
+  including skill areas without generic catalog candidates.
+- Keeps weakness recommendations available when avoiding a repeated skill would
+  otherwise leave no valid choice.
+- Makes Latest and Recent Average score totals match the scores used for their
+  energy calculations.
+- Ages benchmark freshness when completed training blocks are saved, while
+  excluding warm-ups, skipped scenarios, and partial blocks.
+
+## Guided sessions
+
+- Makes Manual only mode disable automatic result counting and keeps automatic
+  tracking armed across scenario transitions.
+- Adds durable scenario skipping without crediting unplayed runs. Skips and
+  partial progress survive recovery and appear separately in the routine queue.
+- Disables run confirmation while paused, labels Resume clearly, and provides a
+  working Start training action after warm-ups and full routines.
+- Keeps session controls visible while the guide and queue scroll.
+- Improves Kovaak's launch fallback behavior and session transition handling.
+
+## Data safety and settings
+
+- Validates and migrates backups in isolation before replacing current data,
+  with integrity, schema, foreign-key, and rollback protection.
+- Rejects nonfinite score values without blocking valid files in the same import.
+- Applies configured score folders consistently to manual imports, background
+  watching, and active-session tracking.
+- Fixes the Settings save crash and refreshes active views after configuration
+  changes.
+
 # Aim Companion 2.0.5
 
 This maintenance update makes benchmark freshness comparisons reliable in

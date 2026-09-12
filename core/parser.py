@@ -1,5 +1,6 @@
 import os
 import re
+import math
 from datetime import datetime
 from models.score import Score
 from models.benchmark import get_benchmark
@@ -105,7 +106,7 @@ def parse_csv_file(filepath: str) -> Score | None:
                 avg_fps = float(m.group(1))
                 continue
 
-    if score_value is None:
+    if score_value is None or not math.isfinite(score_value):
         return None
 
     benchmark_info = get_benchmark(scenario_name)

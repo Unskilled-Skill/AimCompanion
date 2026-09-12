@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timezone
 
 from PyQt6.QtCore import QEvent, Qt, QTimer
@@ -38,7 +39,7 @@ from core.updater import (
 )
 from core.version import VERSION
 from models.database import Database
-from models.config import TrainingConfig
+from models.config import TrainingConfig, _scenario_difficulty
 from ui.aim_hub import AimHubWidget
 from ui.dashboard import DashboardWidget
 from ui.export import ExportWidget
@@ -163,10 +164,9 @@ class MainWindow(QMainWindow):
         self.session_view.overlay_enabled_changed.connect(
             self._set_session_overlay_enabled
         )
+        self.session_view.skip_requested.connect(self._skip_current)
         self.session_view.advance_mode.currentIndexChanged.connect(
-            lambda index: setattr(
-                self.session_coordinator, "automatic_next", index == 0,
-            )
+            self._set_run_detection_mode
         )
         self._overlay_enabled = (
             self.db.get_settings_value("overlay_enabled") == "1"
@@ -239,6 +239,7 @@ class MainWindow(QMainWindow):
         recovered = self.session_repository.load_active()
         if recovered is not None:
             self.session_coordinator.state = recovered
+            self.session_coordinator._arm_current_tracker()
             self._on_session_state(recovered)
 
     def eventFilter(self, obj, event):
@@ -556,6 +557,16 @@ class MainWindow(QMainWindow):
         freshness = BenchmarkFreshness(self.db.conn).status(
             definitions.required_subcategories
         )
+        benchmark_plan = build_benchmark_check_plan(
+            definitions, definitions.required_subcategories, self.difficulty,
+        )
+        benchmark_candidates = tuple(
+            ScenarioCandidate(
+                scenario=step.scenario, category=step.category, subcategory=step.subcategory,
+                estimated_seconds=step.estimated_seconds, guide=step.guide,
+                source=step.source, source_url=step.source_url,
+            ) for step in benchmark_plan.steps
+        )
         candidates = tuple(
             ScenarioCandidate(
                 scenario=item["name"],
@@ -572,6 +583,12 @@ class MainWindow(QMainWindow):
             )
             for item in SCENARIOS
             if item.get("category") and item.get("subcategory")
+            and _scenario_difficulty(item) in (self.difficulty, "Unknown")
+        )
+        covered = {(item.category, item.subcategory) for item in candidates}
+        candidates += tuple(
+            item for item in benchmark_candidates
+            if (item.category, item.subcategory) not in covered
         )
         return CoachingRecommender().next(RecommendationContext(
             profile=self.training_profile,
@@ -580,13 +597,25 @@ class MainWindow(QMainWindow):
             candidates=candidates,
             rotation=self.session_repository.load_rotation_state(),
             fatigue_coaching_enabled=TrainingConfig.load().fatigue_coaching_enabled,
+            benchmark_candidates=benchmark_candidates,
         ))
 
     def _continue_step_by_step(self):
         state = self.session_coordinator.state
-        if not state or state.plan.mode is not SessionMode.STEP_BY_STEP:
+        if not state:
+            return
+        if state.plan.mode in {SessionMode.WARMUP, SessionMode.FULL_ROUTINE}:
+            if state.status is SessionStatus.COMPLETED:
+                self._start_step_by_step_home()
+            return
+        if state.plan.mode is not SessionMode.STEP_BY_STEP:
+            return
+        if state.status is not SessionStatus.COMPLETED:
             return
         recommendation = self._next_recommendation()
+        if recommendation.kind == "benchmark_check":
+            self._start_step_by_step_home()
+            return
         state = append_step_by_step_recommendation(state, recommendation)
         self.session_coordinator.state = state
         self.session_repository.save(state)
@@ -597,6 +626,7 @@ class MainWindow(QMainWindow):
             )
         )
         self._on_session_state(state)
+        self.session_coordinator._arm_current_tracker()
 
     def _on_session_state(self, state):
         view = build_session_view(
@@ -614,6 +644,7 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(
             f"{state.plan.source_id} · {state.status.value.replace('_', ' ').title()}"
         )
+        self._refresh_home()
 
     def _toggle_session_pause(self):
         state = self.session_coordinator.state
@@ -627,8 +658,24 @@ class MainWindow(QMainWindow):
     def _restart_session_step(self):
         if self.session_coordinator.state is not None:
             self.session_coordinator.restart_step()
+        tracker = self.session_coordinator.tracker
+        if tracker.active:
+            scores = tracker.poll()
+            if scores:
+                self.session_coordinator.confirm_detected_runs(scores)
+
+    def _skip_current(self):
+        state = self.session_coordinator.state
+        if state and state.status in {SessionStatus.RUNNING, SessionStatus.PAUSED}:
+            self.session_coordinator.skip_step()
+
+    def _set_run_detection_mode(self, index):
+        automatic = index == 0
+        self.session_coordinator.automatic_next = automatic
+        self.session_coordinator.set_detection_enabled(automatic)
 
     def _poll_session_runs(self):
+        """Poll the Kovaak's run tracker for completed runs."""
         tracker = self.session_coordinator.tracker
         if tracker.active:
             scores = tracker.poll()
@@ -886,7 +933,21 @@ class MainWindow(QMainWindow):
         dialog = SetupDialog(self)
         if dialog.exec():
             self.db.set_settings_value("onboarding_complete", "1")
-            self.routine_view.reload_config()
+            config = TrainingConfig.load()
+            self.progress_view.config = config
+            stats_dir = config.get_stats_dir()
+            self.score_watcher.set_stats_dir(stats_dir)
+            tracker = self.session_coordinator.tracker
+            if os.path.normcase(os.path.abspath(tracker.stats_dir)) != os.path.normcase(
+                os.path.abspath(stats_dir)
+            ):
+                self.session_coordinator._stop_tracker()
+                tracker.stats_dir = stats_dir
+                state = self.session_coordinator.state
+                if state is not None and state.status is SessionStatus.RUNNING:
+                    self.session_coordinator._arm_current_tracker()
+            self._refresh_scenario_availability()
+            self._refresh_home()
             self._check_for_updates()
             self.statusBar().showMessage("Settings saved")
 

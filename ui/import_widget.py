@@ -6,7 +6,8 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont, QDragEnterEvent, QDropEvent
 
 from models.database import Database
-from core.parser import _get_stats_dir, iter_score_csv_paths
+from models.config import TrainingConfig
+from core.parser import iter_score_csv_paths
 from core.score_importer import ScoreImporter
 
 
@@ -134,7 +135,7 @@ class DragDropImport(QWidget):
 
     def _auto_import(self):
         result = ScoreImporter(self.db).import_paths(
-            iter_score_csv_paths(_get_stats_dir())
+            iter_score_csv_paths(TrainingConfig.load().get_stats_dir())
         )
         self.log.append(
             f"Auto-imported {result.imported} new and updated {result.updated} scores "

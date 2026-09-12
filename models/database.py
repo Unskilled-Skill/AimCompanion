@@ -1,6 +1,8 @@
 import json
 import os
 import sqlite3
+import tempfile
+from contextlib import closing
 from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
@@ -781,17 +783,58 @@ class Database:
             backup.close()
 
     def restore_from(self, source_path: str):
-        source = sqlite3.connect(source_path)
+        """Validate and migrate an isolated copy before replacing live data."""
+        with tempfile.TemporaryDirectory(prefix="aim-restore-") as directory:
+            staged_path = str(Path(directory) / "staged.sqlite3")
+            source_uri = Path(source_path).resolve().as_uri() + "?mode=ro"
+            with closing(sqlite3.connect(source_uri, uri=True)) as source:
+                tables = {
+                    row[0] for row in source.execute(
+                        "SELECT name FROM sqlite_master WHERE type = 'table'"
+                    )
+                }
+                if not {"scores", "settings"} <= tables:
+                    raise ValueError("This is not an Aim Companion backup")
+                with closing(sqlite3.connect(staged_path)) as staged:
+                    source.backup(staged)
+
+            candidate = Database(staged_path)
+            try:
+                candidate._validate_restore_schema()
+                rollback_path = str(Path(directory) / "rollback.sqlite3")
+                with closing(sqlite3.connect(rollback_path)) as rollback:
+                    self.conn.backup(rollback)
+                    try:
+                        candidate.conn.backup(self.conn)
+                    except sqlite3.Error:
+                        rollback.backup(self.conn)
+                        raise
+                self.schema_version = candidate.schema_version
+            finally:
+                candidate.close()
+
+    def _validate_restore_schema(self):
+        reference = Database(":memory:")
         try:
-            tables = {
-                row[0] for row in source.execute(
-                    "SELECT name FROM sqlite_master WHERE type = 'table'"
-                )
-            }
-            if "scores" not in tables or "settings" not in tables:
-                raise ValueError("This is not an Aim Companion backup")
-            source.backup(self.conn)
-            self.conn.commit()
-            self._create_tables()
+            if self.schema_version > reference.schema_version:
+                raise ValueError("This backup requires a newer version of Aim Companion")
+            for table in reference.table_names():
+                required = {
+                    row["name"] for row in reference.conn.execute(
+                        f'PRAGMA table_info("{table}")'
+                    )
+                }
+                actual = {
+                    row["name"] for row in self.conn.execute(
+                        f'PRAGMA table_info("{table}")'
+                    )
+                }
+                if not required <= actual:
+                    raise ValueError(f"Backup has an invalid {table} table")
+            integrity = [row[0] for row in self.conn.execute("PRAGMA integrity_check")]
+            if integrity != ["ok"]:
+                raise ValueError("Backup database integrity check failed")
+            if self.conn.execute("PRAGMA foreign_key_check").fetchone() is not None:
+                raise ValueError("Backup contains broken data references")
         finally:
-            source.close()
+            reference.close()

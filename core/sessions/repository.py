@@ -113,6 +113,7 @@ class SessionRepository:
     def save(self, state: SessionState) -> None:
         plan_id = self._resolve_plan_id(state.plan)
         with self.connection:
+            self._record_completed_blocks(plan_id, state)
             self.connection.execute("""
                 UPDATE session_plans
                 SET mode = ?, source_id = ?, source_version = ?,
@@ -129,6 +130,33 @@ class SessionRepository:
             self._write_plan_steps(plan_id, state.plan)
             self._write_state(plan_id, state)
             self._write_confirmed_runs(plan_id, state)
+
+    def _record_completed_blocks(self, plan_id: int, state: SessionState) -> None:
+        if state.plan.mode is SessionMode.WARMUP:
+            return
+        previous = {
+            int(row["step_index"]): int(row["runs"])
+            for row in self.connection.execute(
+                "SELECT step_index, COUNT(*) AS runs FROM session_runs "
+                "WHERE plan_id = ? GROUP BY step_index", (plan_id,),
+            )
+        }
+        skipped = dict(state.skipped_steps)
+        for index, step in enumerate(state.plan.steps):
+            completed = index < state.current_step_index or (
+                index == state.current_step_index and state.status is SessionStatus.COMPLETED
+            )
+            if (not completed or index in skipped
+                    or previous.get(index, 0) >= step.required_runs):
+                continue
+            self.connection.execute("""
+                INSERT INTO subcategory_activity (
+                    subcategory, measured, blocks_since_check, updated_at
+                ) VALUES (?, 0, 1, ?)
+                ON CONFLICT(subcategory) DO UPDATE SET
+                    blocks_since_check = subcategory_activity.blocks_since_check + 1,
+                    updated_at = excluded.updated_at
+            """, (f"{step.category} / {step.subcategory}", state.updated_at.isoformat()))
 
     def finish(self, state: SessionState) -> None:
         if state.status not in {SessionStatus.STOPPED, SessionStatus.COMPLETED}:
@@ -317,8 +345,8 @@ class SessionRepository:
         self.connection.execute("""
             INSERT INTO session_state (
                 plan_id, status, current_step_index, confirmed_runs,
-                started_at, updated_at, stop_reason, owner_token
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                started_at, updated_at, stop_reason, owner_token, skipped_steps_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(plan_id) DO UPDATE SET
                 status = excluded.status,
                 current_step_index = excluded.current_step_index,
@@ -326,7 +354,8 @@ class SessionRepository:
                 started_at = excluded.started_at,
                 updated_at = excluded.updated_at,
                 stop_reason = excluded.stop_reason,
-                owner_token = excluded.owner_token
+                owner_token = excluded.owner_token,
+                skipped_steps_json = excluded.skipped_steps_json
         """, (
             plan_id,
             state.status.value,
@@ -336,6 +365,7 @@ class SessionRepository:
             state.updated_at.isoformat(),
             state.stop_reason,
             self.owner_token,
+            json.dumps(state.skipped_steps),
         ))
 
     def _write_confirmed_runs(self, plan_id: int, state: SessionState) -> None:
@@ -347,8 +377,11 @@ class SessionRepository:
             """, (plan_id,)).fetchall()
         }
         self.connection.execute("DELETE FROM session_runs WHERE plan_id = ?", (plan_id,))
+        skipped = dict(state.skipped_steps)
         for step_index, step in enumerate(state.plan.steps):
-            if step_index < state.current_step_index:
+            if step_index in skipped:
+                count = skipped[step_index]
+            elif step_index < state.current_step_index:
                 count = step.required_runs
             elif step_index == state.current_step_index:
                 count = state.confirmed_runs
@@ -415,4 +448,5 @@ class SessionRepository:
             started_at=datetime.fromisoformat(row["started_at"]),
             updated_at=datetime.fromisoformat(row["updated_at"]),
             stop_reason=row["stop_reason"],
+            skipped_steps=tuple(tuple(item) for item in json.loads(row["skipped_steps_json"])),
         )

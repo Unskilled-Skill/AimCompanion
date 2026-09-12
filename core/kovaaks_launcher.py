@@ -12,6 +12,7 @@ KOVAAKS_APP_ID = "824270"
 # without the spacing expected by Kovaak's online scenario search.
 SCENARIO_NAME_ALIASES = {
     "microshotspeed": "Microshot Speed",
+    "tilefrenzymini": "Tile Frenzy Mini",
 }
 
 
@@ -34,9 +35,23 @@ def scenario_deep_link(scenario_name: str) -> str:
 
 
 def open_kovaaks() -> bool:
-    return QDesktopServices.openUrl(QUrl.fromEncoded(game_deep_link().encode("utf-8")))
+    """Open Kovaak's via Steam deep link.
+    Returns True if the system accepted the URL, False otherwise.
+    """
+    url = QUrl(game_deep_link())
+    result = QDesktopServices.openUrl(url)
+    if not result:
+        # In environments without Steam or protocol handler, log the URL for debugging
+        print(f"Failed to open Kovaak's URL: {url.toString()}")
+    return result
 
 
 def open_kovaaks_scenario(scenario_name: str) -> bool:
-    url = scenario_deep_link(scenario_name)
-    return QDesktopServices.openUrl(QUrl.fromEncoded(url.encode("utf-8")))
+    """Open a specific Kovaak's scenario via Steam deep link.
+    Returns True if the system accepted the URL, False otherwise.
+    """
+    url = QUrl(scenario_deep_link(scenario_name))
+    result = QDesktopServices.openUrl(url)
+    if not result:
+        print(f"Failed to open scenario URL: {url.toString()}")
+    return result

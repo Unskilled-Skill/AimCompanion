@@ -6,6 +6,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QAbstractItemView, QBoxLayout
 
 from core.sessions import SessionEngine, SessionMode, SessionPlan, SessionStep
+from core.scenario_installer import AvailabilityResult
 from ui.session import SessionWidget
 from ui.view_models import build_session_view
 
@@ -139,3 +140,18 @@ def test_status_exposes_visual_state_for_paused_session(qtbot):
     widget.set_state(replace(_view(), status="paused"))
 
     assert widget.status_label.property("sessionStatus") == "paused"
+
+
+def test_completed_warmup_exposes_one_accessible_next_action(qtbot):
+    widget = SessionWidget()
+    qtbot.addWidget(widget)
+    widget.set_state(replace(_view(True), mode="warmup"))
+
+    widget.set_scenario_availability(
+        AvailabilityResult("Missing Scenario", "missing", None)
+    )
+
+    assert widget.next_button.isEnabled()
+    assert widget.next_button.text() == "Start training"
+    assert widget.next_button.accessibleName() == "Start training"
+    assert not widget.launch_button.isEnabled()

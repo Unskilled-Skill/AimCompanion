@@ -94,8 +94,21 @@ class SessionState:
     started_at: datetime
     updated_at: datetime
     stop_reason: str = ""
+    # (execution index, actual confirmed runs) for explicitly omitted steps.
+    skipped_steps: tuple[tuple[int, int], ...] = ()
 
     def __post_init__(self) -> None:
+        skipped = tuple(tuple(item) for item in self.skipped_steps)
+        object.__setattr__(self, "skipped_steps", skipped)
+        if len({index for index, _ in skipped}) != len(skipped):
+            raise ValueError("a step cannot be skipped twice")
+        for index, runs in skipped:
+            if not 0 <= index < len(self.plan.steps) or index > self.current_step_index:
+                raise ValueError("skipped step is outside completed session history")
+            if not 0 <= runs < self.plan.steps[index].required_runs:
+                raise ValueError("skipped run count is outside the step")
+            if index == self.current_step_index and self.status is not SessionStatus.COMPLETED:
+                raise ValueError("an active step cannot already be skipped")
         if not self.plan.steps:
             if self.current_step_index != 0 or self.confirmed_runs != 0:
                 raise ValueError("empty plan state must remain at zero")

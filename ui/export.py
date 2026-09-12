@@ -1,6 +1,7 @@
 import csv
 import os
 import shutil
+import sqlite3
 import tempfile
 import zipfile
 from PyQt6.QtWidgets import (
@@ -271,7 +272,7 @@ class ExportWidget(QWidget):
             if self.on_restore:
                 self.on_restore()
             self._show_preview(f"Backup restored:\n{path}")
-        except (OSError, ValueError, zipfile.BadZipFile) as error:
+        except (OSError, ValueError, sqlite3.Error, zipfile.BadZipFile) as error:
             QMessageBox.critical(self, "Restore failed", str(error))
 
     def update_profile(self, profile):
